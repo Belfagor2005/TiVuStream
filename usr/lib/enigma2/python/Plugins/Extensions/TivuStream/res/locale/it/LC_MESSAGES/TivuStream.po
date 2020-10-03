@@ -1,0 +1,433 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TivuStream\n"
+"Report-Msgid-Bugs-To: Lululla <ekekaz@gmail.com>\n"
+"POT-Creation-Date: 2020-01-25 18:36+0100\n"
+"PO-Revision-Date: 2020-01-25 18:37+0100\n"
+"Last-Translator: Lululla <ekekaz@gmail.com>\n"
+"Language-Team: lululla\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: ../../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: plugin.py:308
+msgid "Channel List"
+msgstr "Lista Canali"
+
+#: plugin.py:314 plugin.py:565 plugin.py:859 plugin.py:1074 plugin.py:1191
+#: plugin.py:1434 plugin.py:1517
+#, python-format
+msgid "..:: TiVuStream List V. %s  by Lululla ::.."
+msgstr "..:: TiVuStream List V. %s  by Lululla ::.."
+
+#: plugin.py:315 plugin.py:566 plugin.py:860 plugin.py:1075 plugin.py:1192
+#: plugin.py:1435 plugin.py:1518
+msgid "Maintainer"
+msgstr "Sviluppo"
+
+#: plugin.py:317 plugin.py:568 plugin.py:862 plugin.py:1077 plugin.py:1194
+#: plugin.py:1437 plugin.py:1520
+msgid "Info"
+msgstr ""
+
+#: plugin.py:319 plugin.py:573 plugin.py:866 plugin.py:1196
+msgid "Exit"
+msgstr "Uscire"
+
+#: plugin.py:320
+msgid "Reload Bouquet"
+msgstr "Ricarica Bouquet"
+
+#: plugin.py:321
+msgid "Delete"
+msgstr "Eliminare"
+
+#: plugin.py:322
+msgid "Player"
+msgstr "Player"
+
+#: plugin.py:323
+msgid "Menu"
+msgstr ""
+
+#: plugin.py:344
+msgid "Check List Update wait please..."
+msgstr "Controlla aggiornamento elenco attendere per favore ..."
+
+#: plugin.py:359
+msgid "List Update: None"
+msgstr "Aggiornamento Liste: Nessuno"
+
+#: plugin.py:412
+msgid "Bouquet not installed"
+msgstr "Bouquet non installato"
+
+#: plugin.py:422
+msgid "StreamLink not installed !!! Install first"
+msgstr "StreamLink non installato !!! Installare prima"
+
+#: plugin.py:427
+msgid "You are not allowed!"
+msgstr "Non hai il permesso!"
+
+#: plugin.py:430
+msgid "CONNECTION ERROR OR UNKNOWN"
+msgstr ""
+
+#: plugin.py:458 plugin.py:731 plugin.py:777 plugin.py:823
+msgid "Check out the favorites list ..."
+msgstr "Dai un'occhiata all'elenco dei preferiti ..."
+
+#: plugin.py:496 plugin.py:511 plugin.py:743 plugin.py:789 plugin.py:835
+msgid "Shuffle Favorite List in Progress"
+msgstr "Riordino Liste favorite in corso"
+
+#: plugin.py:496 plugin.py:508 plugin.py:511 plugin.py:743 plugin.py:789
+#: plugin.py:835
+msgid "Wait please ..."
+msgstr ""
+
+#: plugin.py:504
+msgid "Install the selected list?"
+msgstr "Installare Lista selezionata?"
+
+#: plugin.py:508
+msgid "Installation in progress"
+msgstr ""
+
+#: plugin.py:518
+msgid "ATTENTION"
+msgstr "ATTENZIONE"
+
+#: plugin.py:518
+msgid "Delete TiVuStream channel lists"
+msgstr "Cancellare le liste canali TiVuStream?"
+
+#: plugin.py:537
+msgid "TiVuStream channel lists successfully deleted"
+msgstr "Elenchi di canali TiVuStream eliminati correttamente"
+
+#: plugin.py:572
+#, python-format
+msgid "Folder path %s"
+msgstr "Percorso cartella %s"
+
+#: plugin.py:574
+msgid "Convert StreamLink"
+msgstr "Converti StreamLink"
+
+#: plugin.py:575
+msgid "Convert ExtePlayer3"
+msgstr "Converti ExtePlayer3"
+
+#: plugin.py:576
+msgid "Convert Gstreamer"
+msgstr "Converti Gstreamer"
+
+#: plugin.py:611 plugin.py:870
+msgid "OK"
+msgstr "OK"
+
+#: plugin.py:611 plugin.py:730 plugin.py:776 plugin.py:822 plugin.py:840
+#: plugin.py:843
+msgid "Open Selection"
+msgstr "Apri selezione"
+
+#: plugin.py:654
+msgid "Do you want to remove?"
+msgstr "Vuoi rimuovere?"
+
+#: plugin.py:706 plugin.py:754 plugin.py:800
+#, python-format
+msgid "Converting %s"
+msgstr "Converting %s"
+
+#: plugin.py:730 plugin.py:776 plugin.py:822 plugin.py:840 plugin.py:843
+msgid "TiVuStream M3U:"
+msgstr "TiVuStream M3U:"
+
+#: plugin.py:865
+#, python-format
+msgid "Service Reference used %s"
+msgstr "Service Reference utilizzato %s"
+
+#: plugin.py:867
+msgid "Play"
+msgstr "Play"
+
+#: plugin.py:868
+msgid "Add Stream to Bouquet"
+msgstr "Aggiungi a Bouquet"
+
+#: plugin.py:870
+msgid "Preview"
+msgstr "Anteprima"
+
+#: plugin.py:878
+msgid "N."
+msgstr "N."
+
+#: plugin.py:1099
+msgid "Add Stream IPTV"
+msgstr "Aggiungi Stream IPTV"
+
+#: plugin.py:1105
+msgid "Select the Bouquet and press OK to add"
+msgstr "Selezionare il bouquet e premere OK per aggiungere"
+
+#: plugin.py:1140
+msgid "Enter Name"
+msgstr ""
+
+#: plugin.py:1187
+msgid "TiVuStream Config"
+msgstr "TiVuStream Config"
+
+#: plugin.py:1197
+msgid "Update"
+msgstr "Aggiorna"
+
+#: plugin.py:1198
+msgid "Save"
+msgstr "Salva"
+
+#: plugin.py:1237 plugin.py:1240 plugin.py:1243
+msgid "TiVuStream version: "
+msgstr ""
+
+#: plugin.py:1237 plugin.py:1240
+msgid "No online updates!"
+msgstr "Nessun aggiornamento online!"
+
+#: plugin.py:1237 plugin.py:1240
+msgid "if you like it you can make a free donation"
+msgstr "se ti piace puoi fare una donazione gratuita"
+
+#: plugin.py:1237 plugin.py:1240
+msgid "www.paypal.me/TivuStream"
+msgstr ""
+
+#: plugin.py:1243
+msgid "Last update"
+msgstr "Ultimo aggiornamento"
+
+#: plugin.py:1243
+msgid "available!"
+msgstr "disponibile !"
+
+#: plugin.py:1243
+msgid "ChangeLog:"
+msgstr ""
+
+#: plugin.py:1248
+msgid "No updates available"
+msgstr "Nessun aggiornamento disponibile !"
+
+#: plugin.py:1248
+msgid "No internet connection or server OFF"
+msgstr ""
+
+#: plugin.py:1248
+msgid "Please try again later or change SERVER to config menu."
+msgstr "Riprovare più tardi o cambiare SERVER nel menu di configurazione."
+
+#: plugin.py:1262
+msgid "Server:"
+msgstr "Server:"
+
+#: plugin.py:1262
+msgid "Server selection"
+msgstr "Selezionare il Server Liste"
+
+#: plugin.py:1263
+msgid "Auto Update Plugin:"
+msgstr "Auto Update Plugin"
+
+#: plugin.py:1263
+msgid "Automatic plugin update"
+msgstr "Aggiornamento automatico plugin"
+
+#: plugin.py:1264
+msgid "Personal Password:"
+msgstr "Password per abilitazione"
+
+#: plugin.py:1264
+msgid "Enter the password to download Lists XXX Adults"
+msgstr "Inserisci la password per il download di Liste XXX Adulti"
+
+#: plugin.py:1265
+msgid "IPTV bouquets location "
+msgstr "Posizione dei Bouquet IPTV"
+
+#: plugin.py:1265
+msgid "Configure position of the bouquets of the converted lists"
+msgstr "Configura la posizione dei Bouquet delle liste convertite"
+
+#: plugin.py:1266
+msgid "Player folder List <.m3u>:"
+msgstr "Percorso Liste Player <.m3u>:"
+
+#: plugin.py:1266
+msgid "Folder path containing the .m3u files"
+msgstr "Percorso della cartella contenente i file .m3u"
+
+#: plugin.py:1267
+msgid "Services Reference type"
+msgstr "Tipo di Service Reference"
+
+#: plugin.py:1267
+msgid "Configure Gstreamer/Exteplayer3/StreamLink Service Reference"
+msgstr "Configurare Player Gstreamer/Exteplayer3/StreamLink"
+
+#: plugin.py:1268
+msgid "Link in Extensions Menu:"
+msgstr "Link in Menu Estensioni"
+
+#: plugin.py:1268
+msgid "Show Plugin in Extensions Menu"
+msgstr "Mostra Plugin in Menu Estensioni"
+
+#: plugin.py:1269
+msgid "Link in Main Menu:"
+msgstr "Link in Menu Principale"
+
+#: plugin.py:1269
+msgid "Show Plugin in Main Menu"
+msgstr "Mostra Plugin in Menu Estensioni"
+
+#: plugin.py:1324
+msgid "Choose Directory:"
+msgstr "Scegli cartella"
+
+#: plugin.py:1325
+msgid "Choose directory"
+msgstr "Scegli Cartella:"
+
+#: plugin.py:1346
+msgid "M3u list folder not detected!"
+msgstr "Cartella dell'elenco M3u non rilevata!"
+
+#: plugin.py:1356
+msgid "Settings saved correctly!"
+msgstr "Impostazioni salvate correttamente!"
+
+#: plugin.py:1382
+msgid "Really close without saving the settings?"
+msgstr "Uscire senza salvare le impostazioni?"
+
+#: plugin.py:1391
+msgid "New Online Version!"
+msgstr "Nuova versione online!"
+
+#: plugin.py:1391
+#, python-format
+msgid "Update Plugin to Version %s ?"
+msgstr "Update Plugin to Version %s ?"
+
+#: plugin.py:1396
+msgid "Update Plugin ?"
+msgstr "Aggiornare il plugin?"
+
+#: plugin.py:1404
+#, python-format
+msgid "Update Plugin: %s"
+msgstr "Update Plugin: %s"
+
+#: plugin.py:1419
+msgid "Do you want restart enigma2 ?"
+msgstr ""
+
+#: plugin.py:1460
+msgid "Executing in run:"
+msgstr ""
+
+#: plugin.py:1472
+msgid "Execution finished !!"
+msgstr ""
+
+#: plugin.py:1543
+msgid "Question"
+msgstr "Question"
+
+#: plugin.py:1544
+msgid "Information"
+msgstr "Information"
+
+#: plugin.py:1545
+msgid "Warning"
+msgstr "Warning"
+
+#: plugin.py:1546
+msgid "Error"
+msgstr "Error"
+
+#: plugin.py:1546
+msgid "Message"
+msgstr "Message"
+
+#: plugin.py:1551 plugin.py:1553
+msgid "Yes"
+msgstr "Yes"
+
+#: plugin.py:1551 plugin.py:1553
+msgid "No"
+msgstr "No"
+
+#: plugin.py:1694
+msgid ""
+"\n"
+"\n"
+"\n"
+"Check Connection wait please..."
+msgstr ""
+"\n"
+"\n"
+"\n"
+"Check Connection wait please..."
+
+#: plugin.py:1713
+msgid ""
+"\n"
+"\n"
+"Error downloading updates!"
+msgstr ""
+"\n"
+"\n"
+"Error downloading updates!"
+
+#: plugin.py:1717
+msgid ""
+"\n"
+"\n"
+"Server Off !"
+msgstr ""
+"\n"
+"\n"
+"Server Off !"
+
+#: plugin.py:1717
+msgid "check SERVER in config"
+msgstr "Controllare il Server in configurazione"
+
+#: plugin.py:1742 plugin.py:1761
+msgid "TiVuStream List"
+msgstr ""
+
+#: plugin.py:1762 plugin.py:1764
+msgid "TiVuStream List v."
+msgstr ""
+
+#~ msgid "Credits"
+#~ msgstr "Crediti"
+
+#~ msgid "Plugin Updated!"
+#~ msgstr "Plugin aggiornato!"
+
+#~ msgid "Restart GUI"
+#~ msgstr "Riavvio Enigma"

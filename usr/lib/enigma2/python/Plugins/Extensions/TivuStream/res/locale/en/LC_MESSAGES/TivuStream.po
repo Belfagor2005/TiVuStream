@@ -1,0 +1,821 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TivuStream\n"
+"Report-Msgid-Bugs-To: Lululla <ekekaz@gmail.com>\n"
+"POT-Creation-Date: 2019-10-20 18:41+0200\n"
+"PO-Revision-Date: 2019-10-20 18:42+0200\n"
+"Last-Translator: Lululla <ekekaz@gmail.com>\n"
+"Language-Team: lululla\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: ../../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: plugin.py:369
+msgid "Channel List"
+msgstr ""
+
+#: plugin.py:375 plugin.py:615 plugin.py:900 plugin.py:1106 plugin.py:1223
+#: plugin.py:1461 plugin.py:1544
+#, python-format
+msgid "..:: TiVuStream List V. %s  by Lululla ::.."
+msgstr "..:: TiVuStream List V. %s  by Lululla ::.."
+
+#: plugin.py:376 plugin.py:616 plugin.py:901 plugin.py:1107 plugin.py:1224
+#: plugin.py:1462 plugin.py:1545
+msgid "Maintainer"
+msgstr ""
+
+#: plugin.py:378 plugin.py:618 plugin.py:903 plugin.py:1109 plugin.py:1226
+#: plugin.py:1464 plugin.py:1547
+msgid "Credits"
+msgstr ""
+
+#: plugin.py:380 plugin.py:623 plugin.py:907 plugin.py:1228
+msgid "Exit"
+msgstr ""
+
+#: plugin.py:381
+msgid "Reload Bouquet"
+msgstr ""
+
+#: plugin.py:382
+msgid "Delete"
+msgstr ""
+
+#: plugin.py:383
+msgid "Player"
+msgstr "Player"
+
+#: plugin.py:384
+msgid "Menu"
+msgstr ""
+
+#: plugin.py:404
+msgid "Check List Update wait please..."
+msgstr ""
+
+#: plugin.py:418
+msgid "List Update: None"
+msgstr ""
+
+#: plugin.py:471
+msgid "Bouquet not installed"
+msgstr ""
+
+#: plugin.py:481
+msgid "StreamLink not installed !!! Install first"
+msgstr ""
+
+#: plugin.py:486
+msgid "You are not allowed!"
+msgstr ""
+
+#: plugin.py:489
+msgid "CONNECTION ERROR OR UNKNOWN"
+msgstr ""
+
+#: plugin.py:517 plugin.py:772 plugin.py:818 plugin.py:864
+msgid "Check out the favorites list ..."
+msgstr ""
+
+#: plugin.py:549 plugin.py:564 plugin.py:784 plugin.py:830 plugin.py:876
+msgid "Shuffle Favorite List in Progress"
+msgstr ""
+
+#: plugin.py:549 plugin.py:561 plugin.py:564 plugin.py:784 plugin.py:830
+#: plugin.py:876
+msgid "Wait please ..."
+msgstr ""
+
+#: plugin.py:557
+msgid "Install the selected list?"
+msgstr ""
+
+#: plugin.py:561
+msgid "Installation in progress"
+msgstr ""
+
+#: plugin.py:571
+msgid "ATTENTION"
+msgstr ""
+
+#: plugin.py:571
+msgid "Delete TiVuStream channel lists"
+msgstr ""
+
+#: plugin.py:592
+msgid "TiVuStream channel lists successfully deleted"
+msgstr ""
+
+#: plugin.py:622
+#, python-format
+msgid "Folder path %s"
+msgstr ""
+
+#: plugin.py:624
+msgid "Convert StreamLink"
+msgstr ""
+
+#: plugin.py:625
+msgid "Convert ExtePlayer3"
+msgstr ""
+
+#: plugin.py:626
+msgid "Convert Gstreamer"
+msgstr ""
+
+#: plugin.py:652 plugin.py:911
+msgid "OK"
+msgstr "OK"
+
+#: plugin.py:652 plugin.py:771 plugin.py:817 plugin.py:863 plugin.py:881
+#: plugin.py:884
+msgid "Open Selection"
+msgstr ""
+
+#: plugin.py:695
+msgid "Do you want to remove?"
+msgstr ""
+
+#: plugin.py:747 plugin.py:795 plugin.py:841
+#, python-format
+msgid "Converting %s"
+msgstr "Converting %s"
+
+#: plugin.py:771 plugin.py:817 plugin.py:863 plugin.py:881 plugin.py:884
+msgid "TiVuStream M3U:"
+msgstr "TiVuStream M3U:"
+
+#: plugin.py:906
+#, python-format
+msgid "Service Reference used %s"
+msgstr "Service Reference used %s"
+
+#: plugin.py:908
+msgid "Play"
+msgstr "Play"
+
+#: plugin.py:909
+msgid "Add Stream to Bouquet"
+msgstr ""
+
+#: plugin.py:911
+msgid "Preview"
+msgstr ""
+
+#: plugin.py:918
+msgid "N."
+msgstr "N."
+
+#: plugin.py:1131
+msgid "Add Stream IPTV"
+msgstr ""
+
+#: plugin.py:1137
+msgid "Select the Bouquet and press OK to add"
+msgstr ""
+
+#: plugin.py:1172
+msgid "Enter Name"
+msgstr ""
+
+#: plugin.py:1219
+msgid "TiVuStream Config"
+msgstr "TiVuStream Config"
+
+#: plugin.py:1229
+msgid "Update"
+msgstr ""
+
+#: plugin.py:1230
+msgid "Save"
+msgstr ""
+
+#: plugin.py:1269 plugin.py:1272 plugin.py:1275
+msgid "TiVuStream version: "
+msgstr ""
+
+#: plugin.py:1269 plugin.py:1272
+msgid "No online updates!"
+msgstr ""
+
+#: plugin.py:1269 plugin.py:1272
+msgid "if you like it you can make a free donation"
+msgstr ""
+
+#: plugin.py:1269 plugin.py:1272
+msgid "www.paypal.me/TivuStream"
+msgstr ""
+
+#: plugin.py:1275
+msgid "Last update"
+msgstr ""
+
+#: plugin.py:1275
+msgid "available!"
+msgstr ""
+
+#: plugin.py:1275
+msgid "ChangeLog:"
+msgstr ""
+
+#: plugin.py:1280
+msgid "No updates available"
+msgstr ""
+
+#: plugin.py:1280
+msgid "No internet connection or server OFF"
+msgstr ""
+
+#: plugin.py:1280
+msgid "Please try again later or change SERVER to config menu."
+msgstr ""
+
+#: plugin.py:1295
+msgid "Server:"
+msgstr "Server:"
+
+#: plugin.py:1295
+msgid "Server selection"
+msgstr ""
+
+#: plugin.py:1296
+msgid "Auto Update Plugin:"
+msgstr ""
+
+#: plugin.py:1296
+msgid "Automatic plugin update"
+msgstr ""
+
+#: plugin.py:1297
+msgid "Personal Password:"
+msgstr ""
+
+#: plugin.py:1297
+msgid "Enter the password to download Lists XXX Adults"
+msgstr ""
+
+#: plugin.py:1298
+msgid "IPTV bouquets location "
+msgstr ""
+
+#: plugin.py:1298
+msgid "Configure position of the bouquets of the converted lists"
+msgstr ""
+
+#: plugin.py:1299
+msgid "Player List <.m3u>:"
+msgstr ""
+
+#: plugin.py:1299
+msgid "Folder path containing the .m3u files"
+msgstr ""
+
+#: plugin.py:1300
+msgid "Services Reference type"
+msgstr ""
+
+#: plugin.py:1300
+msgid "Configure Gstreamer / Exteplayer3 / StreamLink Service Reference"
+msgstr ""
+
+#: plugin.py:1301
+msgid "Link in Extensions Menu:"
+msgstr ""
+
+#: plugin.py:1301
+msgid "Show Plugin in Extensions Menu"
+msgstr ""
+
+#: plugin.py:1302
+msgid "Link in Main Menu:"
+msgstr ""
+
+#: plugin.py:1302
+msgid "Show Plugin in Main Menu"
+msgstr ""
+
+#: plugin.py:1357
+msgid "Choose Directory:"
+msgstr ""
+
+#: plugin.py:1358
+msgid "Choose directory"
+msgstr ""
+
+#: plugin.py:1380
+msgid "M3u list folder not detected!"
+msgstr ""
+
+#: plugin.py:1390
+msgid "Settings saved correctly!"
+msgstr ""
+
+#: plugin.py:1417
+msgid "Really close without saving the settings?"
+msgstr ""
+
+#: plugin.py:1426
+msgid "New Online Version!"
+msgstr ""
+
+#: plugin.py:1426
+#, python-format
+msgid "Update Plugin to Version %s ?"
+msgstr "Update Plugin to Version %s ?"
+
+#: plugin.py:1431
+msgid "Update Plugin ?"
+msgstr ""
+
+#: plugin.py:1442
+#, python-format
+msgid "Update Plugin: %s"
+msgstr ""
+
+#: plugin.py:1445
+msgid "Plugin Updated!"
+msgstr ""
+
+#: plugin.py:1445
+msgid "Restart GUI"
+msgstr ""
+
+#: plugin.py:1487
+msgid "Executing in run:"
+msgstr ""
+
+#: plugin.py:1499
+msgid "Execution finished !!"
+msgstr ""
+
+#: plugin.py:1570
+msgid "Question"
+msgstr "Question"
+
+#: plugin.py:1571
+msgid "Information"
+msgstr "Information"
+
+#: plugin.py:1572
+msgid "Warning"
+msgstr "Warning"
+
+#: plugin.py:1573
+msgid "Error"
+msgstr "Error"
+
+#: plugin.py:1573
+msgid "Message"
+msgstr "Message"
+
+#: plugin.py:1578 plugin.py:1580
+msgid "Yes"
+msgstr ""
+
+#: plugin.py:1578 plugin.py:1580
+msgid "No"
+msgstr "No"
+
+#: plugin.py:1722
+msgid ""
+"\n"
+"\n"
+"\n"
+"Check Connection wait please..."
+msgstr ""
+"\n"
+"\n"
+"\n"
+"Check Connection wait please..."
+
+#: plugin.py:1742
+msgid ""
+"\n"
+"\n"
+"Error downloading updates!"
+msgstr ""
+
+#: plugin.py:1747
+msgid ""
+"\n"
+"\n"
+"Server Off !"
+msgstr ""
+"\n"
+"\n"
+"Server Off !"
+
+#: plugin.py:1747
+msgid "check SERVER in config"
+msgstr ""
+
+#: plugin.py:1790
+msgid "TiVuStream List"
+msgstr ""
+
+#: plugin.py:1791 plugin.py:1793
+msgid "TiVuStream List v."
+msgstr ""
+
+#~ msgid "Si"
+#~ msgstr "Yes"
+
+#~ msgid "Anteprima"
+#~ msgstr "Preview"
+
+#~ msgid "Crediti"
+#~ msgstr "Credits"
+
+#~ msgid "Esci"
+#~ msgstr "Exit"
+
+#~ msgid "Ricarica Bouquet"
+#~ msgstr "Reload Bouquet"
+
+#~ msgid "Elimina"
+#~ msgstr "Delete"
+
+#~ msgid "Bouquet non Installato"
+#~ msgstr "not Installed bouquet"
+
+#~ msgid "Controlla nella lista favoriti ..."
+#~ msgstr "Check out the favorites list ..."
+
+#~ msgid "Riordino liste Favorite in Corso"
+#~ msgstr "Shuffle Favorite List in Progress"
+
+#~ msgid "Attendere prego ..."
+#~ msgstr "Wait please ..."
+
+#~ msgid "ERRORE CONNESSIONE O UNKNOW"
+#~ msgstr "CONNECTION OR UNKNOWN ERROR"
+
+#~ msgid ""
+#~ "StreamLink non Installato!!!\n"
+#~ "\n"
+#~ "Installare prima"
+#~ msgstr ""
+#~ "StreamLink not Installed !!!\n"
+#~ "\n"
+#~ "Install first"
+
+#~ msgid "Installare lista %s selezionata"
+#~ msgstr "Install %s list selected"
+
+#~ msgid "Installazione in Corso"
+#~ msgstr "Installation in progress"
+
+#~ msgid "ATTENZIONE"
+#~ msgstr "ATTENTION"
+
+#~ msgid "Eliminare le liste canali TiVuStream"
+#~ msgstr "Delete TiVuStream channel lists"
+
+#~ msgid "Liste canali TiVuStream eliminate con successo"
+#~ msgstr "TiVuStream channel lists successfully deleted"
+
+#~ msgid "Percorso cartella %s"
+#~ msgstr "Folder path %s"
+
+#~ msgid "Converti StreamLink"
+#~ msgstr "Convert StreamLink"
+
+#~ msgid "Converti ExtePlayer3"
+#~ msgstr "Convert ExtePlayer3"
+
+#~ msgid "Converti Gstreamer"
+#~ msgstr "Convert Gstreamer"
+
+#~ msgid "Apri Selezione"
+#~ msgstr "Open Selection"
+
+#~ msgid "Vuoi rimuovere?"
+#~ msgstr "Do you want to remove it?"
+
+#~ msgid "Service Reference utilizzato %s"
+#~ msgstr "Service Reference used %s"
+
+#~ msgid "Aggiungi Stream a Bouquet"
+#~ msgstr "Add Stream to Bouquet"
+
+#~ msgid "Aggiungi Stream IPTV"
+#~ msgstr "Add Stream IPTV"
+
+#~ msgid "Seleziona il Bouquet e premi OK per aggiungere"
+#~ msgstr "Select the Bouquet and press OK to add"
+
+#~ msgid "Inserire Nome"
+#~ msgstr "Enter Name"
+
+#~ msgid "Aggiorna Plugin"
+#~ msgstr "Update Plugin"
+
+#~ msgid "Salva"
+#~ msgstr "Save"
+
+#~ msgid "Nessun aggiornamento online!"
+#~ msgstr "No online updates!"
+
+#~ msgid "se ti piace puoi fare una libera donazione"
+#~ msgstr "if you like it you can make a free donation"
+
+#~ msgid "Ultimo aggiornamento "
+#~ msgstr "Last update"
+
+#~ msgid "disponibile!"
+#~ msgstr "available!"
+
+#~ msgid "Nessun aggiornamento disponibile"
+#~ msgstr "No update available"
+
+#~ msgid "Nessuna connessione Internet o server OFF"
+#~ msgstr "No internet connection or server OFF"
+
+#~ msgid "Prego riprova piu tardi o cambia SERVER in menu config."
+#~ msgstr "Please try again later or change SERVER to config menu."
+
+#~ msgid "Scelta del Server"
+#~ msgstr "Choice of the Server"
+
+#~ msgid "Aggiornarmento plugin automatico"
+#~ msgstr "Automatic plugin update"
+
+#~ msgid "Password Personale:"
+#~ msgstr "Personal Password:"
+
+#~ msgid "Inserisci la password per scaricare Liste XXX Adulti"
+#~ msgstr "Enter your password to download XXX Adult Lists"
+
+#~ msgid "Posizione IPTV bouquets "
+#~ msgstr "IPTV location bouquets"
+
+#~ msgid "Configura posizione dei Bouquet delle liste convertite"
+#~ msgstr "Configure the position of the Bouquet of the converted lists"
+
+#~ msgid "Liste Player <.m3u>:"
+#~ msgstr "Lists Player <.m3u>:"
+
+#~ msgid "Percorso cartella contenente i file .m3u"
+#~ msgstr "Folder path containing the .m3u files"
+
+#~ msgid "Tipo Services Reference"
+#~ msgstr "Type Services Reference"
+
+#~ msgid "Configura Service Reference Gstreamer/Exteplayer3/StreamLink"
+#~ msgstr "Configure Service Reference Gstreamer/Exteplayer3/StreamLink"
+
+#~ msgid "Mostra Plugin in Extensions Menu"
+#~ msgstr "Show Plugin in Menu Extensions"
+
+#~ msgid "Link in Menu Principale:"
+#~ msgstr "Link in the Main Menu:"
+
+#~ msgid "Mostra Plugin in Main Menu"
+#~ msgstr "Show Plugin in Main Menu"
+
+#~ msgid "Cartella Liste m3u non rilevato!"
+#~ msgstr "Lists folder not detected!"
+
+#~ msgid "Impostazioni salvate correttamente!"
+#~ msgstr "Settings saved correctly!"
+
+#~ msgid "Veramente chiudere senza salvare le impostazioni?"
+#~ msgstr "Do you really close without saving the settings?"
+
+#~ msgid "Nuova Versione Online!"
+#~ msgstr "New Online Version!"
+
+#~ msgid "Aggiornare Plugin alla Versione %s ?"
+#~ msgstr "Update Plugin to Version% s?"
+
+#~ msgid "Aggiornare Plugin ?"
+#~ msgstr "Update Plugin ?"
+
+#~ msgid "Aggiorno Plugin: %s"
+#~ msgstr "Update Plugin: %s"
+
+#~ msgid "Plugin Aggiornato!"
+#~ msgstr "Updated plugin!"
+
+#~ msgid "Riavvio interfaccia utente"
+#~ msgstr "User interface restart"
+
+#~ msgid "Esecuzione in corso:"
+#~ msgstr "Execution Progress:"
+
+#~ msgid "Esecuzione finita!!"
+#~ msgstr "Execution finished!!"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Errore nel download degli aggiornamenti !"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Error downloading updates!"
+
+#~ msgid "controlla SERVER in config"
+#~ msgstr "check SERVER in config"
+
+#~ msgid "Versione"
+#~ msgstr "Version"
+
+#~ msgid "..:: TivuStream List ::.."
+#~ msgstr "..:: TivuStream List ::.."
+
+#~ msgid "Credit"
+#~ msgstr "Credit"
+
+#~ msgid "Player List"
+#~ msgstr "Player List"
+
+#~ msgid "CONTROLLA NELLA LISTA FAVORITI..."
+#~ msgstr "CHECK THE LIST FAVOURITES ..."
+
+#~ msgid "Eliminare le liste canali TivuStream"
+#~ msgstr "Delete the TivuStream channel lists"
+
+#~ msgid "Liste canali TivuStream eliminate con successo"
+#~ msgstr "TivuStream channel lists successfully deleted"
+
+#~ msgid "..:: TivuStream Player ::.."
+#~ msgstr "..:: TivuStream Player ::.."
+
+#~ msgid ""
+#~ "OK\n"
+#~ "Apri Selezione"
+#~ msgstr ""
+#~ "OK\n"
+#~ "Open Select"
+
+#~ msgid "TivuStream m3U: Apri Selezione"
+#~ msgstr "TivuStream m3U: Open Select"
+
+#~ msgid ""
+#~ "OK\n"
+#~ "Anteprima"
+#~ msgstr ""
+#~ "OK\n"
+#~ "Preview"
+
+#~ msgid "..:: TivuStream Add Stream ::.."
+#~ msgstr "..:: TivuStream Add Stream ::.."
+
+#~ msgid "Add IPTV Channels"
+#~ msgstr "Add IPTV Channels"
+
+#~ msgid "Seleziona il Bouquet e premi OK per inserire"
+#~ msgstr "Select the Bouquet and press OK to enter"
+
+#~ msgid "Enter name"
+#~ msgstr "Enter name"
+
+#~ msgid "..:: TivuStream Config ::.."
+#~ msgstr "..:: TivuStream Config ::.."
+
+#~ msgid "TivuStream Config"
+#~ msgstr "TivuStream Config"
+
+#~ msgid "TivuStream versione: "
+#~ msgstr "TivuStream version: "
+
+#~ msgid ""
+#~ "\n"
+#~ "Nessun aggiornamento online!"
+#~ msgstr ""
+#~ "\n"
+#~ "No online update!"
+
+#~ msgid ""
+#~ "\n"
+#~ "se ti piace puoi fare una libera donazione\n"
+#~ "www.paypal.me/TivuStream"
+#~ msgstr ""
+#~ "\n"
+#~ "if you like you can make a free donation\n"
+#~ "www.paypal.me/TivuStream"
+
+#~ msgid ""
+#~ "\n"
+#~ "Ultimo aggiornamento "
+#~ msgstr ""
+#~ "\n"
+#~ "Last Update "
+
+#~ msgid ""
+#~ " disponibile!  \n"
+#~ "ChangeLog:"
+#~ msgstr ""
+#~ " available!  \n"
+#~ "ChangeLog:"
+
+#~ msgid ""
+#~ "\n"
+#~ "Nessuna connessione Internet o server OFF"
+#~ msgstr ""
+#~ "\n"
+#~ "No Internet connection or OFF server"
+
+#~ msgid ""
+#~ "\n"
+#~ "Prego riprova piu tardi o cambia SERVER in menu config."
+#~ msgstr ""
+#~ "\n"
+#~ "Please try later or change SERVER in config menu."
+
+#~ msgid "Impostazioni salvate correttamente !"
+#~ msgstr "Saved Settings!"
+
+#~ msgid ""
+#~ "Nuova Versione Online!!!\n"
+#~ "\n"
+#~ "Aggiornare Plugin alla Versione %s ?"
+#~ msgstr ""
+#~ "New Online Version !!!\n"
+#~ "\n"
+#~ "Please Update Plugin to version %s ?"
+
+#~ msgid ""
+#~ "Plugin Aggiornato!\n"
+#~ "Riavvio interfaccia utente"
+#~ msgstr ""
+#~ "Updated Plugin!\n"
+#~ "Restarting the user interface"
+
+#~ msgid "..:: TivuStream Console ::.."
+#~ msgstr "..:: TivuStream Console ::.."
+
+#~ msgid "..:: TivuStream Message ::.."
+#~ msgstr "..:: TivuStream Message ::.."
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "Errore nel download degli aggiornamenti"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "Error downloading updates"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "Server Off"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "Server Off"
+
+#~ msgid "TivuStream"
+#~ msgstr "TivuStream"
+
+#~ msgid "TivuStream v."
+#~ msgstr "TivuStream v."
+
+#~ msgid "Credits: Buio2005,Furlan,Daimon"
+#~ msgstr "Credits: Buio2005,Furlan,Daimon"
+
+#~ msgid "..:: TivuStream About ::.."
+#~ msgstr "..:: TivuStream About ::.."
+
+#~ msgid "Config"
+#~ msgstr "Config"
+
+#~ msgid "Open List"
+#~ msgstr "Open List"
+
+#~ msgid "@Lululla"
+#~ msgstr "@Lululla"
+
+#~ msgid "Versione %s"
+#~ msgstr "Version %s"
+
+#~ msgid "Check Connection wait please..."
+#~ msgstr "Check Connection wait please..."
+
+#~ msgid "Errore nel download degli aggiornamenti"
+#~ msgstr "Error downloading updates"
+
+#~ msgid "Server Off"
+#~ msgstr "Server Off"
+
+#~ msgid "Seleziona i flussi da aggiungere al bouquet"
+#~ msgstr "Select the streams to add to the bouquet"
+
+#~ msgid "..:: TivuStream M3U List ::.."
+#~ msgstr "..:: TivuStream M3U List ::.."
+
+#~ msgid "..:: TivuStream M3U Player ::.."
+#~ msgstr "..:: TivuStream M3U Player ::.."

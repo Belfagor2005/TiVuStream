@@ -1,0 +1,10 @@
+<screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1920,1080" title="-TivuStream-" backgroundColor="#30000000">
+<eLabel position="1833,45" size="8,915" zPosition="1" backgroundColor="#30403f3f" />
+<eLabel position="83,45" size="1755,8" zPosition="1" backgroundColor="#30403f3f" />
+<eLabel position="75,45" size="8,915" zPosition="1" backgroundColor="#30403f3f" />
+<eLabel position="75,953" size="1763,8" zPosition="1" backgroundColor="#30403f3f" />
+<ePixmap position="1183,66" zPosition="5" size="500,104" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/FullHD/logo2.png" alphatest="blend" />
+<ePixmap position="235,60" zPosition="5" size="322,113" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/FullHD/logosk.png" alphatest="blend" />
+<widget name="text" position="235,68" zPosition="3" size="1450,877" font="OpenFont2;30" halign="center" foregroundColor="#006666" transparent="1" />  
+                               
+ </screen>
