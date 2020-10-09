@@ -509,110 +509,110 @@ class OpenScript(Screen):
                 namex = ''
                 sel = self.menu_list[idx]
                 if sel == ("LIVE TUTTI"):
-                        namex = 'livetutti'
-                        lnk = '?p=1&t=0'
+                        namex = "livetutti"
+                        lnk = "?p=1&t=0"
                 elif sel == ("TOP ITALIA"):
-                        namex = 'topitalia'
-                        lnk = '?p=1&t=1'
+                        namex = "topitalia"
+                        lnk = "?p=1&t=1"
                 elif sel == ("SPORT ITALIA"):
-                        namex = 'sportitalia'
-                        lnk = '?p=1&t=2'
+                        namex = "sportitalia"
+                        lnk = "?p=1&t=2"
                 elif sel == ("SPORT LIVE"):
-                        namex = 'sportlive'
-                        lnk = '?p=1&t=3'
+                        namex = "sportlive"
+                        lnk = "?p=1&t=3"
                 elif sel == ("SPORT ESTERI"):
-                        namex = 'sportesteri'
-                        lnk = '?p=1&t=4'
+                        namex = "sportesteri"
+                        lnk = "?p=1&t=4"
                 elif sel == ("MUSICA"):
-                        namex = 'musica'
-                        lnk = '?p=1&t=5'
+                        namex = "musica"
+                        lnk = "?p=1&t=5"
                 elif sel == ("NEWS"):
-                        namex = 'news'
-                        lnk = '?p=1&t=6'
+                        namex = "news"
+                        lnk = "?p=1&t=6"
                 elif sel == ("ESTERO"):
-                        namex = 'estero'
-                        lnk = '?p=1&t=7'
+                        namex = "estero"
+                        lnk = "?p=1&t=7"
                 # elif sel == ("ESTERO2"):
-                        # namex = 'estero2'
-                        # lnk = ''
+                        # namex = "estero2"
+                        # lnk = ""
                         # # self.M3uPlay2()
 
                 elif sel == ("REGIONALI"):
-                        namex = 'regionali'
-                        lnk = '?p=1&t=8'
+                        namex = "regionali"
+                        lnk = "?p=1&t=8"
                 elif sel == ("RELAX"):
-                        namex = 'relax'
-                        lnk = '?p=1&t=9'
+                        namex = "relax"
+                        lnk = "?p=1&t=9"
 
                 elif sel == ("MOVIE TUTTI"):
-                        namex = 'movietutti'
-                        lnk = '?p=2&t=0'
+                        namex = "movietutti"
+                        lnk = "?p=2&t=0"
                 elif sel == ("SERIE"):
-                        namex = 'serie'
-                        lnk = '?p=2&t=10'
+                        namex = "serie"
+                        lnk = "?p=2&t=10"
                 elif sel == ("SERIE TV: 0-9"):
-                        namex = 'serietv09'
-                        lnk = '?p=2&t=11'
+                        namex = "serietv09"
+                        lnk = "?p=2&t=11"
                 elif sel == ("SERIE TV: A-E"):
-                        namex = 'serietvae'
-                        lnk = '?p=2&t=12'
+                        namex = "serietvae"
+                        lnk = "?p=2&t=12"
                 elif sel == ("SERIE TV: F-K"):
-                        namex = 'serietvfk'
-                        lnk = '?p=2&t=13'
+                        namex = "serietvfk"
+                        lnk = "?p=2&t=13"
                 elif sel == ("SERIE TV: L-R"):
-                        namex = 'serietvlr'
-                        lnk = '?p=2&t=14'
+                        namex = "serietvlr"
+                        lnk = "?p=2&t=14"
                 elif sel == ("SERIE TV: S-Z"):
-                        namex = 'serietvsz'
-                        lnk = '?p=2&t=15'
+                        namex = "serietvsz"
+                        lnk = "?p=2&t=15"
                 elif sel == ("FILM"):
-                        namex = 'film'
-                        lnk = '?p=2&t=20'
+                        namex = "film"
+                        lnk = "?p=2&t=20"
                 elif sel == ("FILM RECENTI"):
-                        namex = 'filmrecenti'
-                        lnk = '?p=2&t=21'
+                        namex = "filmrecenti"
+                        lnk = "?p=2&t=21"
                 elif sel == ("FILM: 0-9"):
-                        namex = 'film09'
-                        lnk = '?p=2&t=22'
+                        namex = "film09"
+                        lnk = "?p=2&t=22"
                 elif sel == ("FILM: A-F"):
-                        namex = 'filmaf'
-                        lnk = '?p=2&t=23'
+                        namex = "filmaf"
+                        lnk = "?p=2&t=23"
                 elif sel == ("FILM: G-L"):
-                        namex = 'filmgl'
-                        lnk = '?p=2&t=24'
+                        namex = "filmgl"
+                        lnk = "?p=2&t=24"
                 elif sel == ("FILM: M-R"):
-                        namex = 'filmmr'
-                        lnk = '?p=2&t=25'
+                        namex = "filmmr"
+                        lnk = "?p=2&t=25"
                 elif sel == ("FILM: S-Z"):
-                        namex = 'filmsz'
-                        lnk = '?p=2&t=26'
+                        namex = "filmsz"
+                        lnk = "?p=2&t=26"
                 elif sel == ("FILM IN VERSIONE ORIGINALE"):
-                        namex = 'movieoriginal'
-                        lnk = '?p=2&t=27'
+                        namex = "movieoriginal"
+                        lnk = "?p=2&t=27"
 
                 elif sel == ("RADIO TUTTI"):
-                        namex = 'radiotutti'
-                        lnk = '?p=3&t=0'
+                        namex = "radiotutti"
+                        lnk = "?p=3&t=0"
                 elif sel == ("RADIO ITALIA"):
-                        namex = 'radioitalia'
-                        lnk = '?p=3&t=1'
+                        namex = "radioitalia"
+                        lnk = "?p=3&t=1"
                 elif sel == ("RADIO INT"):
-                        namex = 'radioint'
-                        lnk = '?p=3&t=2'
+                        namex = "radioint"
+                        lnk = "?p=3&t=2"
                 elif sel == ("DASH RADIO"):
-                        namex = 'dashradio'
-                        lnk = '?p=3&t=3'
+                        namex = "dashradio"
+                        lnk = "?p=3&t=3"
 
                 elif sel == ("LIVE XXX"):
-                        namex = 'livexxx'
-                        lnk = '?p=5'
+                        namex = "livexxx"
+                        lnk = "?p=5"
                 elif sel == ("MOVIE XXX"):
-                        namex = 'moviexxx'
-                        lnk = '?p=4'
+                        namex = "moviexxx"
+                        lnk = "?p=4"
 
                 elif sel == ("="):
-                        namex = '=='
-                        lnk = ''
+                        namex = "=="
+                        lnk = ""
                 else:
                         self.mbox = self.session.open(openMessageBox, _('Bouquet not installed'), openMessageBox.TYPE_ERROR, timeout=4)
                         return
@@ -665,7 +665,7 @@ class OpenScript(Screen):
 
                     os.system('chmod 0644 /etc/enigma2/userbouquet.tivustream.tv' )
                     namebqt = ('/etc/enigma2/%s' % bqtname)
-                    onserver = str(servernew) + str(lnk)
+                    onserver = servernew + lnk
                     # print 'onserve: ', onserver
                     with open(namebqt, 'w') as f:
                             content = make_request(onserver)
@@ -1950,7 +1950,7 @@ class plgnstrt(Screen):
                         self.timer.callback.append(self.OpenCheck)
 
         def OpenCheck(self):
-                url3 = upd_fr_txt
+                url3 = str(upd_fr_txt)
                 getPage(url3).addCallback(self.ConnOK).addErrback(self.error)
 
         def ConnOK(self, data):
@@ -1977,6 +1977,8 @@ def main(session, **kwargs):
         if checks:
                 add_skin_font()
                 if isDreamOS:
+                        session.open(OpenScript)
+                elif PY3:
                         session.open(OpenScript)
                 else:
                         session.open(plgnstrt)
