@@ -77,7 +77,7 @@ except:
 try:
     import http.cookiejar
 except:
-    import cookielib   
+    import cookielib
 try:
     import httplib
 except:
@@ -94,7 +94,7 @@ def checkStr(txt):
         if type(txt) == type(unicode()):
             txt = txt.encode('utf-8')
     return txt
-    
+
 
 try:
     from enigma import eMediaDatabase
@@ -107,10 +107,9 @@ try:
 except ImportError:
     eDVBDB = None
 
-#changelog 14.09.2020
-
+#changelog 10.10.2020
 currversion      = '2.7'
-Version          = currversion + ' - 19.09.2020'
+Version          = currversion + ' - 14.10.2020'
 Credits          = 'Info http://t.me/tivustream'
 Maintainer2      = 'Maintener @Lululla'
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
@@ -155,8 +154,8 @@ def make_request(url):
     try:
             req = Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-            # response = urlopen(req) 
-            response = checkStr(urlopen(req))            
+            # response = urlopen(req)
+            response = checkStr(urlopen(req))
             link = response.read()
             response.close()
             print("link =", link)
@@ -169,7 +168,7 @@ def make_request(url):
         if hasattr(e, 'reason'):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
-            
+
 def isExtEplayer3Available():
         return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
 
@@ -227,11 +226,11 @@ def server_ref():
         tex = 'aHR0cDovL3RpdnVzdHJlYW0ud2Vic2l0ZS9pb3MvbGlzdC50eHQ='
         upd_nt_txt = base64.b64decode(tex)
         nt_upd_lnk = ('wget %se2liste/note.txt -O /tmp/note.txt > /dev/null' % server)
-        return server, host, upd_fr_txt, nt_upd_lnk 
+        return server, host, upd_fr_txt, nt_upd_lnk
 server_ref()
 nnewtv = 'aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA='
 servernew = base64.b64decode(nnewtv)
-nnewm3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2wucGhw'
+nnewm3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2wucGhwP3A9NSZ1YT1UaVZ1U3RyZWFtJmY9MQ=='
 servernewm3u = base64.b64decode(nnewm3u)
 estm3u = 'aHR0cDovL3RpdnVzdHJlYW0uY29tL2ZoLnBocA=='
 m3uest = base64.b64decode(estm3u)
@@ -400,7 +399,7 @@ Panel_list = [
  ('MUSICA'),
  ('NEWS'),
  ('ESTERO'),
- # ('ESTERO2'), 
+ # ('ESTERO2'),
  ('REGIONALI'),
  ('RELAX'),
 
@@ -510,109 +509,108 @@ class OpenScript(Screen):
                 sel = self.menu_list[idx]
                 if sel == ("LIVE TUTTI"):
                         namex = "livetutti"
-                        lnk = "?p=1&t=0"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MA=="
                 elif sel == ("TOP ITALIA"):
                         namex = "topitalia"
-                        lnk = "?p=1&t=1"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MQ=="
                 elif sel == ("SPORT ITALIA"):
                         namex = "sportitalia"
-                        lnk = "?p=1&t=2"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mg=="
                 elif sel == ("SPORT LIVE"):
                         namex = "sportlive"
-                        lnk = "?p=1&t=3"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mw=="
                 elif sel == ("SPORT ESTERI"):
                         namex = "sportesteri"
-                        lnk = "?p=1&t=4"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NA=="
                 elif sel == ("MUSICA"):
                         namex = "musica"
-                        lnk = "?p=1&t=5"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NQ=="
                 elif sel == ("NEWS"):
                         namex = "news"
-                        lnk = "?p=1&t=6"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Ng=="
                 elif sel == ("ESTERO"):
                         namex = "estero"
-                        lnk = "?p=1&t=7"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Nw=="
                 # elif sel == ("ESTERO2"):
                         # namex = "estero2"
                         # lnk = ""
                         # # self.M3uPlay2()
-
                 elif sel == ("REGIONALI"):
                         namex = "regionali"
-                        lnk = "?p=1&t=8"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OA=="
                 elif sel == ("RELAX"):
                         namex = "relax"
-                        lnk = "?p=1&t=9"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OQ=="
 
                 elif sel == ("MOVIE TUTTI"):
                         namex = "movietutti"
-                        lnk = "?p=2&t=0"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MA=="
                 elif sel == ("SERIE"):
                         namex = "serie"
-                        lnk = "?p=2&t=10"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTA="
                 elif sel == ("SERIE TV: 0-9"):
                         namex = "serietv09"
-                        lnk = "?p=2&t=11"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTE="
                 elif sel == ("SERIE TV: A-E"):
                         namex = "serietvae"
-                        lnk = "?p=2&t=12"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTI="
                 elif sel == ("SERIE TV: F-K"):
                         namex = "serietvfk"
-                        lnk = "?p=2&t=13"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTM="
                 elif sel == ("SERIE TV: L-R"):
                         namex = "serietvlr"
-                        lnk = "?p=2&t=14"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTQ="
                 elif sel == ("SERIE TV: S-Z"):
                         namex = "serietvsz"
-                        lnk = "?p=2&t=15"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTU="
                 elif sel == ("FILM"):
                         namex = "film"
-                        lnk = "?p=2&t=20"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjA="
                 elif sel == ("FILM RECENTI"):
                         namex = "filmrecenti"
-                        lnk = "?p=2&t=21"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjE="
                 elif sel == ("FILM: 0-9"):
                         namex = "film09"
-                        lnk = "?p=2&t=22"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjI="
                 elif sel == ("FILM: A-F"):
                         namex = "filmaf"
-                        lnk = "?p=2&t=23"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjM="
                 elif sel == ("FILM: G-L"):
                         namex = "filmgl"
-                        lnk = "?p=2&t=24"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjQ="
                 elif sel == ("FILM: M-R"):
                         namex = "filmmr"
-                        lnk = "?p=2&t=25"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjU="
                 elif sel == ("FILM: S-Z"):
                         namex = "filmsz"
-                        lnk = "?p=2&t=26"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjY="
                 elif sel == ("FILM IN VERSIONE ORIGINALE"):
                         namex = "movieoriginal"
-                        lnk = "?p=2&t=27"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9Mjc="
 
                 elif sel == ("RADIO TUTTI"):
                         namex = "radiotutti"
-                        lnk = "?p=3&t=0"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0zJnQ9MA=="
                 elif sel == ("RADIO ITALIA"):
                         namex = "radioitalia"
-                        lnk = "?p=3&t=1"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0zJnQ9MQ=="
                 elif sel == ("RADIO INT"):
                         namex = "radioint"
-                        lnk = "?p=3&t=2"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0zJnQ9Mg=="
                 elif sel == ("DASH RADIO"):
                         namex = "dashradio"
-                        lnk = "?p=3&t=3"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0zJnQ9Mw=="
 
                 elif sel == ("LIVE XXX"):
                         namex = "livexxx"
-                        lnk = "?p=5"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD01"
                 elif sel == ("MOVIE XXX"):
                         namex = "moviexxx"
-                        lnk = "?p=4"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD00"
 
                 elif sel == ("="):
                         namex = "=="
-                        lnk = ""
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA="
                 else:
                         self.mbox = self.session.open(openMessageBox, _('Bouquet not installed'), openMessageBox.TYPE_ERROR, timeout=4)
                         return
@@ -623,12 +621,11 @@ class OpenScript(Screen):
                 self.instal_listTv(namex,lnk)
 
 
-        def instal_listTv(self, namex,lnk):
+        def instal_listTv(self, namex, lnk):
                 name = namex
                 # if namex == ("estero2"):
                     # self.M3uPlay2(namex)
                     # return
-                    
                 lnk = lnk
                 pin = 2808
                 pin2 = int(config.plugins.TivuStream.code.value)
@@ -665,8 +662,10 @@ class OpenScript(Screen):
 
                     os.system('chmod 0644 /etc/enigma2/userbouquet.tivustream.tv' )
                     namebqt = ('/etc/enigma2/%s' % bqtname)
-                    onserver = servernew + lnk
-                    # print 'onserve: ', onserver
+                    # onserver = str(servernew) + lnk
+                    lnk = base64.b64decode(lnk)
+                    onserver = lnk
+
                     with open(namebqt, 'w') as f:
                             content = make_request(onserver)
                             # ##DESCRIPTION [COLOR lime]---LAST UPDATE 01-10-2020 H. 19.10---[/COLOR]
@@ -675,7 +674,7 @@ class OpenScript(Screen):
                             # for color, color2 in match:
                                 # color = color.replace(color, "").replace("[", "").replace("]")
                                 # color2 = color2.replace(color, "")
-                                # color2 = color2.replace("[", "").replace("]")                                
+                                # color2 = color2.replace("[", "").replace("]")
                             f.write(content)
 
                     self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
@@ -752,10 +751,9 @@ class OpenScript(Screen):
         def M3uPlay(self):
                 tivustream = 'tivustream'
                 self.session.open(OpenM3u)
-                
+
         # def M3uPlay2(self,namex):
                 # self.session.open(OpenM3u,namex)
-                                
 
         def scsetup(self):
                 self.session.open(OpenConfig)
@@ -792,9 +790,8 @@ class OpenM3u(Screen):
                 self.convert = False
                 self.name = Path_Movies
                 self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
-                
+
                 # if namex == 'estero2':
-                
                     # try:
                         # cmd66 = 'rm -f ' + Path_Movies + 'estero.m3u'
                         # os.system(cmd66)
@@ -805,22 +802,18 @@ class OpenM3u(Screen):
                             # f.write(content)
                     # except Exception as ex:
                         # print(ex)
-                
                 # else:
-                
+
                 try:
                         cmd66 = 'rm -f ' + Path_Movies + 'tivustream.m3u'
                         os.system(cmd66)
                         destx = self.name + 'tivustream.m3u'
-                        lnkx = '?p=5&ua=TiVuStream'
-                        onserver2 = str(servernewm3u) + str(lnkx)
+                        onserver2 = str(servernewm3u)
                         with open(destx, 'w') as f:
                             content = make_request(onserver2)
                             f.write(content)
                 except Exception as ex:
                         print(ex)
-                        
-                
                 self.onLayoutFinish.append(self.openList)
 
         def scsetup(self):
@@ -1142,7 +1135,7 @@ class M3uPlay(Screen):
                                 for name, url in match:
                                         url = url.replace(' ', '')
                                         url = url.replace('\\n', '')
-                                        url = url.replace('https', 'http')                                        
+                                        url = url.replace('https', 'http')
                                         self.names.append(name)
                                         self.urls.append(url)
                                 m3ulist(self.names, self['list'])
