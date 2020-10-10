@@ -49,17 +49,21 @@ import Components.PluginComponent
 import base64
 import os, re, sys, glob
 import time
+# import urllib.request, urllib.parse, urllib.error
 import socket
 import ssl
 from os.path import splitext
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarNotifications, InfoBarMenu
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-
 global isDreamOS
 isDreamOS = False
 PY3 = sys.version_info.major >= 3
 
+
 if PY3:
+
+
+
     from urllib.request import urlopen, Request
     from urllib.error import URLError, HTTPError
     from urllib.parse import urlparse
@@ -70,6 +74,8 @@ else:
     from urllib2 import URLError, HTTPError
     from urlparse import urlparse
     from urllib import urlencode, quote
+
+
 try:
     import io
 except:
@@ -82,7 +88,6 @@ try:
     import httplib
 except:
     import http.client
-
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3
     if PY3:
@@ -94,8 +99,6 @@ def checkStr(txt):
         if type(txt) == type(unicode()):
             txt = txt.encode('utf-8')
     return txt
-
-
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
@@ -107,9 +110,10 @@ try:
 except ImportError:
     eDVBDB = None
 
-#changelog 10.10.2020
+#changelog 14.09.2020
+
 currversion      = '2.7'
-Version          = currversion + ' - 14.10.2020'
+Version          = currversion + ' - 10.10.2020'
 Credits          = 'Info http://t.me/tivustream'
 Maintainer2      = 'Maintener @Lululla'
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
@@ -124,7 +128,12 @@ def add_skin_font():
 
 def checkInternet():
         try:
+
+
             # response=urlopen("http://google.com", None, 5)
+
+
+
             response = checkStr(urlopen("http://google.com", None, 5))
             response.close()
         except HTTPError:
@@ -152,6 +161,8 @@ def OnclearMem():
 
 def make_request(url):
     try:
+
+
             req = Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
             # response = urlopen(req)
@@ -159,8 +170,20 @@ def make_request(url):
             link = response.read()
             response.close()
             print("link =", link)
+
+
+
+
+
+
+
+
+
             return link
     except:
+
+
+
         e = URLError #, e:
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
@@ -187,7 +210,7 @@ if os.path.exists("/usr/bin/exteplayer3"):
                         modechoices.append(("Exteplayer3", _("Exteplayer3(5002)")))
 
 sessions = []
-config.plugins.TivuStream                                = ConfigSubsection()
+config.plugins.TivuStream                        = ConfigSubsection()
 config.plugins.TivuStream.autoupd                = ConfigYesNo(default=True)
 config.plugins.TivuStream.pthm3uf                = ConfigDirectory(default='/media/hdd/movie')
 # config.plugins.TivuStream.code                   = ConfigInteger(limits=(0, 9999), default=1234)
@@ -535,6 +558,7 @@ class OpenScript(Screen):
                         # namex = "estero2"
                         # lnk = ""
                         # # self.M3uPlay2()
+
                 elif sel == ("REGIONALI"):
                         namex = "regionali"
                         lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OA=="
@@ -626,6 +650,7 @@ class OpenScript(Screen):
                 # if namex == ("estero2"):
                     # self.M3uPlay2(namex)
                     # return
+
                 lnk = lnk
                 pin = 2808
                 pin2 = int(config.plugins.TivuStream.code.value)
@@ -644,10 +669,10 @@ class OpenScript(Screen):
                     groupname = 'userbouquet.tivustream.tv'
                     bouquet = 'bouquets.tv'
                     if 'radio' in name :
-                        bqtname = 'subbouquet.%s.radio' % name
+                        bqtname = 'subbouquet.tivustream.%s.radio' % name
                         number = '2'
                     else:
-                        bqtname = 'subbouquet.%s.tv' % name
+                        bqtname = 'subbouquet.tivustream.%s.tv' % name
                         number = '1'
                     in_bouquets = 0
                     linetv =0
@@ -664,17 +689,23 @@ class OpenScript(Screen):
                     namebqt = ('/etc/enigma2/%s' % bqtname)
                     # onserver = str(servernew) + lnk
                     lnk = base64.b64decode(lnk)
-                    onserver = lnk
+                    onserver = str(lnk)
 
+                    # with open(namebqt, 'w') as f:
+                            # content = make_request(onserver)
+                            # # x = content.readline()
+                            # # for x in content:
+                                # # f.write(x)
+                            # f.write(content)
+                            # f.close()
+
+                    req = Request(onserver)
+                    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                    content = checkStr(urlopen(req))
+                    content = content.read()
+                    print("content =", content)
                     with open(namebqt, 'w') as f:
                             content = make_request(onserver)
-                            # ##DESCRIPTION [COLOR lime]---LAST UPDATE 01-10-2020 H. 19.10---[/COLOR]
-                            # regexcat = "DESCRIPTION [(.*?]).*?([.*?])\\n"
-                            # match = re.compile(regexcat, re.DOTALL).findall(content)
-                            # for color, color2 in match:
-                                # color = color.replace(color, "").replace("[", "").replace("]")
-                                # color2 = color2.replace(color, "")
-                                # color2 = color2.replace("[", "").replace("]")
                             f.write(content)
 
                     self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
@@ -723,7 +754,7 @@ class OpenScript(Screen):
                 self.session.openWithCallback(self.okRun, openMessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=3)
 
         def messagereload(self):
-            self.session.openWithCallback(self.reloadSettings, openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=10)
+            self.session.openWithCallback(self.reloadSettings, openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
 
         def reloadSettings(self, result):
             if result:
@@ -754,6 +785,7 @@ class OpenScript(Screen):
 
         # def M3uPlay2(self,namex):
                 # self.session.open(OpenM3u,namex)
+
 
         def scsetup(self):
                 self.session.open(OpenConfig)
@@ -792,6 +824,7 @@ class OpenM3u(Screen):
                 self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
 
                 # if namex == 'estero2':
+
                     # try:
                         # cmd66 = 'rm -f ' + Path_Movies + 'estero.m3u'
                         # os.system(cmd66)
@@ -802,16 +835,29 @@ class OpenM3u(Screen):
                             # f.write(content)
                     # except Exception as ex:
                         # print(ex)
+
                 # else:
 
+
                 try:
-                        cmd66 = 'rm -f ' + Path_Movies + 'tivustream.m3u'
+                        destx = Path_Movies + 'tivustream.m3u'
+                        cmd66 = 'rm -f ' + destx
                         os.system(cmd66)
-                        destx = self.name + 'tivustream.m3u'
                         onserver2 = str(servernewm3u)
+                        # with open(destx, 'w') as f:
+                            # content = make_request(onserver2)
+                            # f.write(content)
+
+                        req = Request(onserver2)
+                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                        content = checkStr(urlopen(req))
+                        content = content.read()
+                        print("content =", content)
                         with open(destx, 'w') as f:
-                            content = make_request(onserver2)
+
                             f.write(content)
+                            f.close()
+
                 except Exception as ex:
                         print(ex)
                 self.onLayoutFinish.append(self.openList)
@@ -841,6 +887,8 @@ class OpenM3u(Screen):
                 urlm3u = self.Movies[idx]
                 path = urlparse(urlm3u).path
                 ext = splitext(path)[1]
+
+
                 if idx == -1 or None:
                         return
                 else:
@@ -850,6 +898,70 @@ class OpenM3u(Screen):
                                 return
                         else:
                                 return
+
+                        # name = path
+                        # if '.m3u' in name :
+                            # if 'estero'in name:
+                                # self.playList(name)
+
+                            # else:
+                                # self.session.open(M3uPlay, name)
+                                # return
+                        # else:
+                                # return
+
+        # def playList(self,name):
+                # # global search_ok
+                # # search_ok = False
+                # # idx = self['list'].getSelectionIndex()
+                # self.names = []
+                # self.urls = []
+                # self.name = name
+                # # pth = self.name
+                # global namex
+                # namex = ''
+                # try:
+                        # if fileExists(self.name):
+                                # f1 = open(self.name, 'r+')
+                                # fpage = f1.read()
+                                # regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
+                                # match = re.compile(regexcat, re.DOTALL).findall(fpage)
+                                # for name, url in match:
+                                        # url = url.replace(' ', '')
+                                        # url = url.replace('\\n', '')
+                                        # url = url.replace('https', 'http')
+                                        # self.names.append(name)
+                                        # self.urls.append(url)
+                                # m3ulist(self.names, self['list'])
+                                # self["live"].setText('N.' + str(len(self.names)) + " Stream")
+                # except Exception as ex:
+                        # print(ex)
+
+        # def showContent3(name, url):
+                # url=url
+                # print 'url--semifininal-:', url
+                # # url = 'http://bit.ly/2RpPCCg' + url
+                # if 'fh.php' in url:
+                    # url = url
+                # else:
+                    # url = server + url
+                # content = getUrl(url)
+                # print "content 3 =", content
+                # pass#print "content 3 =", content
+                # # fpage = content.read()
+                # regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
+                # match = re.compile(regexcat,re.DOTALL).findall(content)
+                # for name, url in match:
+                        # url = url.replace(" ", "")
+                        # url = url.replace("\\n", "")
+                        # url = url.replace('\r','')
+                        # url = url.replace('https','http')
+                        # name = name.replace('\r','')
+                        # pic = " "
+                        # print 'url final:', url
+                        # addDirectoryItem(name, {"name":name, "url":url, "mode":3}, pic)
+                # xbmcplugin.endOfDirectory(thisPlugin)
+
 
         def message1(self):
                 idx = self['list'].getSelectionIndex()
@@ -921,7 +1033,7 @@ class OpenM3u(Screen):
                                 for line in open('/etc/enigma2/bouquets.tv'):
                                         if bqtname in line:
                                                 in_bouquets = 1
-                                if in_bouquets != 0:
+                                if in_bouquets is 0:
                                         if os.path.isfile('/etc/enigma2/%s' % bqtname) and os.path.isfile('/etc/enigma2/bouquets.tv'):
                                                 remove_line('/etc/enigma2/bouquets.tv', bqtname)
                                                 with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
@@ -964,7 +1076,7 @@ class OpenM3u(Screen):
                                         if bqtname in line:
                                                 in_bouquets = 1
 
-                                if in_bouquets != 0:
+                                if in_bouquets is 0:
                                         if os.path.isfile('/etc/enigma2/%s' % bqtname) and os.path.isfile('/etc/enigma2/bouquets.tv'):
                                                 remove_line('/etc/enigma2/bouquets.tv', bqtname)
                                                 with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
@@ -978,6 +1090,9 @@ class OpenM3u(Screen):
                         self.close()
                 else:
                         self.close()
+
+
+
 
 
 class M3uPlay(Screen):
@@ -1486,13 +1601,18 @@ class OpenConfig(Screen, ConfigListScreen):
                         req = Request(upd_fr_txt)
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                         # fp = urlopen(req)
+
+
+
+
+
                         fp = checkStr(urlopen(req))
                         fp = fp.read()
                         print("fp3 =", fp)
 
                         with open(destr, 'w') as f:
                             f.write(fp)
-                            f.close
+                            f.close()
                         with open(destr, 'r') as fp:
                             count = 0
                             self.labeltext = ''
