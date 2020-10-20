@@ -61,9 +61,6 @@ PY3 = sys.version_info.major >= 3
 
 
 if PY3:
-
-
-
     from urllib.request import urlopen, Request
     from urllib.error import URLError, HTTPError
     from urllib.parse import urlparse
@@ -128,12 +125,7 @@ def add_skin_font():
 
 def checkInternet():
         try:
-
-
             # response=urlopen("http://google.com", None, 5)
-
-
-
             response = checkStr(urlopen("http://google.com", None, 5))
             response.close()
         except HTTPError:
@@ -142,7 +134,6 @@ def checkInternet():
             return False
         except socket.timeout:
             return False
-
 
 def ReloadBouquet():
                 if eDVBDB:
@@ -161,8 +152,6 @@ def OnclearMem():
 
 def make_request(url):
     try:
-
-
             req = Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
             # response = urlopen(req)
@@ -170,20 +159,8 @@ def make_request(url):
             link = response.read()
             response.close()
             print("link =", link)
-
-
-
-
-
-
-
-
-
             return link
     except:
-
-
-
         e = URLError #, e:
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
@@ -554,11 +531,6 @@ class OpenScript(Screen):
                 elif sel == ("ESTERO"):
                         namex = "estero"
                         lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Nw=="
-                # elif sel == ("ESTERO2"):
-                        # namex = "estero2"
-                        # lnk = ""
-                        # # self.M3uPlay2()
-
                 elif sel == ("REGIONALI"):
                         namex = "regionali"
                         lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OA=="
@@ -638,19 +610,11 @@ class OpenScript(Screen):
                 else:
                         self.mbox = self.session.open(openMessageBox, _('Bouquet not installed'), openMessageBox.TYPE_ERROR, timeout=4)
                         return
-                # if namex == ("estero2"):
-                    # self.M3uPlay2(namex)
-                    # return
-                # else:
                 self.instal_listTv(namex,lnk)
 
 
         def instal_listTv(self, namex, lnk):
                 name = namex
-                # if namex == ("estero2"):
-                    # self.M3uPlay2(namex)
-                    # return
-
                 lnk = lnk
                 pin = 2808
                 pin2 = int(config.plugins.TivuStream.code.value)
@@ -690,15 +654,6 @@ class OpenScript(Screen):
                     # onserver = str(servernew) + lnk
                     lnk = base64.b64decode(lnk)
                     onserver = str(lnk)
-
-                    # with open(namebqt, 'w') as f:
-                            # content = make_request(onserver)
-                            # # x = content.readline()
-                            # # for x in content:
-                                # # f.write(x)
-                            # f.write(content)
-                            # f.close()
-
                     req = Request(onserver)
                     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                     content = checkStr(urlopen(req))
@@ -783,10 +738,6 @@ class OpenScript(Screen):
                 tivustream = 'tivustream'
                 self.session.open(OpenM3u)
 
-        # def M3uPlay2(self,namex):
-                # self.session.open(OpenM3u,namex)
-
-
         def scsetup(self):
                 self.session.open(OpenConfig)
 
@@ -823,31 +774,11 @@ class OpenM3u(Screen):
                 self.name = Path_Movies
                 self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
 
-                # if namex == 'estero2':
-
-                    # try:
-                        # cmd66 = 'rm -f ' + Path_Movies + 'estero.m3u'
-                        # os.system(cmd66)
-                        # destx = self.name + 'estero.m3u'
-                        # onserver2 = str(m3uest)
-                        # with open(destx, 'w') as f:
-                            # content = make_request(onserver2)
-                            # f.write(content)
-                    # except Exception as ex:
-                        # print(ex)
-
-                # else:
-
-
                 try:
                         destx = Path_Movies + 'tivustream.m3u'
                         cmd66 = 'rm -f ' + destx
                         os.system(cmd66)
                         onserver2 = str(servernewm3u)
-                        # with open(destx, 'w') as f:
-                            # content = make_request(onserver2)
-                            # f.write(content)
-
                         req = Request(onserver2)
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                         content = checkStr(urlopen(req))
@@ -898,70 +829,6 @@ class OpenM3u(Screen):
                                 return
                         else:
                                 return
-
-                        # name = path
-                        # if '.m3u' in name :
-                            # if 'estero'in name:
-                                # self.playList(name)
-
-                            # else:
-                                # self.session.open(M3uPlay, name)
-                                # return
-                        # else:
-                                # return
-
-        # def playList(self,name):
-                # # global search_ok
-                # # search_ok = False
-                # # idx = self['list'].getSelectionIndex()
-                # self.names = []
-                # self.urls = []
-                # self.name = name
-                # # pth = self.name
-                # global namex
-                # namex = ''
-                # try:
-                        # if fileExists(self.name):
-                                # f1 = open(self.name, 'r+')
-                                # fpage = f1.read()
-                                # regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
-                                # match = re.compile(regexcat, re.DOTALL).findall(fpage)
-                                # for name, url in match:
-                                        # url = url.replace(' ', '')
-                                        # url = url.replace('\\n', '')
-                                        # url = url.replace('https', 'http')
-                                        # self.names.append(name)
-                                        # self.urls.append(url)
-                                # m3ulist(self.names, self['list'])
-                                # self["live"].setText('N.' + str(len(self.names)) + " Stream")
-                # except Exception as ex:
-                        # print(ex)
-
-        # def showContent3(name, url):
-                # url=url
-                # print 'url--semifininal-:', url
-                # # url = 'http://bit.ly/2RpPCCg' + url
-                # if 'fh.php' in url:
-                    # url = url
-                # else:
-                    # url = server + url
-                # content = getUrl(url)
-                # print "content 3 =", content
-                # pass#print "content 3 =", content
-                # # fpage = content.read()
-                # regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
-                # match = re.compile(regexcat,re.DOTALL).findall(content)
-                # for name, url in match:
-                        # url = url.replace(" ", "")
-                        # url = url.replace("\\n", "")
-                        # url = url.replace('\r','')
-                        # url = url.replace('https','http')
-                        # name = name.replace('\r','')
-                        # pic = " "
-                        # print 'url final:', url
-                        # addDirectoryItem(name, {"name":name, "url":url, "mode":3}, pic)
-                # xbmcplugin.endOfDirectory(thisPlugin)
-
 
         def message1(self):
                 idx = self['list'].getSelectionIndex()
@@ -1091,10 +958,6 @@ class OpenM3u(Screen):
                 else:
                         self.close()
 
-
-
-
-
 class M3uPlay(Screen):
         def __init__(self, session, name):
                 self.session = session
@@ -1191,7 +1054,6 @@ class M3uPlay(Screen):
                         else:
                                 self.downloading = False
                                 self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=5)
-
 
         def download_m3u(self, result):
                 if result:
@@ -1601,11 +1463,6 @@ class OpenConfig(Screen, ConfigListScreen):
                         req = Request(upd_fr_txt)
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                         # fp = urlopen(req)
-
-
-
-
-
                         fp = checkStr(urlopen(req))
                         fp = fp.read()
                         print("fp3 =", fp)
