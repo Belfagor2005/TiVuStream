@@ -85,6 +85,7 @@ try:
     import httplib
 except:
     import http.client
+
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3
     if PY3:
@@ -241,14 +242,14 @@ skin_path = plugin_path
 HD = getDesktop(0).size()
 if HD.width() > 1280:
         if isDreamOS:
-                skin_path = plugin_path + '/res/skins/fhd/dreamOs/'
+                skin_path = plugin_path + 'res/skins/fhd/dreamOs/'
         else:
-                skin_path = plugin_path + '/res/skins/fhd/'
+                skin_path = plugin_path + 'res/skins/fhd/'
 else:
         if isDreamOS:
-                skin_path = plugin_path + '/res/skins/hd/dreamOs/'
+                skin_path = plugin_path + 'res/skins/hd/dreamOs/'
         else:
-                skin_path = plugin_path + '/res/skins/hd/'
+                skin_path = plugin_path + 'res/skins/hd/'
 
 
 def remove_line(filename, what):
@@ -630,7 +631,7 @@ class OpenScript(Screen):
                         else:
                             print('pass xxx')
                             pass
-                    groupname = 'userbouquet.tivustream.tv'
+                    # groupname = 'userbouquet.tivustream.tv'
                     bouquet = 'bouquets.tv'
                     if 'radio' in name :
                         bqtname = 'subbouquet.tivustream.%s.radio' % name
@@ -774,29 +775,35 @@ class OpenM3u(Screen):
                 self.name = Path_Movies
                 self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
 
-                try:
-                        destx = Path_Movies + 'tivustream.m3u'
-                        cmd66 = 'rm -f ' + destx
-                        os.system(cmd66)
-                        onserver2 = str(servernewm3u)
-                        req = Request(onserver2)
-                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                        content = checkStr(urlopen(req))
-                        content = content.read()
-                        print("content =", content)
-                        with open(destx, 'w') as f:
+                # try:
+                        # destx = Path_Movies + 'tivustream.m3u'
+                        # cmd66 = 'rm -f ' + destx
+                        # os.system(cmd66)
+                        # onserver2 = str(servernewm3u)
+                        # req = Request(onserver2)
+                        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                        # content = checkStr(urlopen(req))
+                        # content = content.read()
+                        # print("content =", content)
+                        # with open(destx, 'w') as f:
 
-                            f.write(content)
-                            f.close()
+                            # f.write(content)
+                            # f.close()
 
-                except Exception as ex:
-                        print(ex)
+                # except Exception as ex:
+                        # print(ex)
                 self.onLayoutFinish.append(self.openList)
 
         def scsetup(self):
                 self.session.openWithCallback(self.close, OpenConfig)
 
         def openList(self):
+                self.timerq = eTimer()
+                self.timerq.start(300, 1)
+                if isDreamOS:
+                        self.timerq_conn = self.timerq.timeout.connect(self.question)
+                else:
+                        self.timerq.callback.append(self.question)
                 self.names = []
                 self.Movies = []
                 path = self.name
@@ -810,6 +817,31 @@ class OpenM3u(Screen):
                                         self.Movies.append(root +'/'+name)
                 pass
                 m3ulist(self.names, self['list'])
+
+        def question(self):
+            self.session.openWithCallback(self.callMyMsg1,openMessageBox,_("Download M3U TVS?"), openMessageBox.TYPE_YESNO)
+
+
+        def my_tvs_dow(self, result):
+            if result:
+                try:
+                    destx = Path_Movies + 'tivustream.m3u'
+                    cmd66 = 'rm -f ' + destx
+                    os.system(cmd66)
+                    onserver2 = str(servernewm3u)
+                    req = Request(onserver2)
+                    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                    content = checkStr(urlopen(req))
+                    content = content.read()
+                    print("content =", content)
+                    with open(destx, 'w') as f:
+
+                        f.write(content)
+                        f.close()
+
+                except Exception as ex:
+                    print(ex)
+
 
         def runList(self):
                 # selection = str(self['list'].getCurrent())
