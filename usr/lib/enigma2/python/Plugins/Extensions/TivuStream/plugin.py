@@ -517,19 +517,19 @@ class OpenScript(Screen):
                 sel = self.menu_list[idx]
                 if sel == ("LIVE TUTTI"):
                         namex = "livetutti"
-                        lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTEmdD0w"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MA=="
                 elif sel == ("TOP ITALIA"):
                         namex = "topitalia"
-                        lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTEmdD0x"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MQ=="
                 elif sel == ("SPORT ITALIA"):
                         namex = "sportitalia"
-                        lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTEmdD0y"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mg=="
                 elif sel == ("SPORT LIVE"):
                         namex = "sportlive"
-                        lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTEmdD0z"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mw=="
                 elif sel == ("SPORT ESTERI"):
                         namex = "sportesteri"
-                        lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTEmdD00"
+                        lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NA=="
                 elif sel == ("MUSICA"):
                         namex = "musica"
                         lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NQ=="
@@ -656,20 +656,30 @@ class OpenScript(Screen):
                             nameString = "#NAME tivustream.com"
                             if nameString not in f:
                                 f.write(nameString + '\r\n')
-
                     os.system('chmod 0644 /etc/enigma2/userbouquet.tivustream.tv' )
                     namebqt = ('/etc/enigma2/%s' % bqtname)
-                    # onserver = str(servernew) + lnk
-                    lnk = lnk.replace('https', 'http')
-                    onserver = str(lnk)
+                    # lnk = lnk.replace('https', 'http')
+                    # onserver = lnk
                     # req = Request(onserver)
-                    # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                    # HEADERS('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                    HEADERS = {'User-Agent': 'Mozilla/5.0 (SmartHub; SMART-TV; U; Linux/SmartTV; Maple2012) AppleWebKit/534.7 (KHTML, like Gecko) SmartTV Safari/534.7'}
                     # content = checkStr(urlopen(req))
+                    # content = urlopen(req)
                     # content = content.read()
                     # print("content =", content)
-                    with open(namebqt, 'w') as f:
-                            content = make_request(onserver)
-                            f.write(content)
+                    
+                    try:
+                        req = Request(lnk, headers=HEADERS)
+                        resp = urlopen(req, timeout=2)
+                        content =(resp.read().decode('utf-8') if PY3 else resp.read())
+                        with open(namebqt, 'w') as f:
+                                f.write(content)
+                    except Exception as e:
+                        print(ex)
+                    # with open(namebqt, 'w') as f:
+                            # # content = urlopen(onserver)
+                            # # content = content.read()
+                            # f.write(content)
 
                     self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
                     with open('/etc/enigma2/bouquets.tv', 'a+') as f:
