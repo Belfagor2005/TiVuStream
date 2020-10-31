@@ -1,7 +1,7 @@
 #"****************************************"
 #"*      coded by Lululla                 *"
 #"*             skin by MMark             *"
-#"*             18/09/2020                *"
+#"*             01/11/2020                *"
 #"****************************************"
 # from . import _
 from Components.AVSwitch import AVSwitch
@@ -624,6 +624,7 @@ class OpenScript(Screen):
         def instal_listTv(self, namex, lnk):
                 name = namex
                 lnk = base64.b64decode(lnk)
+                print('link  : ', lnk)
                 pin = 2808
                 pin2 = int(config.plugins.TivuStream.code.value)
                 groupname = 'userbouquet.tivustream.tv'
@@ -638,7 +639,7 @@ class OpenScript(Screen):
                         else:
                             print('pass xxx')
                             pass
-                    # groupname = 'userbouquet.tivustream.tv'
+                    groupname = 'userbouquet.tivustream.tv'
                     bouquet = 'bouquets.tv'
                     if 'radio' in name :
                         bqtname = 'subbouquet.tivustream.%s.radio' % name
@@ -658,29 +659,19 @@ class OpenScript(Screen):
                                 f.write(nameString + '\r\n')
                     os.system('chmod 0644 /etc/enigma2/userbouquet.tivustream.tv' )
                     namebqt = ('/etc/enigma2/%s' % bqtname)
-                    # lnk = lnk.replace('https', 'http')
-                    # onserver = lnk
-                    # req = Request(onserver)
-                    # HEADERS('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                    HEADERS = {'User-Agent': 'Mozilla/5.0 (SmartHub; SMART-TV; U; Linux/SmartTV; Maple2012) AppleWebKit/534.7 (KHTML, like Gecko) SmartTV Safari/534.7'}
-                    # content = checkStr(urlopen(req))
-                    # content = urlopen(req)
-                    # content = content.read()
-                    # print("content =", content)
-                    
+                    #install list to bouquet
                     try:
-                        req = Request(lnk, headers=HEADERS)
-                        resp = urlopen(req, timeout=2)
-                        content =(resp.read().decode('utf-8') if PY3 else resp.read())
                         with open(namebqt, 'w') as f:
-                                f.write(content)
-                    except Exception as e:
-                        print(ex)
-                    # with open(namebqt, 'w') as f:
-                            # # content = urlopen(onserver)
-                            # # content = content.read()
-                            # f.write(content)
+                            req = make_request(lnk)
+                            print('Resp 1: ', req)
+                            content = checkStr(req)
+                            print('Resp 2: ', content)
+                            f.write(content)
+                            os.system('sleep 5')
+                            f.close()
 
+                    except Exception as ex:
+                        print(ex)
                     self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
                     with open('/etc/enigma2/bouquets.tv', 'a+') as f:
                         bouquetTvString = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "' + groupname + '" ORDER BY bouquet\n'
@@ -797,39 +788,30 @@ class OpenM3u(Screen):
                         # self.timerq_conn = self.timerq.timeout.connect(self.question)
                 # else:
                         # self.timerq.callback.append(self.question)
+                        
+                #download m3u
                 try:
-                        destx = Path_Movies + 'tivustream.m3u'
-                        cmd66 = 'rm -f ' + destx
-                        os.system(cmd66)
-                        onserver2 = str(servernewm3u)
-                        req = Request(onserver2)
-                        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                        content = checkStr(urlopen(req))
-                        content = content.read()
-                        print("content =", content)
-                        with open(destx, 'w') as f:
-
-                            f.write(content)
-                            f.close()
-
+                    destx = Path_Movies + 'tivustream.m3u'
+                    # print('detstx: ', Path_Movies)
+                    with open(destx, 'w') as f:
+                        req = make_request(servernewm3u)
+                        print('Resp 1: ', req)
+                        content = checkStr(req)
+                        print('Resp 1: ', content)
+                        f.write(content)
+                        os.system('sleep 5')
+                        f.close()
                 except Exception as ex:
                         print(ex)
+                        print('Exception exit : ', ex)
                 self.onLayoutFinish.append(self.openList)
 
         def scsetup(self):
                 self.session.openWithCallback(self.close, OpenConfig)
 
         def openList(self):
-                # self.timerq = eTimer()
-                # self.timerq.start(300, 1)
-                # if isDreamOS:
-                        # self.timerq_conn = self.timerq.timeout.connect(self.question)
-                # else:
-                        # self.timerq.callback.append(self.question)
                 self.names = []
                 self.Movies = []
-                # del self.Movies[idx]
-                # del self.names[idx]
                 path = self.name
                 AA = ['.m3u']
                 for root, dirs, files in os.walk(path):
@@ -842,32 +824,32 @@ class OpenM3u(Screen):
                 pass
                 m3ulist(self.names, self['list'])
 
-        def question(self):
-            self.session.openWithCallback(self.my_tvs_dow,openMessageBox,_("Download M3U TVS?"), openMessageBox.TYPE_YESNO)
+        # def question(self):
+            # self.session.openWithCallback(self.my_tvs_dow,openMessageBox,_("Download M3U TVS?"), openMessageBox.TYPE_YESNO)
 
 
-        def my_tvs_dow(self, result):
-            if result:
-                try:
-                    destx = Path_Movies + 'tivustream.m3u'
-                    cmd66 = 'rm -f ' + destx
-                    os.system(cmd66)
-                    onserver2 = str(servernewm3u)
-                    req = Request(onserver2)
-                    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                    content = checkStr(urlopen(req))
-                    content = content.read()
-                    print("content =", content)
-                    with open(destx, 'w') as f:
+        # def my_tvs_dow(self, result):
+            # if result:
+                # try:
+                    # destx = Path_Movies + 'tivustream.m3u'
+                    # cmd66 = 'rm -f ' + destx
+                    # os.system(cmd66)
+                    # onserver2 = str(servernewm3u)
+                    # req = Request(onserver2)
+                    # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+                    # content = checkStr(urlopen(req))
+                    # content = content.read()
+                    # print("content =", content)
+                    # with open(destx, 'w') as f:
 
-                        f.write(content)
-                        f.close()
+                        # f.write(content)
+                        # f.close()
 
-                except Exception as ex:
-                    print(ex)
-            else:
-                return
-            self.onShown.append(self.openList)
+                # except Exception as ex:
+                    # print(ex)
+            # else:
+                # return
+            # self.onShown.append(self.openList)
 
 
         def runList(self):
@@ -1629,7 +1611,7 @@ class OpenConfig(Screen, ConfigListScreen):
                          editDir=True,
                          inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
                          minFree=15)
-                except Exception as e:
+                except Exception as ex:
                         print(ex)
 
         def openDirectoryBrowserCB(self, path):
