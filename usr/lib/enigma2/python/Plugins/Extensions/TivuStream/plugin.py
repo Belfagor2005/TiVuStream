@@ -1691,7 +1691,8 @@ class OpenConfig(Screen, ConfigListScreen):
 
 class OpenConsole(Screen):
 
-    def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
+    # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
+    def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False,endstr=''):
         self.session = session
         skin = skin_path + '/OpenConsole.xml'
         f = open(skin, 'r')
@@ -1700,6 +1701,7 @@ class OpenConsole(Screen):
         Screen.__init__(self, session)
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
+        self.endstr = endstr
         self['text'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions'], {'ok': self.cancel,
          'back': self.cancel,
