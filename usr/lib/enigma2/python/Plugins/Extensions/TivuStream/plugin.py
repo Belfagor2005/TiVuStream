@@ -1,10 +1,11 @@
-#"****************************************"
-#"*      coded by Lululla                 *"
-#"*             skin by MMark             *"
-#"*             01/11/2020                *"
-#"****************************************"
+#--------------------#
+#  coded by Lululla	 #
+#	skin by MMark	 #
+#	  10/11/2020	 #
+#--------------------#
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -58,7 +59,8 @@ from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarS
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 global isDreamOS
 isDreamOS = False
-PY3 = sys.version_info.major >= 3
+# PY3 = sys.version_info.major >= 3
+PY3 = sys.version_info[0] == 3
 
 
 if PY3:
@@ -87,12 +89,25 @@ try:
 except:
     import http.client
 
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
+# try:
+    # _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+    # pass
+# else:
+    # ssl._create_default_https_context = _create_unverified_https_context
+
+if sys.version_info >= (2, 7, 9):
+	try:
+		import ssl
+		sslContext = ssl._create_unverified_context()
+	except:
+		sslContext = None
+
+def ssl_urlopen(url):
+	if sslContext:
+		return urlopen(url, context=sslContext)
+	else:
+		return urlopen(url)
 
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3
@@ -783,17 +798,8 @@ class OpenM3u(Screen):
         self.convert = False
         self.name = Path_Movies
         self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
-        # self.timerq = eTimer()
-        # self.timerq.start(300, 1)
-        # if isDreamOS:
-                # self.timerq_conn = self.timerq.timeout.connect(self.question)
-        # else:
-                # self.timerq.callback.append(self.question)
-                
-        #download m3u
         try:
             destx = Path_Movies + 'tivustream.m3u'
-            # print('detstx: ', Path_Movies)
             with open(destx, 'w') as f:
                 req = make_request(servernewm3u)
                 print('Resp 1: ', req)
@@ -825,33 +831,7 @@ class OpenM3u(Screen):
         pass
         m3ulist(self.names, self['list'])
 
-    # def question(self):
-        # self.session.openWithCallback(self.my_tvs_dow,openMessageBox,_("Download M3U TVS?"), openMessageBox.TYPE_YESNO)
-
-    # def my_tvs_dow(self, result):
-        # if result:
-            # try:
-                # destx = Path_Movies + 'tivustream.m3u'
-                # cmd66 = 'rm -f ' + destx
-                # os.system(cmd66)
-                # onserver2 = str(servernewm3u)
-                # req = Request(onserver2)
-                # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                # content = checkStr(urlopen(req))
-                # content = content.read()
-                # print("content =", content)
-                # with open(destx, 'w') as f:
-                    # f.write(content)
-                    # f.close()
-            # except Exception as ex:
-                # print(ex)
-        # else:
-            # return
-        # self.onShown.append(self.openList)
-
-
     def runList(self):
-        # selection = str(self['list'].getCurrent())
         idx = self["list"].getSelectionIndex()
         namem3u = self.names[idx]
         urlm3u = self.Movies[idx]
@@ -1450,7 +1430,6 @@ class AddIpvStream(Screen):
         self.close()
 
 
-
 class OpenConfig(Screen, ConfigListScreen):
 
         def __init__(self, session):
@@ -1768,49 +1747,6 @@ class OpenConsole(Screen):
 
     def restartenigma(self):
         self.session.open(TryQuitMainloop, 3)
-    
-    # def runFinished(self, retval):
-        # self.run += 1
-        # if self.run != len(self.cmdlist):
-            # if self.container.execute(self.cmdlist[self.run]):
-                # self.runFinished(-1)
-        # else:
-            # str = self['text'].getText()
-            # str += _('Execution finished !!')
-            # self['text'].setText(str)
-            # self['text'].lastPage()
-            # if self.finishedCallback is not None:
-                # self.finishedCallback()
-            # if not retval and self.closeOnSuccess:
-                # self.cancel()
-        # return
-
-    # def cancel(self):
-        # if self.run == len(self.cmdlist):
-            # self.close()
-        # try:
-            # self.container.appClosed.remove(self.runFinished)
-        # except:
-            # self.appClosed_conn = None
-        # try:
-            # self.container.dataAvail.remove(self.dataAvail)
-        # except:
-            # self.dataAvail_conn = None
-        # return
-            
-    # def cancel(self):
-        # if self.run == len(self.cmdlist):
-            # self.close()
-            # try:
-                # self.appClosed_conn=None
-                # self.dataAvail_conn=None
-            # except:
-                # self.container.appClosed.remove(self.runFinished)
-                # self.container.dataAvail.remove(self.dataAvail)
-
-    # def dataAvail(self, str):
-            # self['text'].setText(self['text'].getText() + str)
-
 
 class openMessageBox(Screen):
     TYPE_YESNO = 0
