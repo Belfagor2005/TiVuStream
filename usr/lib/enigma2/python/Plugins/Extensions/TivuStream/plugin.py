@@ -1,7 +1,7 @@
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  10/11/2020	 #
+#	  06/12/2020	 #
 #--------------------#
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -133,8 +133,8 @@ except ImportError:
 
 #changelog 14.09.2020
 
-currversion      = '2.7'
-Version          = currversion + ' - 10.10.2020'
+currversion      = '2.8'
+Version          = currversion + ' - 06.12.2020'
 Credits          = 'Info http://t.me/tivustream'
 Maintainer2      = 'Maintener @Lululla'
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
@@ -252,11 +252,11 @@ def server_ref():
     nt_upd_lnk = ('wget %se2liste/note.txt -O /tmp/note.txt > /dev/null' % server)
     return server, host, upd_fr_txt, nt_upd_lnk
 server_ref()
-nnewtv = 'aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA='
+nnewtv = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=='
 servernew = base64.b64decode(nnewtv)
-nnewm3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2wucGhwP3A9NSZ1YT1UaVZ1U3RyZWFtJmY9MQ=='
+nnewm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbC5waHA/cD01JnVhPVRpVnVTdHJlYW0mZj0x'
 servernewm3u = base64.b64decode(nnewm3u)
-estm3u = 'aHR0cDovL3RpdnVzdHJlYW0uY29tL2ZoLnBocA=='
+estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
 m3uest = base64.b64decode(estm3u)
 
 
@@ -533,104 +533,104 @@ class OpenScript(Screen):
         sel = self.menu_list[idx]
         if sel == ("LIVE TUTTI"):
                 namex = "livetutti"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0w"
         elif sel == ("TOP ITALIA"):
                 namex = "topitalia"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9MQ=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0x"
         elif sel == ("SPORT ITALIA"):
                 namex = "sportitalia"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mg=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0y"
         elif sel == ("SPORT LIVE"):
                 namex = "sportlive"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Mw=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0z"
         elif sel == ("SPORT ESTERI"):
                 namex = "sportesteri"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
         elif sel == ("MUSICA"):
                 namex = "musica"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9NQ=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
         elif sel == ("NEWS"):
                 namex = "news"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Ng=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
         elif sel == ("ESTERO"):
                 namex = "estero"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9Nw=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
         elif sel == ("REGIONALI"):
                 namex = "regionali"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
         elif sel == ("RELAX"):
                 namex = "relax"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0xJnQ9OQ=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
 
         elif sel == ("MOVIE TUTTI"):
                 namex = "movietutti"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0w"
         elif sel == ("SERIE"):
                 namex = "serie"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTA="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMA=="
         elif sel == ("SERIE TV: 0-9"):
                 namex = "serietv09"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTE="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMQ=="
         elif sel == ("SERIE TV: A-E"):
                 namex = "serietvae"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTI="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMg=="
         elif sel == ("SERIE TV: F-K"):
                 namex = "serietvfk"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTM="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMw=="
         elif sel == ("SERIE TV: L-R"):
                 namex = "serietvlr"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTQ="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xNA=="
         elif sel == ("SERIE TV: S-Z"):
                 namex = "serietvsz"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MTU="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xNQ=="
         elif sel == ("FILM"):
                 namex = "film"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjA="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yMA=="
         elif sel == ("FILM RECENTI"):
                 namex = "filmrecenti"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjE="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yMQ=="
         elif sel == ("FILM: 0-9"):
                 namex = "film09"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0yJnQ9MjI="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yMg=="
         elif sel == ("FILM: A-F"):
                 namex = "filmaf"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTImdD0yMw=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yMw=="
         elif sel == ("FILM: G-L"):
                 namex = "filmgl"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTImdD0yNA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yNA=="
         elif sel == ("FILM: M-R"):
                 namex = "filmmr"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTImdD0yNQ=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yNQ=="
         elif sel == ("FILM: S-Z"):
                 namex = "filmsz"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTImdD0yNg=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yNg=="
         elif sel == ("FILM IN VERSIONE ORIGINALE"):
                 namex = "movieoriginal"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTImdD0yNw=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0yNw=="
 
         elif sel == ("RADIO TUTTI"):
                 namex = "radiotutti"
-                lnk = "aHR0cHM6Ly90aXZ1c3RyZWFtLmNvbS90c2xFbi5waHA/cD0zJnQ9MA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTMmdD0w"
         elif sel == ("RADIO ITALIA"):
                 namex = "radioitalia"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTMmdD0x"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTMmdD0x"
         elif sel == ("RADIO INT"):
                 namex = "radioint"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTMmdD0y"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTMmdD0y"
         elif sel == ("DASH RADIO"):
                 namex = "dashradio"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTMmdD0z"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTMmdD0z"
 
         elif sel == ("LIVE XXX"):
                 namex = "livexxx"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTU="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTU="
         elif sel == ("MOVIE XXX"):
                 namex = "moviexxx"
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocD9wPTQ="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTQ="
 
         elif sel == ("="):
                 namex = "=="
-                lnk = "aHR0cDovL3RpdnVzdHJlYW0uY29tL3RzbEVuLnBocA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=="
         else:
                 self.mbox = self.session.open(openMessageBox, _('Bouquet not installed'), openMessageBox.TYPE_ERROR, timeout=4)
                 return
