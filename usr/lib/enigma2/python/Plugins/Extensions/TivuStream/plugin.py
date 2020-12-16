@@ -214,8 +214,8 @@ sessions = []
 config.plugins.TivuStream                        = ConfigSubsection()
 config.plugins.TivuStream.autoupd                = ConfigYesNo(default=True)
 config.plugins.TivuStream.pthm3uf                = ConfigDirectory(default='/media/hdd/movie')
-# config.plugins.TivuStream.code                   = ConfigInteger(limits=(0, 9999), default=1234)
-config.plugins.TivuStream.code                   = ConfigNumber(default = 1234)
+# config.plugins.TivuStream.code                   = ConfigNumber(default = 1234)
+config.plugins.TivuStream.code                   = ConfigText(default = "1234")
 config.plugins.TivuStream.bouquettop             = ConfigSelection(default='Bottom', choices=['Bottom', 'Top'])
 config.plugins.TivuStream.server                 = ConfigSelection(default='CORVOBOYS', choices=['PATBUWEB', 'CORVOBOYS'])
 config.plugins.TivuStream.services               = ConfigSelection(default='Default', choices=modechoices)
@@ -642,7 +642,8 @@ class OpenScript(Screen):
         lnk = base64.b64decode(lnk)
         print('link  : ', lnk)
         pin = 2808
-        pin2 = int(config.plugins.TivuStream.code.value)
+        pin2 = str(config.plugins.TivuStream.code.value)
+        # pin2 = int(config.plugins.TivuStream.code.value)
         groupname = 'userbouquet.tivustream.tv'
         if name == '==' :
             self.mbox = self.session.open(openMessageBox, _('CONNECTION ERROR OR UNKNOWN'), openMessageBox.TYPE_ERROR, timeout=4)
@@ -1644,7 +1645,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 return
             if config.plugins.TivuStream.autoupd.value == False:
                 return
-            self.session.openWithCallback(self.runupdate, openMessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?' % self.version), openMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, openMessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?\nPlease Restart GUI Required!' % self.version), openMessageBox.TYPE_YESNO)
 
         def msgupdt1(self):
             if self.cbUpdate == False:
@@ -1657,7 +1658,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 dom = 'Last version ' + self.version
                 os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % com)
                 os.system('sleep 3')
-                self.session.open(OpenConsole, _('Update Plugin: %s') % dom, ['tar -xvf /tmp/tivustream.tar -C /'], finishedCallback=self.ipkrestrt, closeOnSuccess=False)
+                self.session.open(OpenConsole, _('Update Plugin: %s') % dom, ['tar -xvf /tmp/tivustream.tar -C /'], closeOnSuccess=False) #finishedCallback=self.ipkrestrt, closeOnSuccess=False)
 
         def ipkrestrt(self):
             epgpath = '/media/hdd/epg.dat'
@@ -1693,7 +1694,7 @@ class OpenConsole(Screen):
         try:
             self.container.appClosed.append(self.runFinished)
             self.container.dataAvail.append(self.dataAvail)
-        except:        
+        except:
             self.appClosed_conn=self.container.appClosed.connect(self.runFinished)
             self.dataAvail_conn=self.container.dataAvail.connect(self.dataAvail)
         self.onLayoutFinish.append(self.startRun)
@@ -1709,12 +1710,12 @@ class OpenConsole(Screen):
     def runFinished(self, retval):
         self.run += 1
         if self.run != len(self.cmdlist):
-            if self.container.execute(self.cmdlist[self.run]): 
+            if self.container.execute(self.cmdlist[self.run]):
                 self.runFinished(-1)
         else:
             str=self["text"].getText()
             if not retval and self.endstr.startswith("Swapping"):
-               str += _("\n\n"+self.endstr)     
+               str += _("\n\n"+self.endstr)
             else:
                str += _("Execution finished!!\n")
             self["text"].setText(str)
@@ -1747,6 +1748,16 @@ class OpenConsole(Screen):
 
     def restartenigma(self):
         self.session.open(TryQuitMainloop, 3)
+
+    def cancel(self):
+        if self.run == len(self.cmdlist):
+            self.close()
+            try:
+                self.appClosed_conn=None
+                self.dataAvail_conn=None
+            except:
+                self.container.appClosed.remove(self.runFinished)
+                self.container.dataAvail.remove(self.dataAvail)
 
 class openMessageBox(Screen):
     TYPE_YESNO = 0
