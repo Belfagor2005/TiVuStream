@@ -3,10 +3,10 @@
 	<widget name="selectedChoice" position="615,584" size="533,33" font="Regular;22" foregroundColor="#ffffff" backgroundColor="#2518252e" transparent="1" zPosition="3" />
 	<widget name="Text" position="93,3" size="533,26" font="Regular;21" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
 	<widget name="text" position="93,3" size="533,26" font="Regular;21" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
-	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="WarningPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" blend="blend" />
+	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" />
+	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" />
+	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="13,16" size="53,53" />
+	<widget name="WarningPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" />
 	<widget name="list" position="13,40" size="626,233" itemHeight="33" transparent="1" foregroundColor="#a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#0b2049" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sliderb.png" />
 		<applet type="onLayoutFinish">
 # this should be factored out into some helper code, but currently demonstrates applets.
