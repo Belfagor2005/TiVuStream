@@ -1064,7 +1064,7 @@ class M3uPlay(Screen):
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
                     if 'tvg-logo' in fpage:
                         print('Tvg-logo in fpage is True1 ---')
-                        regexcat = 'EXTINF.*?tvg-logo="(.*?)",(.*?)\\n(.*?)\\n'
+                        regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
                         
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
                     for pic, name, url in match:
