@@ -905,6 +905,10 @@ class OpenM3u(Screen):
         self.convert = True
         name = self.names[idx]
         pth = Path_Movies #self.name
+        if not os.path.exists(pth):
+            self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
+            return
+        
         bqtname = 'userbouquet.%s.tv' % name
         # self.iConsole = iConsole()
         desk_tmp = ''
@@ -947,6 +951,9 @@ class OpenM3u(Screen):
         self.convert = True
         name = self.names[idx]
         pth = Path_Movies #self.name
+        if not os.path.exists(pth):
+            self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
+            return        
         bqtname = 'userbouquet.%s.tv' % name
         # self.iConsole = iConsole()
         desk_tmp = ''
