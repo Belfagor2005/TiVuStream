@@ -1061,11 +1061,11 @@ class M3uPlay(Screen):
                     fpage = f1.read()
                     ##EXTINF:-1 group-title="SERIE TV: A-E" tvg-logo="https://patbuweb.com/tivustream/logos/logo.png",[COLOR red]-- UNDER MAINTENANCE --[/COLOR]
                     ##EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
+                    ##EXTINF:-1,Primafila 1
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
                     if 'tvg-logo' in fpage:
                         print('Tvg-logo in fpage is True1 ---')
                         regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
-                        
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
                     for pic, name, url in match:
                         if str(search).lower() in name.lower():
@@ -1162,12 +1162,12 @@ class M3uPlay(Screen):
                 if "#EXTM3U" in fpage:
                     ##EXTINF:-1 tvg-logo="https://mr.comingsoon.it/imgdb/PrimoPiano/99017_ppl.jpg" group-title="TOP ITALIA",GFVip Un'ora fa
                     ###EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
-                    regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
+                    ##EXTINF:-1 group-title="RAI PLAY ACTION",--- RAI PLAY ACTION ---
+                    ##EXTINF:-1,Primafila 1
+                    regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
                     if 'tvg-logo' in fpage:
                         print('tvg-logo in fpage: True')
                         regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
-                    # else:
-                        # regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
                     for pic, name, url in match:
                         url = url.replace(' ', '')
@@ -1191,7 +1191,7 @@ class M3uPlay(Screen):
                             
                     else:
                         m3ulist(self.names, self['list'])
-                        self["live"].setText('N.' + str(len(self.names)) + " Stream")
+                    self["live"].setText('N.' + str(len(self.names)) + " Stream")
                             
                 else:
                     self.session.open(openMessageBox, _('File Unknow!!!'), openMessageBox.TYPE_INFO, timeout=5)
