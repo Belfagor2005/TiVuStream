@@ -1,7 +1,7 @@
 <!-- Skin OpenScript 15/08/2020 -->
 <screen name="OpenScript" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="transparent" flags="wfNoBorder">
-	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main1.png" zPosition="1" />
-	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" zPosition="5" />
+	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main1.png" alphatest="blend" zPosition="1" />
+	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" zPosition="5" />
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="220,130" size="830,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
 	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />

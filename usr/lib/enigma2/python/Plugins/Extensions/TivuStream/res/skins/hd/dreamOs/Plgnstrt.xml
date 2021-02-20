@@ -1,10 +1,11 @@
 <!-- Skin plgstr 16/08/2020 -->
 <screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1280,720" title="..::TiVuStream List Channel::.." backgroundColor="#30000000">
-	<eLabel  position="1222,30" size="5,610"  zPosition="1" backgroundColor="#30403f3f" />
-	<eLabel  position="55,30"   size="1170,5" zPosition="1" backgroundColor="#30403f3f" />
-	<eLabel  position="50,30"   size="5,610"  zPosition="1" backgroundColor="#30403f3f" />
-	<eLabel  position="50,635"  size="1175,5" zPosition="1" backgroundColor="#30403f3f" />
-	<ePixmap position="788,44" size="333,69" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/skins/fhd/logo.png" alphatest="blend" zPosition="5" />
-	<ePixmap position="156,40"  size="214,75" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/skins/fhd/logosk.png" alphatest="blend" zPosition="5" />
-	<widget name="text" position="156,45" size="966,584" font="OpenFont2;20" halign="center" foregroundColor="#006666" transparent="1" zPosition="10" />  
+	<ePixmap position="963,44" size="250,117" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustreram_xxx.png" alphatest="blend" zPosition="11" />
+	<ePixmap position="67,45" size="320,110" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="11" />
+	<widget name="poster" position="66,38" size="1147,600" alphatest="blend" scale="stretch" zPosition="-1" />
+	<eLabel position="1222,30" size="5,610" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="55,30" size="1170,5" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="50,30" size="5,610" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="50,635" size="1175,5" zPosition="1" backgroundColor="#30403f3f" />
+	<widget name="text" position="72,52" size="1140,584" halign="center" foregroundColor="#006666" transparent="1" zPosition="10" />  
 </screen>

@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  09/01/2021	 #
+#	  14/02/2021	 #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -58,8 +58,10 @@ import glob
 import time
 import socket
 import ssl
+import random
+import shutil
 from enigma import eTimer
-from enigma import getDesktop
+from enigma import getDesktop, ePicLoad, gPixmapPtr
 from Plugins.Extensions.TivuStream.getpics import getpics
 from Plugins.Extensions.TivuStream.getpics import GridMain
 from os.path import splitext
@@ -75,12 +77,14 @@ if PY3:
     from urllib.error import URLError, HTTPError
     from urllib.parse import urlparse
     from urllib.parse import urlencode, quote
+    from urllib.request import urlretrieve
 
 else:
     from urllib2 import urlopen, Request
     from urllib2 import URLError, HTTPError
     from urlparse import urlparse
     from urllib import urlencode, quote
+    from urllib import urlretrieve
 
 
 try:
@@ -109,6 +113,30 @@ if sys.version_info >= (2, 7, 9):
 # else:
     # ssl._create_default_https_context = _create_unverified_https_context
 
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse
+    except:
+        from urllib.parse import urlparse
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+            
 def ssl_urlopen(url):
 	if sslContext:
 		return urlopen(url, context=sslContext)
@@ -123,11 +151,6 @@ def checkStr(data):
         if type(data) == type(unicode()):
             data = data.encode('utf-8')
     return data
-    # if PY3:
-        # data = data.decode("utf-8")
-    # else:
-        # data = data.encode("utf-8")
-    # return data
     
 try:
     from enigma import eMediaDatabase
@@ -280,7 +303,11 @@ servernewm3u = base64.b64decode(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
 m3uest = base64.b64decode(estm3u)
 
-
+global nasarandom, imgjpg, pngori
+nasarandom = "http://patbuweb.com/back-tvstream/"
+imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg", "nasa4.jpg", "nasa5.jpg", "nasa6.jpg", "nasa7.jpg", "nasa8.jpg", "nasa9.jpg", "nasa10.jpg", "nasa11.jpg")
+pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg'   
+                
 global skin_path
 skin_path = plugin_path
 HD = getDesktop(0).size()
@@ -319,7 +346,7 @@ def m3ulistEntry(download):
         res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=1, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
     return res
 
 def m3ulist(data, list):
@@ -429,7 +456,7 @@ def tvListEntry(name,png):
         res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
     return res
 
 
@@ -1639,8 +1666,8 @@ class OpenConfig(Screen, ConfigListScreen):
             self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf, _("Folder path containing the .m3u files")))
             self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services, _("Configure Service Player Reference")))
             self.list.append(getConfigListEntry(_('Show thumpics ?'), config.plugins.TivuStream.thumb, _("Show thumpics in Player M3U ?")))
-            if config.plugins.TivuStream.thumb.value == True:
-                self.list.append(getConfigListEntry(_('Download thumpics ?'), config.plugins.TivuStream.thumbpic, _("Download thumpics in Player M3U (is very Slow)?")))
+            # if config.plugins.TivuStream.thumb.value == True:
+                # self.list.append(getConfigListEntry(_('Download thumpics ?'), config.plugins.TivuStream.thumbpic, _("Download thumpics in Player M3U (is very Slow)?")))
             self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext, _("Show Plugin in Extensions Menu")))
             self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain, _("Show Plugin in Main Menu")))
             self['config'].list = self.list
@@ -2038,6 +2065,8 @@ class plgnstrt(Screen):
         self.skin = f.read()
         f.close()
         Screen.__init__(self, session)
+        self["poster"] = Pixmap()
+        self.picload = ePicLoad()
         self['text'] = ScrollLabel()
         self['actions'] = ActionMap(['OkCancelActions',
          'DirectionActions','ColorActions', 'SetupActions'], {'ok': self.clsgo,
@@ -2049,15 +2078,94 @@ class plgnstrt(Screen):
          'left': self['text'].pageUp,
          'right': self['text'].pageDown,
          'green': self.clsgo}, -1)
+        self.onShown.append(self.RandomNasa)        
         self.onLayoutFinish.append(self.checkDwnld)
+        # self.onLayoutFinish.append(self.RandomNasa)
 
+    def decodeImage(self, pngori):
+        if isDreamOS:
+            self['poster'].instance.setPixmap(gPixmapPtr())
+        else:
+            self['poster'].instance.setPixmap(None)
+        self['poster'].hide()
+        sc = AVSwitch().getFramebufferScale()
+        self.picload = ePicLoad()
+        size = self['poster'].instance.size()
+        self.picload.setPara((size.width(), size.height(), sc[0], sc[1], False, 1, '#FF000000'))
 
+        if not isDreamOS:
+            self.picload.startDecode(pngori, 0, 0, False)
+        else:
+            self.picload.startDecode(pngori, False)
+        ptr = self.picload.getData()
+        if ptr is not None:
+            self["poster"].instance.setPixmap(ptr)
+            self["poster"].show()
+        else:
+            self.decodeImage(pngori)
+
+    def image_downloaded(self, data, pngori):
+        if os.path.exists(pngori):
+            try:
+                self.decodeImage(pngori)
+            except Exception as ex:
+                print(ex)
+                pass
+            except:
+                pass
+
+    def downloadError(self, pngori):
+        try:
+            self.decodeImage(pngori)
+        except Exception as ex:
+            print(ex)
+            
+    def RandomNasa(self):
+        global urlorig
+        urlorig = 'https://apod.nasa.gov/apod/'
+        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg'
+        print('urllllllllllllllllllll', urlorig)
+        url2 = ' '
+        try:
+            if urlorig.startswith("https") and sslverify:
+                parsed_uri = urlparse(urlorig)
+                domain = parsed_uri.hostname
+                sniFactory = SNIFactory(domain)
+                if PY3 == 3:
+                    urlorig = urlorig.encode()
+                content = make_request(urlorig)   
+                print('content B =', content) 
+                if 'href="image/' in content:
+                    print('in content if real')
+                    regex = '<a href="image/(.*?)">'
+                    match = re.compile(regex, re.DOTALL).findall(content)
+                    url2 = match[0]
+                    print('url2 math: ', url2)
+                    url = urlorig + 'image/' + str(url2)
+                    if url.endswith('jpg'):
+                        print('uurrll: ', url)
+                        downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError) 
+
+                else:
+                    self.RandomNasa2()            
+        except:
+            print('no url parsed')
+            pass
+        
+    def RandomNasa2(self):
+        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+        npj = random.choice(imgjpg)  
+        url = pngori + npj
+        print('urllllllllllllllllllll', url)
+        shutil.copyfile(url, pngori + 'nasa.jpg')
+        self.decodeImage(pngori)
+        
     def checkDwnld(self):
         server_ref()
         self.icount = 0
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
-        self.timer.start(500, 1)
+        self.timer.start(1000, 1)
 
         if isDreamOS:
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
