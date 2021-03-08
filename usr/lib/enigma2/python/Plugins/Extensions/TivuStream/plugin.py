@@ -1090,18 +1090,19 @@ class M3uPlay(Screen):
                     ##EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
                     ##EXTINF:-1,Primafila 1
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
-                    if 'tvg-logo' in fpage:
-                        print('Tvg-logo in fpage is True1 ---')
-                        regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
+                    
+                    # if 'tvg-logo' in fpage:
+                        # print('Tvg-logo in fpage is True1 ---')
+                        # regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
-                    for pic, name, url in match:
+                    for  name, url in match:
                         if str(search).lower() in name.lower():
                             global search_ok
                             search_ok = True
                             url = url.replace(" ", "")
                             url = url.replace("\\n", "")
-                            if pic:
-                               pic = pic 
+                            # if pic:
+                               # pic = pic 
                             self.names.append(name)
                             self.urls.append(url)
                             self.pics.append(pic)
@@ -1192,16 +1193,16 @@ class M3uPlay(Screen):
                     ##EXTINF:-1 group-title="RAI PLAY ACTION",--- RAI PLAY ACTION ---
                     ##EXTINF:-1,Primafila 1
                     regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
-                    if 'tvg-logo' in fpage:
-                        print('tvg-logo in fpage: True')
-                        regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
+                    # if 'tvg-logo' in fpage:
+                        # print('tvg-logo in fpage: True')
+                        # regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
-                    for pic, name, url in match:
+                    for name, url in match:
                         url = url.replace(' ', '')
                         url = url.replace('\\n', '')
-                        # url = url.replace('https', 'http')
-                        if pic:
-                            pic = pic
+                        # # url = url.replace('https', 'http')
+                        # if pic:
+                            # pic = pic
                         self.names.append(name)
                         self.urls.append(url)
                         self.pics.append(pic)
@@ -2066,32 +2067,40 @@ class plgnstrt(Screen):
         f.close()
         Screen.__init__(self, session)
         self["poster"] = Pixmap()
+        self["poster"].hide()
         self.picload = ePicLoad()
-        self['text'] = ScrollLabel()
+        self.scale = AVSwitch().getFramebufferScale()
+        # self['text'] = ScrollLabel()
+        self['text'] = StaticText()        
         self['actions'] = ActionMap(['OkCancelActions',
          'DirectionActions','ColorActions', 'SetupActions'], {'ok': self.clsgo,
          'cancel': self.clsgo,
          'back': self.clsgo,
          'red': self.clsgo,
-         'up': self['text'].pageUp,
-         'down': self['text'].pageDown,
-         'left': self['text'].pageUp,
-         'right': self['text'].pageDown,
+         # 'up': self['text'].pageUp,
+         # 'down': self['text'].pageDown,
+         # 'left': self['text'].pageUp,
+         # 'right': self['text'].pageDown,
          'green': self.clsgo}, -1)
-        self.onShown.append(self.RandomNasa)        
+        # self.onShown.append(self.checkDwnld)   
+        self.onFirstExecBegin.append(self.RandomNasa)        
+        # self.onLayoutFinish.append(self.checkDwnld)
         self.onLayoutFinish.append(self.checkDwnld)
-        # self.onLayoutFinish.append(self.RandomNasa)
 
+            
     def decodeImage(self, pngori):
+        self["poster"].show()
+        # if self["poster"].instance:                       
+    
         if isDreamOS:
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
-        self['poster'].hide()
-        sc = AVSwitch().getFramebufferScale()
-        self.picload = ePicLoad()
-        size = self['poster'].instance.size()
-        self.picload.setPara((size.width(), size.height(), sc[0], sc[1], False, 1, '#FF000000'))
+            # self['poster'].show()
+            self.scale = AVSwitch().getFramebufferScale()
+            self.picload = ePicLoad()
+            size = self['poster'].instance.size()
+            self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, '#FF000000'))
 
         if not isDreamOS:
             self.picload.startDecode(pngori, 0, 0, False)
@@ -2102,7 +2111,8 @@ class plgnstrt(Screen):
             self["poster"].instance.setPixmap(ptr)
             self["poster"].show()
         else:
-            self.decodeImage(pngori)
+            self.loadDefaultImage()
+
 
     def image_downloaded(self, data, pngori):
         if os.path.exists(pngori):
@@ -2119,6 +2129,15 @@ class plgnstrt(Screen):
             self.decodeImage(pngori)
         except Exception as ex:
             print(ex)
+
+    def loadDefaultImage(self, failure=None):
+        print("*** failure *** %s" % failure)
+        if self["poster"].instance:
+            global pngori
+            fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+            npj = random.choice(imgjpg)  
+            pngori = fldpng + npj
+            self["poster"].instance.setPixmapFromFile(pngori)
             
     def RandomNasa(self):
         global urlorig
@@ -2126,38 +2145,46 @@ class plgnstrt(Screen):
         pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg'
         print('urllllllllllllllllllll', urlorig)
         url2 = ' '
-        try:
-            if urlorig.startswith("https") and sslverify:
-                parsed_uri = urlparse(urlorig)
-                domain = parsed_uri.hostname
-                sniFactory = SNIFactory(domain)
-                if PY3 == 3:
-                    urlorig = urlorig.encode()
-                content = make_request(urlorig)   
-                print('content B =', content) 
-                if 'href="image/' in content:
-                    print('in content if real')
-                    regex = '<a href="image/(.*?)">'
-                    match = re.compile(regex, re.DOTALL).findall(content)
-                    url2 = match[0]
-                    print('url2 math: ', url2)
-                    url = urlorig + 'image/' + str(url2)
-                    if url.endswith('jpg'):
-                        print('uurrll: ', url)
-                        downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError) 
+        # try:
+        if urlorig.startswith("https") and sslverify:
+            parsed_uri = urlparse(urlorig)
+            domain = parsed_uri.hostname
+            sniFactory = SNIFactory(domain)
+            if PY3 == 3:
+                urlorig = urlorig.encode()
+            content = make_request(urlorig)   
+            print('content B =', content) 
+            if 'href="image/' in content:
+                print('in content if real')
+                regex = '<a href="image/(.*?)"'
+                match = re.compile(regex, re.DOTALL).findall(content)
+                url2 = match[0]
+                print('url2 math: ', url2)
+                url = urlorig + 'image/' + str(url2)
+                # if 'jpg' in url:
+                    # print('uurrll: ', url)
+                    # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)
+                print('uurrll: ', url)    
+                downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)                     
+                    
 
-                else:
-                    self.RandomNasa2()            
-        except:
-            print('no url parsed')
-            pass
+                # else:
+                    # self.RandomNasa2()    
+            else:
+                self.loadDefaultImage()
+        else:
+            self.loadDefaultImage()                        
+        # except:
+            # print('no url parsed')
+            # pass
         
     def RandomNasa2(self):
-        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+        global pngori
+        fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
         npj = random.choice(imgjpg)  
-        url = pngori + npj
-        print('urllllllllllllllllllll', url)
-        shutil.copyfile(url, pngori + 'nasa.jpg')
+        pngori = fldpng + npj
+        print('urllllllllllllllllllll', pngori)
+        shutil.copyfile(pngori, fldpng + 'nasa.jpg')
         self.decodeImage(pngori)
         
     def checkDwnld(self):
