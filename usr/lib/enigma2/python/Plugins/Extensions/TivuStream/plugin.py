@@ -2088,36 +2088,80 @@ class plgnstrt(Screen):
         self.onLayoutFinish.append(self.checkDwnld)
 
             
+            
+    def loadDefaultImage(self, failure=None):
+        print("*** failure *** %s" % failure)
+        # global pngori
+        if self["poster"].instance:        
+            fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+            npj = random.choice(imgjpg)  
+            pngori = fldpng + npj        
+            self.decodeImage(pngori)
+            # self["poster"].instance.setPixmapFromFile(pngori)
+            # self['poster'].show()
+
+
     def decodeImage(self, pngori):
-        self["poster"].show()
-        # if self["poster"].instance:                       
-    
+        # self["poster"].show()
         if isDreamOS:
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
-            # self['poster'].show()
-            self.scale = AVSwitch().getFramebufferScale()
-            self.picload = ePicLoad()
-            size = self['poster'].instance.size()
-            self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, '#FF000000'))
-
-        if not isDreamOS:
-            self.picload.startDecode(pngori, 0, 0, False)
-        else:
+        self['poster'].hide()
+        sc = AVSwitch().getFramebufferScale()
+        self.picload = ePicLoad()
+        size = self['poster'].instance.size()
+        self.picload.setPara((size.width(),
+         size.height(),
+         sc[0],
+         sc[1],
+         False,
+         1,
+         '#FF000000'))
+        ptr = self.picload.getData()
+        if isDreamOS:
             self.picload.startDecode(pngori, False)
+        else:
+            self.picload.startDecode(pngori, 0, 0, False)        
         ptr = self.picload.getData()
         if ptr is not None:
             self["poster"].instance.setPixmap(ptr)
             self["poster"].show()
         else:
             self.loadDefaultImage()
+           
+            
+            
+    # def decodeImage(self, pngori):
+        # self["poster"].show()
+        # # if self["poster"].instance:                       
+    
+        # if isDreamOS:
+            # self['poster'].instance.setPixmap(gPixmapPtr())
+        # else:
+            # self['poster'].instance.setPixmap(None)
+            # # self['poster'].show()
+            # self.scale = AVSwitch().getFramebufferScale()
+            # self.picload = ePicLoad()
+            # size = self['poster'].instance.size()
+            # self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, '#FF000000'))
+
+        # if isDreamOS:
+            # self.picload.startDecode(pngori, False)
+        # else:
+            # self.picload.startDecode(pngori, 0, 0, False) 
+        # ptr = self.picload.getData()
+        # if ptr is not None:
+            # self["poster"].instance.setPixmap(ptr)
+            # self["poster"].show()
+        # else:
+            # self.loadDefaultImage()
 
 
-    def image_downloaded(self, data, pngori):
-        if os.path.exists(pngori):
+    def image_downloaded(self, data, png):
+        if os.path.exists(png):
             try:
-                self.decodeImage(pngori)
+                self.decodeImage(png)
             except Exception as ex:
                 print(ex)
                 pass
@@ -2130,14 +2174,14 @@ class plgnstrt(Screen):
         except Exception as ex:
             print(ex)
 
-    def loadDefaultImage(self, failure=None):
-        print("*** failure *** %s" % failure)
-        if self["poster"].instance:
-            global pngori
-            fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
-            npj = random.choice(imgjpg)  
-            pngori = fldpng + npj
-            self["poster"].instance.setPixmapFromFile(pngori)
+    # def loadDefaultImage(self, failure=None):
+        # print("*** failure *** %s" % failure)
+        # if self["poster"].instance:
+            # global pngori
+            # fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+            # npj = random.choice(imgjpg)  
+            # pngori = fldpng + npj
+            # self["poster"].instance.setPixmapFromFile(pngori)
             
     def RandomNasa(self):
         global urlorig
@@ -2166,10 +2210,20 @@ class plgnstrt(Screen):
                     # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)
                 print('uurrll: ', url)    
                 downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)                     
-                    
-
-                # else:
-                    # self.RandomNasa2()    
+   
+            # elif "<iframe src='" in content:
+                # print('in content if real')
+                # regex = "<iframe src='(.*?)'"
+                # match = re.compile(regex, re.DOTALL).findall(content)
+                # url2 = match[0]
+                # print('url2 math: ', url2)
+                # url = str(url2) # urlorig + 'image/' + str(url2)
+                # # if 'jpg' in url:
+                    # # print('uurrll: ', url)
+                    # # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)
+                # print('uurrll: ', url)    
+                # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)    
+   
             else:
                 self.loadDefaultImage()
         else:
@@ -2178,22 +2232,21 @@ class plgnstrt(Screen):
             # print('no url parsed')
             # pass
         
-    def RandomNasa2(self):
-        global pngori
-        fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
-        npj = random.choice(imgjpg)  
-        pngori = fldpng + npj
-        print('urllllllllllllllllllll', pngori)
-        shutil.copyfile(pngori, fldpng + 'nasa.jpg')
-        self.decodeImage(pngori)
+    # def RandomNasa2(self):
+        # global pngori
+        # fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+        # npj = random.choice(imgjpg)  
+        # pngori = fldpng + npj
+        # print('urllllllllllllllllllll', pngori)
+        # shutil.copyfile(pngori, fldpng + 'nasa.jpg')
+        # self.decodeImage(pngori)
         
     def checkDwnld(self):
         server_ref()
         self.icount = 0
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
-        self.timer.start(1000, 1)
-
+        self.timer.start(1500, 1)
         if isDreamOS:
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
@@ -2270,62 +2323,63 @@ def Plugins(**kwargs):
     return result
 
 def charRemove(text):
-                char = ["1080p",
-                 "2018",
-                 "2019",
-                 "2020",
-                 "480p",
-                 "4K",
-                 "720p",
-                 "ANIMAZIONE",
-                 "APR",
-                 "AVVENTURA",
-                 "BIOGRAFICO",
-                 "BDRip",
-                 "BluRay",
-                 "CINEMA",
-                 "COMMEDIA",
-                 "DOCUMENTARIO",
-                 "DRAMMATICO",
-                 "FANTASCIENZA",
-                 "FANTASY",
-                 "FEB",
-                 "GEN",
-                 "GIU",
-                 "HDCAM",
-                 "HDTC",
-                 "HDTS",
-                 "LD",
-                 "MAFIA",
-                 "MAG",
-                 "MARVEL",
-                 "MD",
-                 "ORROR",
-                 "NEW_AUDIO",
-                 "POLIZ",
-                 "R3",
-                 "R6",
-                 "SD",
-                 "SENTIMENTALE",
-                 "TC",
-                 "TEEN",
-                 "TELECINE",
-                 "TELESYNC",
-                 "THRILLER",
-                 "Uncensored",
-                 "V2",
-                 "WEBDL",
-                 "WEBRip",
-                 "WEB",
-                 "WESTERN",
-                 "-",
-                 "_",
-                 ".",
-                 "+",
-                 "[",
-                 "]"]
+    char = ["1080p",
+     "2018",
+     "2019",
+     "2020",
+     "2021",
+     "480p",
+     "4K",
+     "720p",
+     "ANIMAZIONE",
+     "APR",
+     "AVVENTURA",
+     "BIOGRAFICO",
+     "BDRip",
+     "BluRay",
+     "CINEMA",
+     "COMMEDIA",
+     "DOCUMENTARIO",
+     "DRAMMATICO",
+     "FANTASCIENZA",
+     "FANTASY",
+     "FEB",
+     "GEN",
+     "GIU",
+     "HDCAM",
+     "HDTC",
+     "HDTS",
+     "LD",
+     "MAFIA",
+     "MAG",
+     "MARVEL",
+     "MD",
+     "ORROR",
+     "NEW_AUDIO",
+     "POLIZ",
+     "R3",
+     "R6",
+     "SD",
+     "SENTIMENTALE",
+     "TC",
+     "TEEN",
+     "TELECINE",
+     "TELESYNC",
+     "THRILLER",
+     "Uncensored",
+     "V2",
+     "WEBDL",
+     "WEBRip",
+     "WEB",
+     "WESTERN",
+     "-",
+     "_",
+     ".",
+     "+",
+     "[",
+     "]"]
 
-                myreplace = text
-                for ch in char:
-                        myreplace = myreplace.replace(ch, "").replace("  ", " ").replace("       ", " ").strip()
-                return myreplace
+    myreplace = text
+    for ch in char:
+            myreplace = myreplace.replace(ch, "").replace("  ", " ").replace("       ", " ").strip()
+    return myreplace
