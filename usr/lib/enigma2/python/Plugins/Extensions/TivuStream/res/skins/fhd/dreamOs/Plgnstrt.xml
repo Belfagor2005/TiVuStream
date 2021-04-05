@@ -2,13 +2,16 @@
 <screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1920,1080" title="..::TiVuStream Project::.." backgroundColor="#30000000">
 	<!-- <ePixmap position="86,53" size="1750,910" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" alphatest="blend" scale="stretch" zPosition="-1" /> -->
 	<ePixmap position="1528,72" size="250,117" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustreram_xxx.png" alphatest="blend" zPosition="7" />
-	<ePixmap position="109,74" size="322,113" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="5" />
+	<ePixmap position="1072,73" size="322,113" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="5" />
+<!-- 	
 	<widget name="poster" position="88,53" size="950,900" alphatest="blend" scale="stretch" zPosition="-1" />
+	 -->
+	<widget name="poster" position="88,53" size="950,900" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" alphatest="blend" scale="stretch" zPosition="-1" />
 	<eLabel position="1833,45" size="8,915" zPosition="1" backgroundColor="#30403f3f" />
 	<eLabel position="83,45" size="1755,8" zPosition="1" backgroundColor="#30403f3f" />
 	<eLabel position="75,45" size="8,915" zPosition="1" backgroundColor="#30403f3f" />
 	<eLabel position="75,953" size="1763,8" zPosition="1" backgroundColor="#30403f3f" />
-    <widget source="text" render="xcRunningText" position="1072,324" size="730,609" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
+    <widget source="text" render="xcRunningText" position="1072,244" size="730,689" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
 <!-- 
 	<widget name="text" position="219,71" size="1450,877" font="OpenFont2;30" halign="center" foregroundColor="#33ccff" transparent="1" zPosition="5" />   
 	-->

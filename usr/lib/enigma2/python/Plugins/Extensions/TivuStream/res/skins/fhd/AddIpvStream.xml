@@ -4,7 +4,7 @@
 	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" zPosition="5" />
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="220,130" size="1030,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
-	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="lrft" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
+	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
 	<!-- Menu List -->
 	<widget name="statusbar" position="220,155" size="1030,50" font="Regular;30" halign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
 	<widget name="menu" position="220,215" size="1030,700" font="Regular;30" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" 

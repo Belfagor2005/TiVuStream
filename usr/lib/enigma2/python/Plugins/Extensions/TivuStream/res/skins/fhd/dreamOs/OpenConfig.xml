@@ -1,18 +1,16 @@
 <!-- Skin Config 15/08/2020 -->
 <screen name="Config" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="transparent" flags="wfNoBorder">
-	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main2.png" alphatest="blend" zPosition="1" />
+	<ePixmap position="0,0" size="1920,1078" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main2.png" alphatest="blend" zPosition="1" />
 	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" zPosition="5" />
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="220,130" size="1030,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
-	<widget name="Maintainer2" position="510,68" size="412,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="description" position="224,1074" size="1018,94" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="Maintainer2" position="541,55" size="412,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="description" position="223,677" size="1018,52" font="Regular; 32" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<!-- Menu List -->
-	<widget name="config" position="220,155" size="1030,456" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" 
-		foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" 
-		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png" />
+	<widget name="config" position="220,150" itemHeight="50" size="1030,522" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png" />
 	<!-- Widget -->
-	<widget name="infoc2" position="220,700" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="text" position="220,709" size="1030,191" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="infoc2" position="628,960" size="170,100" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="text" position="222,730" size="1030,175" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<!-- Colors 1220 -->
 	<ePixmap position="220,910" size="1030,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5" />

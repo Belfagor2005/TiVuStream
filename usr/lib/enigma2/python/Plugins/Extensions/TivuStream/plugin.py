@@ -3,11 +3,10 @@
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  14/02/2021	 #
+#	  04/04/2022	 #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
-from . import _
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -24,16 +23,20 @@ from Components.PluginList import *
 from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
 from Components.SelectionList import SelectionList
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.ServiceList import ServiceList
 from Components.Sources.List import List
 from Components.Sources.Progress import Progress
 from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import *
+from Plugins.Extensions.TivuStream.getpics import GridMain
+from Plugins.Extensions.TivuStream.getpics import getpics
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
 from Screens.InfoBar import MoviePlayer, InfoBar
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications, InfoBarMenu #, InfoBarSubtitleSupport
 from Screens.InputBox import InputBox
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
@@ -47,27 +50,26 @@ from Tools.Directories import resolveFilename, fileExists, copyfile, pathExists
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
+from enigma import eSize, eListbox, eListboxPythonMultiContent, eServiceCenter, eServiceReference, iPlayableService
+from enigma import eTimer
+from enigma import getDesktop, ePicLoad, gPixmapPtr
+from enigma import loadPNG, gFont
+from os.path import splitext
+from sys import version_info
 from twisted.web.client import downloadPage, getPage, error
 from xml.dom import Node, minidom
 import Components.PluginComponent
 import base64
-import os
-import re
-import sys
 import glob
-import time
+import os
+import random
+import re
+import shutil
 import socket
 import ssl
-import random
-import shutil
-from enigma import eTimer
-from enigma import getDesktop, ePicLoad, gPixmapPtr
-from Plugins.Extensions.TivuStream.getpics import getpics
-from Plugins.Extensions.TivuStream.getpics import GridMain
-from os.path import splitext
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications, InfoBarMenu #, InfoBarSubtitleSupport
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from sys import version_info
+import sys
+import time
 global isDreamOS
 isDreamOS = False
 
@@ -85,7 +87,6 @@ else:
     from urlparse import urlparse
     from urllib import urlencode, quote
     from urllib import urlretrieve
-
 
 try:
     import io
@@ -136,7 +137,6 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-            
 def ssl_urlopen(url):
 	if sslContext:
 		return urlopen(url, context=sslContext)
@@ -144,20 +144,22 @@ def ssl_urlopen(url):
 		return urlopen(url)
 
 def checkStr(data):
+
     if PY3:
+
         if type(data) == type(bytes()):
             data = data.decode('utf-8')
     else:
+
         if type(data) == type(unicode()):
             data = data.encode('utf-8')
     return data
-    
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
 except:
     isDreamOS = False
-        
+
 try:
     from enigma import eDVBDB
 except ImportError:
@@ -166,8 +168,8 @@ except ImportError:
 #changelog 21.01.2021
 currversion = '2.9'
 Version = currversion + ' - 18.12.2020'
-title_plug = '..:: TiVuStream Revolution V. %s ::..' % Version
-name_plug = 'TiVuStream Revolution'
+title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
+name_plug = 'TivuStream Revolution'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
 Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
@@ -214,14 +216,12 @@ def trace_error():
         traceback.print_exc(file=open('/tmp/KeyAdderError.log', 'a'))
     except:
         pass
-        
 def make_request(url):
     try:
         req = Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
         # response = urlopen(req)
         response = checkStr(urlopen(req))
-        # response = checkStr(ssl_urlopen(req))        
         link = response.read()
         response.close()
         print("link =", link)
@@ -253,29 +253,42 @@ if os.path.exists("/usr/bin/exteplayer3"):
     modechoices.append(("5002", _("Exteplayer3(5002)")))
 
 sessions = []
-config.plugins.TivuStream = ConfigSubsection()
-config.plugins.TivuStream.autoupd = ConfigYesNo(default=True)
-config.plugins.TivuStream.pthm3uf = ConfigDirectory(default='/media/hdd/movie')
-# config.plugins.TivuStream.code = ConfigNumber(default = 1234)
-config.plugins.TivuStream.code = ConfigText(default = "1234")
-config.plugins.TivuStream.bouquettop = ConfigSelection(default='Bottom', choices=['Bottom', 'Top'])
-config.plugins.TivuStream.server = ConfigSelection(default='CORVOBOYS', choices=['PATBUWEB', 'CORVOBOYS'])
-config.plugins.TivuStream.services = ConfigSelection(default='Default', choices=modechoices)
-config.plugins.TivuStream.strtext = ConfigYesNo(default=True)
-config.plugins.TivuStream.strtmain = ConfigYesNo(default=True)
-config.plugins.TivuStream.thumb = ConfigYesNo(default=False)
-config.plugins.TivuStream.thumbpic = ConfigYesNo(default=False)
+config.plugins.TivuStream                        = ConfigSubsection()
+config.plugins.TivuStream.autoupd                = ConfigYesNo(default=True)
+config.plugins.TivuStream.pthm3uf                = ConfigDirectory(default='/media/hdd/movie')
+# config.plugins.TivuStream.code                   = ConfigNumber(default = 1234)
+config.plugins.TivuStream.code                   = ConfigText(default = "1234")
+config.plugins.TivuStream.bouquettop             = ConfigSelection(default='Bottom', choices=['Bottom', 'Top'])
+config.plugins.TivuStream.server                 = ConfigSelection(default='CORVOBOYS', choices=['PATBUWEB', 'CORVOBOYS'])
+config.plugins.TivuStream.services               = ConfigSelection(default='4097', choices=modechoices)
+config.plugins.TivuStream.cachefold              = ConfigDirectory(default='/media/hdd/')
+config.plugins.TivuStream.strtext                = ConfigYesNo(default=True)
+config.plugins.TivuStream.strtmain               = ConfigYesNo(default=True)
+config.plugins.TivuStream.thumb                  = ConfigYesNo(default=False)
+config.plugins.TivuStream.thumbpic               = ConfigYesNo(default=False)
 
 global Path_Movies
 Path_Movies             = str(config.plugins.TivuStream.pthm3uf.value) + "/"
 if Path_Movies.endswith("//") is True:
     Path_Movies = Path_Movies[:-1]
 
+
+tvstrvl = config.plugins.TivuStream.cachefold.value + "tivustream"
+tmpfold = config.plugins.TivuStream.cachefold.value + "tivustream/tmp"
+picfold = config.plugins.TivuStream.cachefold.value + "tivustream/pic"
+
+if not os.path.exists(tvstrvl):
+    os.system("mkdir " + tvstrvl)
+if not os.path.exists(tmpfold):
+    os.system("mkdir " + tmpfold)
+if not os.path.exists(picfold):
+    os.system("mkdir " + picfold)
+
 def server_ref():
-    global server, host, upd_fr_txt, nt_upd_lnk,upd_nt_txt
+    global server, host, upd_fr_txt, upd_nt_txt
     server = ''
     host = ''
-    TEST1 = 'aHR0cDovL3BhdGJ1d2ViLmNvbQ=='
+    TEST1 = 'aHR0cHM6Ly9wYXRidXdlYi5jb20='
     ServerS1 = base64.b64decode(TEST1)
     data_s1 = 'L2lwdHYv' #
     FTP_1 = base64.b64decode(data_s1)
@@ -293,8 +306,7 @@ def server_ref():
     # upd_nt_txt = ('%se2liste/list.txt' % server)
     tex = 'aHR0cDovL3RpdnVzdHJlYW0ud2Vic2l0ZS9pb3MvbGlzdC50eHQ='
     upd_nt_txt = base64.b64decode(tex)
-    nt_upd_lnk = ('wget %se2liste/note.txt -O /tmp/note.txt > /dev/null' % server)
-    return server, host, upd_fr_txt, nt_upd_lnk
+    return server, host, upd_fr_txt
 server_ref()
 nnewtv = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=='
 servernew = base64.b64decode(nnewtv)
@@ -303,11 +315,11 @@ servernewm3u = base64.b64decode(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
 m3uest = base64.b64decode(estm3u)
 
-global nasarandom, imgjpg, pngori
+global pngori
 nasarandom = "http://patbuweb.com/back-tvstream/"
-imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg", "nasa4.jpg", "nasa5.jpg", "nasa6.jpg", "nasa7.jpg", "nasa8.jpg", "nasa9.jpg", "nasa10.jpg", "nasa11.jpg")
-pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg'   
-                
+imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
+pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
+
 global skin_path
 skin_path = plugin_path
 HD = getDesktop(0).size()
@@ -452,11 +464,11 @@ def tvListEntry(name,png):
     res = [name]
     png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting.png'
     if HD.width() > 1280:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+            res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
+            res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+            res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
+            res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
     return res
 
 
@@ -503,7 +515,7 @@ class OpenScript(Screen):
         skin = skin_path + '/OpenScript.xml'
         f = open(skin, 'r')
         self.skin = f.read()
-        f.close()
+        # f.close()
         Screen.__init__(self, session)
         self.setup_title = _('Channel List')
         self['list'] = tvList([])
@@ -538,12 +550,12 @@ class OpenScript(Screen):
         self.icount = 0
         self['listUpdate'].setText(_('Check List Update wait please...'))
         self.timer = eTimer()
-        self.timer.start(1000, 1)
+        self.timer.start(500, 1)
         if isDreamOS:
             self.timer_conn = self.timer.timeout.connect(self.read)
         else:
             self.timer.callback.append(self.read)
-           
+
     def read(self):
         try:
             destr = plugin_path + 'list.txt'
@@ -554,7 +566,6 @@ class OpenScript(Screen):
             self['listUpdate'].setText(content)
         except Exception as ex:
             print(ex)
-            
 
     def updateMenuList(self):
         self.menu_list = []
@@ -568,6 +579,7 @@ class OpenScript(Screen):
             self.menu_list.append(x)
             idx += 1
         self['list'].setList(list)
+
 
     def okRun(self, result):
         if result:
@@ -817,7 +829,7 @@ class OpenM3u(Screen):
         skin = skin_path + '/OpenM3u.xml'
         f = open(skin, 'r')
         self.skin = f.read()
-        f.close()
+        # f.close()
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
@@ -935,7 +947,7 @@ class OpenM3u(Screen):
         if not os.path.exists(pth):
             self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
             return
-        
+
         bqtname = 'userbouquet.%s.tv' % name
         # self.iConsole = iConsole()
         desk_tmp = ''
@@ -980,7 +992,7 @@ class OpenM3u(Screen):
         pth = Path_Movies #self.name
         if not os.path.exists(pth):
             self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
-            return        
+            return
         bqtname = 'userbouquet.%s.tv' % name
         # self.iConsole = iConsole()
         desk_tmp = ''
@@ -1031,7 +1043,7 @@ class M3uPlay(Screen):
         skin = skin_path + '/M3uPlay.xml'
         f = open(skin, 'r')
         self.skin = f.read()
-        f.close()
+        # f.close()
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
@@ -1048,6 +1060,7 @@ class M3uPlay(Screen):
         self["key_blue"] = Button(_("Search"))
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
+        self["progress"].hide()
         self.downloading = False
         self.pin = False
         global search_ok
@@ -1090,7 +1103,6 @@ class M3uPlay(Screen):
                     ##EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
                     ##EXTINF:-1,Primafila 1
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
-                    
                     # if 'tvg-logo' in fpage:
                         # print('Tvg-logo in fpage is True1 ---')
                         # regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
@@ -1102,7 +1114,7 @@ class M3uPlay(Screen):
                             url = url.replace(" ", "")
                             url = url.replace("\\n", "")
                             # if pic:
-                               # pic = pic 
+                               # pic = pic
                             self.names.append(name)
                             self.urls.append(url)
                             self.pics.append(pic)
@@ -1159,6 +1171,7 @@ class M3uPlay(Screen):
                 pass
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show()
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -1170,6 +1183,7 @@ class M3uPlay(Screen):
             self['progresstext'].text = ''
             self.progclear = 0
             self['progress'].setValue(self.progclear)
+            self["progress"].hide()
 
     def showError(self, error):
         OnclearMem()
@@ -1187,47 +1201,58 @@ class M3uPlay(Screen):
             if fileExists(self.name):
                 f1 = open(self.name, 'r+')
                 fpage = f1.read()
-                if "#EXTM3U" in fpage:
-                    ##EXTINF:-1 tvg-logo="https://mr.comingsoon.it/imgdb/PrimoPiano/99017_ppl.jpg" group-title="TOP ITALIA",GFVip Un'ora fa
-                    ###EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
-                    ##EXTINF:-1 group-title="RAI PLAY ACTION",--- RAI PLAY ACTION ---
-                    ##EXTINF:-1,Primafila 1
-                    regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
-                    # if 'tvg-logo' in fpage:
-                        # print('tvg-logo in fpage: True')
-                        # regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
+
+                if "#EXTM3U" and 'tvg-logo' in fpage:
+                    print('tvg-logo in fpage: True')
+                    regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
-                    for name, url in match:
-                        url = url.replace(' ', '')
-                        url = url.replace('\\n', '')
-                        # # url = url.replace('https', 'http')
-                        # if pic:
-                            # pic = pic
-                        self.names.append(name)
-                        self.urls.append(url)
-                        self.pics.append(pic)
+                    for pic, name, url in match:
+                            url = url.replace(' ', '')
+                            url = url.replace('\\n', '')
+                            # # url = url.replace('https', 'http')
+                            # if pic:
+                            pic = pic
+                            self.names.append(name)
+                            self.urls.append(url)
+                            self.pics.append(pic)
+
+                # elif "#EXTM3U" in fpage:
+                else:
+                        regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
+                        match = re.compile(regexcat, re.DOTALL).findall(fpage)
+                        for name, url in match:
+                                url = url.replace(' ', '')
+                                url = url.replace('\\n', '')
+                                # # url = url.replace('https', 'http')
+                                # if pic:
+                                pic = pic
+                                self.names.append(name)
+                                self.urls.append(url)
+                                self.pics.append(pic)
     #####################################################################################
     #self.onShown.append(self.openTest)
-                    if config.plugins.TivuStream.thumb.value == True:
-                        self.gridmain = eTimer()
-                        self.gridmain.start(2000, True)
-                        try:
-                            self.hideTimer_conn = self.gridmain.timeout.connect(self.gridpic)
-                        except:
-                            self.gridmain.callback.append(self.gridpic)
+                if config.plugins.TivuStream.thumb.value == True:
+                    self.gridmaint = eTimer()
+                    self.gridmaint.start(3000, True)
+                    try:
+                        self.gridmaint_conn = self.gridmaint.timeout.connect(self.gridpic)
+                    except:
+                        self.gridmaint.callback.append(self.gridpic)
+                    # self.session.open(GridMain, self.names, self.urls, self.pics)
     #####################################################################################
-                            
-                    else:
-                        m3ulist(self.names, self['list'])
-                    self["live"].setText('N.' + str(len(self.names)) + " Stream")
-                            
+
                 else:
-                    self.session.open(openMessageBox, _('File Unknow!!!'), openMessageBox.TYPE_INFO, timeout=5)
-                
+                    m3ulist(self.names, self['list'])
+                self["live"].setText('N.' + str(len(self.names)) + " Stream")
+
+            else:
+                self.session.open(openMessageBox, _('File Unknow!!!'), openMessageBox.TYPE_INFO, timeout=5)
+
         except Exception as ex:
             print('error exception: ', ex)
 
     def gridpic(self):
+
         self.session.open(GridMain, self.names, self.urls, self.pics)
         self.close()
 
@@ -1293,6 +1318,7 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     STATE_PAUSED = 2
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
+    screen_timeout = 5000
 
     def __init__(self, session, name, url):
         Screen.__init__(self, session)
@@ -1332,9 +1358,18 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.name = name
         # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         self.state = self.STATE_PLAYING
+        # self.hidetimer = eTimer()
+        # self.hidetimer.timeout.get().append(self.ok)
+        self.hideTimer = eTimer()
+        self.hideTimer.start(5000, True)
+        try:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
+        except:
+            self.hideTimer.callback.append(self.ok)
         self.onLayoutFinish.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
 
+		# self.onClose.append(self.__onClose)
 
     def showIMDB(self):
         if '.mp4' in self.url or '.mkv' in self.url or '.flv' in self.url or '.avi' in self.url:
@@ -1355,34 +1390,11 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         else:
             self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=9)
 
-    # def openPlay(self):
-        # url = str(self.url)
-        # self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
-        ###kiddac test
-        # print('servicetype1: ', self.servicetype)
-        # ref = ':0:1:0:0:0:0:0:0:0:' + url
-        
-        # # if config.plugins.TivuStream.services.value == '5001':
-                # # self.servicetype = '5001'
-        # # elif config.plugins.TivuStream.services.value == '5002':
-                # # self.servicetype = '5002' 
-        # # elif config.plugins.TivuStream.services.value == '8193':
-                # # # ref = '8193:0:1:0:0:0:0:0:0:0:yt%3a//' + url + '<videoid>'
-                # # self.servicetype = '8193' 
-        # # elif config.plugins.TivuStream.services.value == '1':
-                # # self.servicetype = '1' 
-        # # else:
-            # # if config.plugins.TivuStream.services.value == '4097':
-                # # self.servicetype = '4097' 
-        # ref = self.servicetype + ref
-        # sref = eServiceReference(ref)
-        # sref.setName(self.name)
-        # self.session.nav.stopService()
-        # self.session.nav.playService(sref)
     def openPlay(self,servicetype, url):
         url = url
         ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
         print('final reference :   ', ref)
+
         sref = eServiceReference(ref)
         sref.setName(self.name)
         self.session.nav.stopService()
@@ -1391,9 +1403,9 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     def cicleStreamType(self):
         from itertools import cycle, islice
         self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
-
         ###kiddac test
         print('servicetype1: ', self.servicetype)
+
         url = str(self.url)
         currentindex = 0
         streamtypelist = ["1", "4097"]
@@ -1419,6 +1431,21 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.session.nav.stopService()
         self.session.nav.playService(srefInit)
         self.close()
+
+    def __setHideTimer(self):
+        self.hidetimer.start(self.screen_timeout)
+
+    def showInfobar(self):
+        self.vlcservice.refresh()
+        self.show()
+        if self.state == self.STATE_PLAYING:
+            self.__setHideTimer()
+        else:
+            pass
+
+    def hideInfobar(self):
+        self.hide()
+        self.hidetimer.stop()
 
     def ok(self):
         if self.shown:
@@ -1587,22 +1614,36 @@ class OpenConfig(Screen, ConfigListScreen):
             self['text'] = Label(info)
             self["description"] = Label(_(''))
             self.cbUpdate = False
-            self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'],
-            {
+            
+            self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"  ], {
+                'cancel': self.extnok,
                 "red": self.extnok,
-                "cancel": self.extnok,
-                'yellow': self.msgupdt1,
                 "green": self.cfgok,
-                "left": self.keyLeft,
-                "right": self.keyRight,
-                'showVirtualKeyboard': self.KeyText,
-                "ok": self.Ok_edit
-            }, -1)
+                'yellow': self.msgupdt1,
+                'showVirtualKeyboard': self.KeyText,                
+                'ok': self.Ok_edit,
+
+            }, -2)
+            
+            # self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'],
+            # {
+                # "red": self.extnok,
+                # "cancel": self.extnok,
+                # 'yellow': self.msgupdt1,
+                # "green": self.cfgok,
+                # "left": self.keyLeft,
+                # "right": self.keyRight,
+                # 'showVirtualKeyboard': self.KeyText,
+                # "ok": self.Ok_edit
+            # }, -1)
             self.list = []
             ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
             self.createSetup()
             self.onLayoutFinish.append(self.checkUpdate)
             self.onLayoutFinish.append(self.layoutFinished)
+            if self.setInfo not in self['config'].onSelectionChanged:
+                self['config'].onSelectionChanged.append(self.setInfo)            
+               
 
         def checkUpdate(self):
             # server_ref()
@@ -1660,20 +1701,59 @@ class OpenConfig(Screen, ConfigListScreen):
         def createSetup(self):
             self.editListEntry = None
             self.list = []
-            self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server, _("Server selection")))
-            self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd, _("Automatic plugin update")))
-            self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code, _("Enter the password to download Lists XXX Adults")))
-            self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop, _("Configure position of the bouquets of the converted lists")))
-            self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf, _("Folder path containing the .m3u files")))
-            self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services, _("Configure Service Player Reference")))
-            self.list.append(getConfigListEntry(_('Show thumpics ?'), config.plugins.TivuStream.thumb, _("Show thumpics in Player M3U ?")))
-            # if config.plugins.TivuStream.thumb.value == True:
-                # self.list.append(getConfigListEntry(_('Download thumpics ?'), config.plugins.TivuStream.thumbpic, _("Download thumpics in Player M3U (is very Slow)?")))
-            self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext, _("Show Plugin in Extensions Menu")))
-            self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain, _("Show Plugin in Main Menu")))
+            self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server))
+            self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd))
+            self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code))
+            self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop))
+            self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
+            self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
+            self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
+            if config.plugins.TivuStream.thumb.value == True:
+                self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
+            self.list.append(getConfigListEntry(_('Folder Cache for Thumbpics:'), config.plugins.TivuStream.cachefold))
+            self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext))
+            self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain))
             self['config'].list = self.list
             self["config"].setList(self.list)
+            self.setInfo()
 
+        def setInfo(self):
+            entry = str(self.getCurrentEntry())
+            if entry == _('Server:'):
+                self['description'].setText(_("Configure Server for Update Service and List"))
+                return
+            if entry == _('Auto Update Plugin:'):
+                self['description'].setText(_("Set Automatic Update Plugin Version"))
+                return
+            if entry == _('Personal Password:'):
+                self['description'].setText(_("Enter the password to download Lists XXX Adults"))
+                return
+            if entry == _('IPTV bouquets location '):
+                self['description'].setText(_("Configure position of the bouquets of the converted lists"))
+                return
+            if entry == _('Player folder List <.m3u>:'):
+                self['description'].setText(_("Folder path containing the .m3u files"))
+                return                
+            if entry == _('Services Player Reference type'):
+                self['description'].setText(_("Configure Service Player Reference"))
+                return
+            if entry == _('Show thumpics?'):
+                self['description'].setText(_("Show Thumbpics ? Enigma restart required"))
+                return          
+            if entry == _('Download thumpics?'):
+                self['description'].setText(_("Download thumpics in Player M3U (is very Slow)?"))
+                return     
+            if entry == _('Folder Cache for Thumbpics:'):
+                self['description'].setText(_("Configure position folder for temporary Thumbpics"))
+                return                
+            if entry == _('Link in Extensions Menu:'):
+                self['description'].setText(_("Show Plugin in Extensions Menu"))
+                return                
+            if entry == _('Link in Main Menu:'):
+                self['description'].setText(_("Show Plugin in Main Menu"))
+            return                      
+   
+            
         def changedEntry(self):
             sel = self['config'].getCurrent()
             for x in self.onChangedEntry:
@@ -1695,13 +1775,13 @@ class OpenConfig(Screen, ConfigListScreen):
             from Screens.Setup import SetupSummary
             return SetupSummary
 
-        def keyLeft(self):
-            ConfigListScreen.keyLeft(self)
-            self.createSetup()
+        # def keyLeft(self):
+            # ConfigListScreen.keyLeft(self)
+            # self.createSetup()
 
-        def keyRight(self):
-            ConfigListScreen.keyRight(self)
-            self.createSetup()
+        # def keyRight(self):
+            # ConfigListScreen.keyRight(self)
+            # self.createSetup()
 
         def Ok_edit(self):
             ConfigListScreen.keyOK(self)
@@ -1709,6 +1789,9 @@ class OpenConfig(Screen, ConfigListScreen):
             if sel and sel == config.plugins.TivuStream.pthm3uf:
                 self.setting = 'pthm3uf'
                 self.openDirectoryBrowser(config.plugins.TivuStream.pthm3uf.value)
+            elif sel and sel == config.plugins.TivuStream.cachefold:
+                self.setting = 'cachefold'
+                self.openDirectoryBrowser(config.plugins.TivuStream.cachefold.value)
             else:
                 pass
 
@@ -1732,6 +1815,8 @@ class OpenConfig(Screen, ConfigListScreen):
             if path is not None:
                 if self.setting == 'pthm3uf':
                     config.plugins.TivuStream.pthm3uf.setValue(path)
+                elif self.setting == 'cachefold':
+                    config.plugins.TivuStream.cachefold.setValue(path)
             return
 
         def cfgok(self):
@@ -2071,7 +2156,7 @@ class plgnstrt(Screen):
         self.picload = ePicLoad()
         self.scale = AVSwitch().getFramebufferScale()
         # self['text'] = ScrollLabel()
-        self['text'] = StaticText()        
+        self['text'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
          'DirectionActions','ColorActions', 'SetupActions'], {'ok': self.clsgo,
          'cancel': self.clsgo,
@@ -2082,32 +2167,19 @@ class plgnstrt(Screen):
          # 'left': self['text'].pageUp,
          # 'right': self['text'].pageDown,
          'green': self.clsgo}, -1)
-        # self.onShown.append(self.checkDwnld)   
-        self.onFirstExecBegin.append(self.RandomNasa)        
-        # self.onLayoutFinish.append(self.checkDwnld)
+        # self.onShown.append(self.checkDwnld)
+        self.onFirstExecBegin.append(self.loadDefaultImage)
+        # self.onLayoutFinish.append(self.image_downloaded)
         self.onLayoutFinish.append(self.checkDwnld)
 
-            
-            
-    def loadDefaultImage(self, failure=None):
-        print("*** failure *** %s" % failure)
-        # global pngori
-        if self["poster"].instance:        
-            fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
-            npj = random.choice(imgjpg)  
-            pngori = fldpng + npj        
-            self.decodeImage(pngori)
-            # self["poster"].instance.setPixmapFromFile(pngori)
-            # self['poster'].show()
-
-
+           
     def decodeImage(self, pngori):
-        # self["poster"].show()
+        pixmaps = pngori
         if isDreamOS:
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
-        self['poster'].hide()
+        # self['poster'].hide()
         sc = AVSwitch().getFramebufferScale()
         self.picload = ePicLoad()
         size = self['poster'].instance.size()
@@ -2120,146 +2192,75 @@ class plgnstrt(Screen):
          '#FF000000'))
         ptr = self.picload.getData()
         if isDreamOS:
-            self.picload.startDecode(pngori, False)
+            if self.picload.startDecode(pixmaps, False) == 0:
+                ptr = self.picload.getData()
         else:
-            self.picload.startDecode(pngori, 0, 0, False)        
-        ptr = self.picload.getData()
-        if ptr is not None:
-            self["poster"].instance.setPixmap(ptr)
-            self["poster"].show()
+            if self.picload.startDecode(pixmaps, 0, 0, False) == 0:
+                ptr = self.picload.getData()
+        if ptr != None:
+            self['poster'].instance.setPixmap(ptr)
+            self['poster'].show()
         else:
-            self.loadDefaultImage()
-           
+            print('no cover.. error')
+        return            
             
-            
-    # def decodeImage(self, pngori):
-        # self["poster"].show()
-        # # if self["poster"].instance:                       
-    
-        # if isDreamOS:
-            # self['poster'].instance.setPixmap(gPixmapPtr())
-        # else:
-            # self['poster'].instance.setPixmap(None)
-            # # self['poster'].show()
-            # self.scale = AVSwitch().getFramebufferScale()
-            # self.picload = ePicLoad()
-            # size = self['poster'].instance.size()
-            # self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, '#FF000000'))
-
-        # if isDreamOS:
-            # self.picload.startDecode(pngori, False)
-        # else:
-            # self.picload.startDecode(pngori, 0, 0, False) 
-        # ptr = self.picload.getData()
-        # if ptr is not None:
-            # self["poster"].instance.setPixmap(ptr)
-            # self["poster"].show()
-        # else:
-            # self.loadDefaultImage()
-
-
-    def image_downloaded(self, data, png):
-        if os.path.exists(png):
+    def image_downloaded(self):
+        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
+        if os.path.exists(pngori):
+            print('image pngori: ',pngori)
             try:
-                self.decodeImage(png)
+                self.decodeImage(pngori)
             except Exception as ex:
                 print(ex)
                 pass
             except:
                 pass
 
-    def downloadError(self, pngori):
-        try:
-            self.decodeImage(pngori)
-        except Exception as ex:
-            print(ex)
-
-    # def loadDefaultImage(self, failure=None):
-        # print("*** failure *** %s" % failure)
+    def loadDefaultImage(self, failure=None):
+        print("*** failure *** %s" % failure)
         # if self["poster"].instance:
-            # global pngori
-            # fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
-            # npj = random.choice(imgjpg)  
-            # pngori = fldpng + npj
-            # self["poster"].instance.setPixmapFromFile(pngori)
-            
-    def RandomNasa(self):
-        global urlorig
-        urlorig = 'https://apod.nasa.gov/apod/'
-        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg'
-        print('urllllllllllllllllllll', urlorig)
-        url2 = ' '
-        # try:
-        if urlorig.startswith("https") and sslverify:
-            parsed_uri = urlparse(urlorig)
-            domain = parsed_uri.hostname
-            sniFactory = SNIFactory(domain)
-            if PY3 == 3:
-                urlorig = urlorig.encode()
-            content = make_request(urlorig)   
-            print('content B =', content) 
-            if 'href="image/' in content:
-                print('in content if real')
-                regex = '<a href="image/(.*?)"'
-                match = re.compile(regex, re.DOTALL).findall(content)
-                url2 = match[0]
-                print('url2 math: ', url2)
-                url = urlorig + 'image/' + str(url2)
-                # if 'jpg' in url:
-                    # print('uurrll: ', url)
-                    # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)
-                print('uurrll: ', url)    
-                downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)                     
-   
-            # elif "<iframe src='" in content:
-                # print('in content if real')
-                # regex = "<iframe src='(.*?)'"
-                # match = re.compile(regex, re.DOTALL).findall(content)
-                # url2 = match[0]
-                # print('url2 math: ', url2)
-                # url = str(url2) # urlorig + 'image/' + str(url2)
-                # # if 'jpg' in url:
-                    # # print('uurrll: ', url)
-                    # # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)
-                # print('uurrll: ', url)    
-                # downloadPage(url, pngori, sniFactory, timeout=10).addCallback(self.image_downloaded, pngori).addErrback(self.downloadError)    
-   
-            else:
-                self.loadDefaultImage()
-        else:
-            self.loadDefaultImage()                        
-        # except:
-            # print('no url parsed')
-            # pass
-        
-    # def RandomNasa2(self):
-        # global pngori
-        # fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
-        # npj = random.choice(imgjpg)  
-        # pngori = fldpng + npj
-        # print('urllllllllllllllllllll', pngori)
-        # shutil.copyfile(pngori, fldpng + 'nasa.jpg')
-        # self.decodeImage(pngori)
-        
+        global pngori
+        # self.png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
+        fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
+        npj = random.choice(imgjpg)
+        pngori = fldpng + npj
+        self.decodeImage(pngori)
+
     def checkDwnld(self):
-        server_ref()
         self.icount = 0
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
-        self.timer.start(1500, 1)
+        self.timer.start(2000, 1)
         if isDreamOS:
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
             self.timer.callback.append(self.OpenCheck)
 
-    def OpenCheck(self):
-        url3 = str(upd_fr_txt)
-        getPage(url3).addCallback(self.ConnOK).addErrback(self.error)
+    def getinfo(self):
+        continfo = _("==========       WELCOME     ============\n")
+        continfo += _("=========     SUPPORT ON:   ============\n")
+        continfo += _("+WWW.TIVUSTREAM.COM - WWW.CORVOBOYS.COM+\n")
+        continfo += _("http://t.me/tivustream\n\n")
+        continfo += _("========================================\n")
+        continfo += _("NOTA BENE:\n")
+        continfo += _("Le liste create ad HOC contengono indirizzi liberamente e gratuitamente\n")
+        continfo += _("trovati in rete e non protetti da sottoscrizione o abbonamento.\n")
+        continfo += _("Il server di riferimento strutturale ai progetti rilasciati\n")
+        continfo += _("non e' fonte di alcun stream/flusso.\n")
+        continfo += _("Assolutamente VIETATO utilizzare queste liste senza autorizzazione.\n")
+        continfo += _("========================================\n")
+        continfo += _("DISCLAIMER: \n")
+        continfo += _("The lists created at HOC contain addresses freely and freely found on\n")
+        continfo += _("the net and not protected by subscription or subscription.\n")
+        continfo += _("The structural reference server for projects released\n")
+        continfo += _("is not a source of any stream/flow.\n")
+        continfo += _("Absolutely PROHIBITED to use this lists without authorization\n")
+        continfo += _("========================================\n")
+        return continfo
 
-    def ConnOK(self, data):
-        URL = ('%se2liste/note.txt'% server)
+    def OpenCheck(self):
         try:
-            self['text'].setText(make_request(URL))
+            self['text'].setText(self.getinfo())
         except:
             self['text'].setText(_('\n\n' + 'Error downloading News!'))
 

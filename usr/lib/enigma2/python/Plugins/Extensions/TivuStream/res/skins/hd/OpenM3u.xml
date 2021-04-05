@@ -11,7 +11,7 @@
 		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sliderb.png" />
 	<!-- Widget -->
 	<widget name="path"   position="146,540" size="686,35" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="infoc2" position="146,570" size="274,36" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="infoc2" position="146,570" size="686,35" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<!-- Colors 1220 -->
 	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sep.png" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
