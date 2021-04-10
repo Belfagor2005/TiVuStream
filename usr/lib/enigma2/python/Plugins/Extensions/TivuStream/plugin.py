@@ -71,6 +71,7 @@ import ssl
 import sys
 import time
 global isDreamOS
+import six 
 isDreamOS = False
 
 PY3 = sys.version_info[0] == 3
@@ -218,14 +219,15 @@ def trace_error():
         pass
 def make_request(url):
     try:
+        url = checkStr(url)
         req = Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
         # response = urlopen(req)
-        response = checkStr(urlopen(req))
+        response = urlopen(req)
         link = response.read()
         response.close()
-        print("link =", link)
-        return link
+        print("link =", six.ensure_str(link))
+        return six.ensure_str(link)
     except:
         e = URLError #, e:
         print('We failed to open "%s".' % url)
@@ -559,7 +561,7 @@ class OpenScript(Screen):
     def read(self):
         try:
             destr = plugin_path + 'list.txt'
-            onserver2 = str(upd_nt_txt)
+            onserver2 = six.ensure_str(upd_nt_txt)
             with open(destr, 'w') as f:
                 content = make_request(onserver2)
                 f.write(content)
