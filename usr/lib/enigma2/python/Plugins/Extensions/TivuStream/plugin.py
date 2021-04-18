@@ -144,17 +144,24 @@ def ssl_urlopen(url):
 	else:
 		return urlopen(url)
 
-def checkStr(data):
-
+def checkStr(txt):
     if PY3:
-
-        if type(data) == type(bytes()):
-            data = data.decode('utf-8')
+        if isinstance(txt, type(bytes())):
+            txt = txt.decode('utf-8')
     else:
+        if isinstance(txt, type(six.text_type())):
+            txt = txt.encode('utf-8')
+    return txt
+    
+# def checkStr(data):
+    # if PY3:
+        # if type(data) == type(bytes()):
+            # data = data.decode('utf-8')
+    # else:
 
-        if type(data) == type(unicode()):
-            data = data.encode('utf-8')
-    return data
+        # if type(data) == type(unicode()):
+            # data = data.encode('utf-8')
+    # return data
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
@@ -1438,7 +1445,7 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.hidetimer.start(self.screen_timeout)
 
     def showInfobar(self):
-        self.vlcservice.refresh()
+        # self.vlcservice.refresh()
         self.show()
         if self.state == self.STATE_PLAYING:
             self.__setHideTimer()

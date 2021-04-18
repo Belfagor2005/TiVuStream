@@ -27,6 +27,7 @@ import os
 import re
 import sys
 import glob
+import six
 global isDreamOS, skin_path, tmpfold, picfold
 from os.path import splitext
 
@@ -87,14 +88,14 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
             
-def checkStr(data):
+def checkStr(txt):
     if PY3:
-        if type(data) == type(bytes()):
-            data = data.decode('utf-8')
+        if isinstance(txt, type(bytes())):
+            txt = txt.decode('utf-8')
     else:
-        if type(data) == type(unicode()):
-            data = data.encode('utf-8')
-    return data
+        if isinstance(txt, type(six.text_type())):
+            txt = txt.encode('utf-8')
+    return txt
 
 def make_request(url):
     try:
@@ -142,16 +143,15 @@ def getUrl2(url, referer):
     link=response.read()
     response.close()
     return link
-    
+
+
 def getpics(names, pics, tmpfold, picfold):
     print("In getpics tmpfold =", tmpfold)
     print("In getpics picfold =", picfold)
-    if config.plugins.exodus.skinres.value == "FullHD":
+    if HD.width() > 1280:
         nw = 300
     else:
         nw = 200
-    tpicf = ""
-    defpic = plugin_path + "res/pics/default.png"              
     pix = []
     if config.plugins.TivuStream.thumbpic.value == False:
         if HD.width() > 1280:
@@ -168,8 +168,8 @@ def getpics(names, pics, tmpfold, picfold):
     os.system(cmd)
     npic = len(pics)
     j = 0
-    # print("In getpics names =", names)
-    # print("In getpics pics =", pics)
+    print("In getpics names =", names)
+    print("In getpics pics =", pics)
     while j < npic:
         name = names[j]
         print("In getpics name =", name)
@@ -180,10 +180,8 @@ def getpics(names, pics, tmpfold, picfold):
             name = name.replace(":", "")
             name = name.replace("(", "-")
             name = name.replace(")", "")
-            name = name.replace(" ", "-")
-            name = name.replace("'", "")
-                                      
-            name = name.strip()
+            name = name.replace(" ", "")
+            name = name.replace("'", "")                          
         except:
             pass
         url = pics[j]
@@ -191,17 +189,29 @@ def getpics(names, pics, tmpfold, picfold):
             url = ""
         url = url.replace(" ", "%20")
         url = url.replace("ExQ", "=")
-        url = url.strip()
-        # print("In getpics url =", url)
-        
-        path = urlparse(url).path
-        ext = splitext(path)[1]
-        picf = picfold + "/" + name + ext  
-        tpicf = tmpfold + "/" + name + ext #".png"
+        print("In getpics url =", url)
+
+        # path = urlparse(url).path
+        # ext = splitext(path)[1]
+        # picf = picfold + "/" + name + ext  
+        # tpicf = tmpfold + "/" + name + ext #".png"
+
+        # if url[-4:] == ".png":
+            # tpicf = tmpfold + '/' +  name + ".png"
+        # elif url[-4:] == ".jpg":
+            # tpicf = tmpfold + '/' + name + ".jpg"
+
+        if ".png" in url:
+            tpicf = tmpfold + "/" + name + ".png"
+        else:
+            tpicf = tmpfold + "/" + name + ".jpg"
+        picf = picfold + "/" + name + ".jpg"
+                  
         if fileExists(picf):
             cmd = "cp " + picf + " " + tmpfold
             print("In getpics fileExists(picf) cmd =", cmd)
             os.system(cmd)
+
         if not fileExists(picf):
             if plugin_path in url:
                 try:
@@ -228,22 +238,49 @@ def getpics(names, pics, tmpfold, picfold):
                         f1=open(tpicf,"wb")
                         f1.write(fpage)
                         f1.close()
-                      
+                          
                 except:
                     if HD.width() > 1280:
                         cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
                     else:
                         cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
                     os.system(cmd)
+
             if not fileExists(tpicf):
                 print("In getpics not fileExists(tpicf) tpicf=", tpicf)
-                
                 if HD.width() > 1280:
                     cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
                 else:
                     cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
                 print("In getpics not fileExists(tpicf) cmd=", cmd)
                 os.system(cmd)
+
+            # if eDreamOS == False:
+            try:
+                try:
+                    import Image
+                except:
+                    from PIL import Image
+                im = Image.open(tpicf)
+                imode = im.mode
+                if im.mode != "P":
+                    im = im.convert("P")
+                        
+                w = im.size[0]
+                d = im.size[1]
+                r = float(d)/float(w)
+                d1 = r*nw
+                if w != nw:
+                    x = int(nw)
+                    y = int(d1)
+                    im = im.resize((x,y), Image.ANTIALIAS)
+                tpicf = tmpfold + "/" + name + ".png"
+                picf = picfold + "/" + name + ".png"
+                # im.save(tpicf)
+                im.save(tpicf, quality=100, optimize=True) 
+            except:
+                tpicf = plugin_path + "/res/pics/default.png"   
+            
         pix.append(j)
         pix[j] = picf
         j = j+1
@@ -251,6 +288,116 @@ def getpics(names, pics, tmpfold, picfold):
     print("In getpics final cmd1=", cmd1)
     os.system(cmd1)
     return pix
+
+    
+# def getpics(names, pics, tmpfold, picfold):
+    # print("In getpics tmpfold =", tmpfold)
+    # print("In getpics picfold =", picfold)
+    # if config.plugins.exodus.skinres.value == "FullHD":
+        # nw = 300
+    # else:
+        # nw = 200
+    # tpicf = ""
+    # defpic = plugin_path + "res/pics/default.png"              
+    # pix = []
+    # if config.plugins.TivuStream.thumbpic.value == False:
+        # if HD.width() > 1280:
+            # defpic = plugin_path + "res/pics/defaultL.png"
+        # else:
+            # defpic = plugin_path + "res/pics/default.png"
+        # npic = len(pics)
+        # i = 0
+        # while i < npic:
+            # pix.append(defpic)
+            # i = i+1
+        # return pix
+    # cmd = "rm " + tmpfold + "/*"
+    # os.system(cmd)
+    # npic = len(pics)
+    # j = 0
+    # # print("In getpics names =", names)
+    # # print("In getpics pics =", pics)
+    # while j < npic:
+        # name = names[j]
+        # print("In getpics name =", name)
+        # if name is None:
+            # name = "Video"
+        # try:
+            # name = name.replace("&", "")
+            # name = name.replace(":", "")
+            # name = name.replace("(", "-")
+            # name = name.replace(")", "")
+            # name = name.replace(" ", "-")
+            # name = name.replace("'", "")
+                                      
+            # name = name.strip()
+        # except:
+            # pass
+        # url = pics[j]
+        # if url is None:
+            # url = ""
+        # url = url.replace(" ", "%20")
+        # url = url.replace("ExQ", "=")
+        # url = url.strip()
+        # # print("In getpics url =", url)
+        
+        # path = urlparse(url).path
+        # ext = splitext(path)[1]
+        # picf = picfold + "/" + name + ext  
+        # tpicf = tmpfold + "/" + name + ext #".png"
+        # if fileExists(picf):
+            # cmd = "cp " + picf + " " + tmpfold
+            # print("In getpics fileExists(picf) cmd =", cmd)
+            # os.system(cmd)
+        # if not fileExists(picf):
+            # if plugin_path in url:
+                # try:
+                    # cmd = "cp " + url + " " + tpicf
+                    # print("In getpics not fileExists(picf) cmd =", cmd)
+                    # os.system(cmd)
+                # except:
+                    # pass
+            # else:
+                # try:
+                    # if "|" in url:
+                        # n3 = url.find("|", 0)
+                        # n1 = url.find("Referer", n3)
+                        # n2 = url.find("=", n1)
+                        # url1 = url[:n3]
+                        # referer = url[n2:]
+                        # p = getUrl2(url1, referer)
+                        # f1=open(tpicf,"wb")
+                        # f1.write(p)
+                        # f1.close()
+                    # else:
+                        # print("Going in urlopen url =", url)
+                        # fpage = getUrl(url)
+                        # f1=open(tpicf,"wb")
+                        # f1.write(fpage)
+                        # f1.close()
+                      
+                # except:
+                    # if HD.width() > 1280:
+                        # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
+                    # else:
+                        # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                    # os.system(cmd)
+            # if not fileExists(tpicf):
+                # print("In getpics not fileExists(tpicf) tpicf=", tpicf)
+                
+                # if HD.width() > 1280:
+                    # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
+                # else:
+                    # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                # print("In getpics not fileExists(tpicf) cmd=", cmd)
+                # os.system(cmd)
+        # pix.append(j)
+        # pix[j] = picf
+        # j = j+1
+    # cmd1 = "cp " + tmpfold + "/* " + picfold + " && rm " + tmpfold + "/* &"
+    # print("In getpics final cmd1=", cmd1)
+    # os.system(cmd1)
+    # return pix
 
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -334,10 +481,9 @@ class GridMain(Screen):
         Screen.__init__(self, session)
         self['title'] = Label(_('..:: TiVuStream Revolution ::..' ))
 
-        tmpfold = config.plugins.TivuStream.cachefold.value + "tivustream/tmp"
-        picfold = config.plugins.TivuStream.cachefold.value + "tivustream/pic"        
+        tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
+        picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"        
         # pics = getpics(names, pics, tmpfold, picfold)
-
         self["info"] = Label()
         list = names
         self.picsint = eTimer()
@@ -440,8 +586,8 @@ class GridMain(Screen):
         # self.onShown.append(self.openTest)
         
     def getpic(self):
-        tmpfold = config.plugins.TivuStream.cachefold.value + "tivustream/tmp"
-        picfold = config.plugins.TivuStream.cachefold.value + "tivustream/pic"  
+        tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
+        picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"  
         pics = getpics(self.names, self.pics, tmpfold, picfold)
         # return pics
     
@@ -452,34 +598,36 @@ class GridMain(Screen):
         self.close()
 
     def paintFrame(self):
-        # pass#print  "In paintFrame self.index, self.minentry, self.maxentry =", self.index, self.minentry, self.maxentry
+        print("In paintFrame self.index, self.minentry, self.maxentry =", self.index, self.minentry, self.maxentry)
+        # if self.maxentry < self.index or self.index < 0:
+        #     return
+        print("In paintFrame self.ipage = ", self.ipage)
         ifr = self.index - (10*(self.ipage-1))
-        # pass#print  "ifr =", ifr
+        print("ifr =", ifr)
         ipos = self.pos[ifr]
-        # pass#print  "ipos =", ipos
+        print("ipos =", ipos)
         self["frame"].moveTo( ipos[0], ipos[1], 1)
         self["frame"].startMoving()
-        
+
     def openTest(self):
-#                coming in self.ipage=1, self.shortnms, self.pics
         print("self.index, openTest self.ipage, self.npage =", self.index, self.ipage, self.npage)
         if self.ipage < self.npage:
-                self.maxentry = (10*self.ipage)-1
-                self.minentry = (self.ipage-1)*10
-                #self.index 0-11
-                print("self.ipage , self.minentry, self.maxentry =", self.ipage, self.minentry, self.maxentry)
+            self.maxentry = (10*self.ipage)-1
+            self.minentry = (self.ipage-1)*10
+            #self.index 0-11
+            print("self.ipage , self.minentry, self.maxentry =", self.ipage, self.minentry, self.maxentry)
 
         elif self.ipage == self.npage:
-                print("self.ipage , len(self.pics) =", self.ipage, len(self.pics))
-                self.maxentry = len(self.pics) - 1
-                self.minentry = (self.ipage-1)*10
-                print("self.ipage , self.minentry, self.maxentry B=", self.ipage, self.minentry, self.maxentry)
-                i1 = 0
-                blpic = plugin_path + "res/pics/Blank.png"
-                while i1 < 12:
-                      self["label" + str(i1+1)].setText(" ")
-                      self["pixmap" + str(i1+1)].instance.setPixmapFromFile(blpic)
-                      i1 = i1+1
+            print("self.ipage , len(self.pics) =", self.ipage, len(self.pics))
+            self.maxentry = len(self.pics) - 1
+            self.minentry = (self.ipage-1)*10
+            print("self.ipage , self.minentry, self.maxentry B=", self.ipage, self.minentry, self.maxentry)
+            i1 = 0
+            blpic = plugin_path + "res/pics/Blank.png"
+            while i1 < 12:
+                self["label" + str(i1+1)].setText(" ")
+                self["pixmap" + str(i1+1)].instance.setPixmapFromFile(blpic)
+                i1 = i1+1
         print("len(self.pics) , self.minentry, self.maxentry =", len(self.pics) , self.minentry, self.maxentry)
         self.npics = len(self.pics)
 
@@ -491,64 +639,61 @@ class GridMain(Screen):
         while i < ln:
             idx = self.minentry + i
             print("i, idx =", i, idx)
-##################################
+
             print("self.names1[idx] B=", self.names1[idx])
             self["label" + str(i+1)].setText(self.names1[idx])
-#################################
-
             print("idx, self.pics[idx]", idx, self.pics[idx])
-
             pic = self.pics[idx]
-            # print("pic =", pic)
-            # if os.path.exists(pic):
-                   # print("pic path exists")
-            # else:
-                   # print("pic path exists not")
-
-            picd = "/usr/lib/enigma2/python/Plugins/Extensions/Exodus/default.png"
-            # if os.path.exists(picd):
-                   # print("pic path 2 exists")
-            # else:
-                   # print("pic path 2 exists not")
+            print("pic =", pic)
+            if os.path.exists(pic):
+                print("pic path exists")
+            else:
+                print("pic path exists not")
+            picd = plugin_path + "res/pics/default.png"
             try:
-                self["pixmap" + str(i+1)].instance.setPixmapFromFile(pic)
+                self["pixmap" + str(i+1)].instance.setPixmapFromFile(pic) #ok
             except:
                 self["pixmap" + str(i+1)].instance.setPixmapFromFile(picd)
             i = i+1
-            self.index = self.minentry
+        self.index = self.minentry
         print("self.minentry, self.index =", self.minentry, self.index)
         self.paintFrame()
         
     def key_left(self):
         self.index -= 1
         if self.index < 0:
-           self.index = self.maxentry
+            self.index = self.maxentry
         self.paintFrame()
 
     def key_right(self):
         i = self.npics - 1
         if self.index == i:
-           self.index = 0
-           self.ipage = 1
-           self.openTest()
+            self.index = 0
+            self.ipage = 1
+            self.openTest()
         self.index += 1
         if self.index > self.maxentry:
-           self.index = 0
+            self.index = 0
         self.paintFrame()
 
     def key_up(self):
         print("keyup self.index, self.minentry = ", self.index, self.minentry)
         self.index = self.index - 5
+        #   if self.index < 0:
+        #       self.index = self.maxentry
+        #       self.paintFrame()
         print("keyup self.index, self.minentry 2 = ", self.index, self.minentry)
         print("keyup self.ipage = ", self.ipage)
         if self.index < (self.minentry):
             if self.ipage > 1:
                 self.ipage = self.ipage - 1
                 self.openTest()
+        ##  self.paintFrame()
             elif self.ipage == 1:
+        #   self.close()
                 self.paintFrame()
             else:
-               self.paintFrame()
+                self.paintFrame()
         else:
             self.paintFrame()
 
@@ -567,11 +712,12 @@ class GridMain(Screen):
                 self.index = 0
                 self.ipage = 1
                 self.openTest()
+
             else:
                 print("keydown self.index, self.maxentry 3= ", self.index, self.maxentry)
                 self.paintFrame()
         else:
-            self.paintFrame()
+            self.paintFrame()   #pcd fix
 
     def okClicked(self):
         itype = self.index
