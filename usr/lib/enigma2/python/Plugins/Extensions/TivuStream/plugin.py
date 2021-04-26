@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  04/04/2022	 #
+#	  24/04/2022	 #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -137,6 +137,7 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+            
 def ssl_urlopen(url):
 	if sslContext:
 		return urlopen(url, context=sslContext)
@@ -152,15 +153,6 @@ def checkStr(txt):
             txt = txt.encode('utf-8')
     return txt
     
-# def checkStr(data):
-    # if PY3:
-        # if type(data) == type(bytes()):
-            # data = data.decode('utf-8')
-    # else:
-
-        # if type(data) == type(unicode()):
-            # data = data.encode('utf-8')
-    # return data
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
@@ -174,7 +166,7 @@ except ImportError:
 
 #changelog 21.01.2021
 currversion = '2.9'
-Version = currversion + ' - 18.12.2020'
+Version = currversion + ' - 26.04.2021'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
 name_plug = 'TivuStream Revolution'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
