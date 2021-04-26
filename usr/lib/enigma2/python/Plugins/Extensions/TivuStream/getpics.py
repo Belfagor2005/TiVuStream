@@ -19,7 +19,6 @@ from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarS
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from enigma import iServiceInformation, iPlayableService, eServiceReference
 from enigma import eTimer, eActionMap, getDesktop
-from enigma import eTimer
 from time import time, localtime, strftime
 from Screens.MessageBox import MessageBox
 from Components.MenuList import MenuList
@@ -30,9 +29,10 @@ import glob
 import six
 global isDreamOS, skin_path, tmpfold, picfold
 from os.path import splitext
+global defipic
 
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
-
+defipic = plugin_path + "res/pics/defaultL.png"
 PY3 = sys.version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
@@ -52,17 +52,17 @@ skin_path = plugin_path
 
 HD = getDesktop(0).size()
 if HD.width() > 1280:
+    defipic = plugin_path + "res/pics/defaultL.png"
     if isDreamOS:
         skin_path = plugin_path + 'res/skins/fhd/dreamOs/'
     else:
         skin_path = plugin_path + 'res/skins/fhd/'
 else:
+    defipic = plugin_path + "res/pics/default.png"
     if isDreamOS:
         skin_path = plugin_path + 'res/skins/hd/dreamOs/'
     else:
         skin_path = plugin_path + 'res/skins/hd/'
-
- 
 
 try:
     from OpenSSL import SSL
@@ -154,10 +154,11 @@ def getpics(names, pics, tmpfold, picfold):
         nw = 200
     pix = []
     if config.plugins.TivuStream.thumbpic.value == False:
-        if HD.width() > 1280:
-            defpic = plugin_path + "res/pics/defaultL.png"
-        else:
-            defpic = plugin_path + "res/pics/default.png"
+        # if HD.width() > 1280:
+            # defpic = plugin_path + "res/pics/defaultL.png"
+        # else:
+            # defpic = plugin_path + "res/pics/default.png"
+        defpic = defipic
         npic = len(pics)
         i = 0
         while i < npic:
@@ -191,21 +192,23 @@ def getpics(names, pics, tmpfold, picfold):
         url = url.replace("ExQ", "=")
         print("In getpics url =", url)
 
-        # path = urlparse(url).path
-        # ext = splitext(path)[1]
-        # picf = picfold + "/" + name + ext  
-        # tpicf = tmpfold + "/" + name + ext #".png"
-
+        # print("In getpics url =", url)
+#####################
+        path = urlparse(url).path
+        ext = splitext(path)[1]
+        picf = picfold + "/" + name + ext
+        tpicf = tmpfold + "/" + name + ext #".png"
+####################
         # if url[-4:] == ".png":
             # tpicf = tmpfold + '/' +  name + ".png"
         # elif url[-4:] == ".jpg":
             # tpicf = tmpfold + '/' + name + ".jpg"
-
-        if ".png" in url:
-            tpicf = tmpfold + "/" + name + ".png"
-        else:
-            tpicf = tmpfold + "/" + name + ".jpg"
-        picf = picfold + "/" + name + ".jpg"
+#-----------------
+        # if ".png" in url:
+            # tpicf = tmpfold + "/" + name + ".png"
+        # else:
+            # tpicf = tmpfold + "/" + name + ".jpg"
+        # picf = picfold + "/" + name + ".jpg"
                   
         if fileExists(picf):
             cmd = "cp " + picf + " " + tmpfold
@@ -240,46 +243,49 @@ def getpics(names, pics, tmpfold, picfold):
                         f1.close()
                           
                 except:
-                    if HD.width() > 1280:
-                        cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                    else:
-                        cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                    # if HD.width() > 1280:
+                        # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
+                    # else:
+                        # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                    cmd = "cp " + plugin_path + defipic +" " + tpicf
                     os.system(cmd)
 
             if not fileExists(tpicf):
                 print("In getpics not fileExists(tpicf) tpicf=", tpicf)
-                if HD.width() > 1280:
-                    cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                else:
-                    cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                # if HD.width() > 1280:
+                    # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
+                # else:
+                    # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
+                cmd = "cp " + plugin_path + defpic + " " + tpicf    
                 print("In getpics not fileExists(tpicf) cmd=", cmd)
                 os.system(cmd)
 
-            # if eDreamOS == False:
-            try:
+            if isDreamOS == False:
                 try:
-                    import Image
+                    try:
+                        import Image
+                    except:
+                        from PIL import Image
+                    im = Image.open(tpicf)
+                    imode = im.mode
+                    if im.mode != "P":
+                        im = im.convert("P")
+                            
+                    w = im.size[0]
+                    d = im.size[1]
+                    r = float(d)/float(w)
+                    d1 = r*nw
+                    if w != nw:
+                        x = int(nw)
+                        y = int(d1)
+                        im = im.resize((x,y), Image.ANTIALIAS)
+                    # tpicf = tmpfold + "/" + name + ".png"
+                    # picf = picfold + "/" + name + ".png"
+                    # im.save(tpicf)
+                    im.save(tpicf, quality=100, optimize=True) 
                 except:
-                    from PIL import Image
-                im = Image.open(tpicf)
-                imode = im.mode
-                if im.mode != "P":
-                    im = im.convert("P")
-                        
-                w = im.size[0]
-                d = im.size[1]
-                r = float(d)/float(w)
-                d1 = r*nw
-                if w != nw:
-                    x = int(nw)
-                    y = int(d1)
-                    im = im.resize((x,y), Image.ANTIALIAS)
-                tpicf = tmpfold + "/" + name + ".png"
-                picf = picfold + "/" + name + ".png"
-                # im.save(tpicf)
-                im.save(tpicf, quality=100, optimize=True) 
-            except:
-                tpicf = plugin_path + "/res/pics/default.png"   
+                    # tpicf = plugin_path + "/res/pics/default.png" 
+                    tpicf = defipic
             
         pix.append(j)
         pix[j] = picf
@@ -289,115 +295,6 @@ def getpics(names, pics, tmpfold, picfold):
     os.system(cmd1)
     return pix
 
-    
-# def getpics(names, pics, tmpfold, picfold):
-    # print("In getpics tmpfold =", tmpfold)
-    # print("In getpics picfold =", picfold)
-    # if config.plugins.exodus.skinres.value == "FullHD":
-        # nw = 300
-    # else:
-        # nw = 200
-    # tpicf = ""
-    # defpic = plugin_path + "res/pics/default.png"              
-    # pix = []
-    # if config.plugins.TivuStream.thumbpic.value == False:
-        # if HD.width() > 1280:
-            # defpic = plugin_path + "res/pics/defaultL.png"
-        # else:
-            # defpic = plugin_path + "res/pics/default.png"
-        # npic = len(pics)
-        # i = 0
-        # while i < npic:
-            # pix.append(defpic)
-            # i = i+1
-        # return pix
-    # cmd = "rm " + tmpfold + "/*"
-    # os.system(cmd)
-    # npic = len(pics)
-    # j = 0
-    # # print("In getpics names =", names)
-    # # print("In getpics pics =", pics)
-    # while j < npic:
-        # name = names[j]
-        # print("In getpics name =", name)
-        # if name is None:
-            # name = "Video"
-        # try:
-            # name = name.replace("&", "")
-            # name = name.replace(":", "")
-            # name = name.replace("(", "-")
-            # name = name.replace(")", "")
-            # name = name.replace(" ", "-")
-            # name = name.replace("'", "")
-                                      
-            # name = name.strip()
-        # except:
-            # pass
-        # url = pics[j]
-        # if url is None:
-            # url = ""
-        # url = url.replace(" ", "%20")
-        # url = url.replace("ExQ", "=")
-        # url = url.strip()
-        # # print("In getpics url =", url)
-        
-        # path = urlparse(url).path
-        # ext = splitext(path)[1]
-        # picf = picfold + "/" + name + ext  
-        # tpicf = tmpfold + "/" + name + ext #".png"
-        # if fileExists(picf):
-            # cmd = "cp " + picf + " " + tmpfold
-            # print("In getpics fileExists(picf) cmd =", cmd)
-            # os.system(cmd)
-        # if not fileExists(picf):
-            # if plugin_path in url:
-                # try:
-                    # cmd = "cp " + url + " " + tpicf
-                    # print("In getpics not fileExists(picf) cmd =", cmd)
-                    # os.system(cmd)
-                # except:
-                    # pass
-            # else:
-                # try:
-                    # if "|" in url:
-                        # n3 = url.find("|", 0)
-                        # n1 = url.find("Referer", n3)
-                        # n2 = url.find("=", n1)
-                        # url1 = url[:n3]
-                        # referer = url[n2:]
-                        # p = getUrl2(url1, referer)
-                        # f1=open(tpicf,"wb")
-                        # f1.write(p)
-                        # f1.close()
-                    # else:
-                        # print("Going in urlopen url =", url)
-                        # fpage = getUrl(url)
-                        # f1=open(tpicf,"wb")
-                        # f1.write(fpage)
-                        # f1.close()
-                      
-                # except:
-                    # if HD.width() > 1280:
-                        # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                    # else:
-                        # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
-                    # os.system(cmd)
-            # if not fileExists(tpicf):
-                # print("In getpics not fileExists(tpicf) tpicf=", tpicf)
-                
-                # if HD.width() > 1280:
-                    # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                # else:
-                    # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
-                # print("In getpics not fileExists(tpicf) cmd=", cmd)
-                # os.system(cmd)
-        # pix.append(j)
-        # pix[j] = picf
-        # j = j+1
-    # cmd1 = "cp " + tmpfold + "/* " + picfold + " && rm " + tmpfold + "/* &"
-    # print("In getpics final cmd1=", cmd1)
-    # os.system(cmd1)
-    # return pix
 
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -488,10 +385,7 @@ class GridMain(Screen):
         list = names
         self.picsint = eTimer()
         self.picsint.start(1000, True)
-        # try:
-            # self.picsint_conn = self.picsint.timeout.connect(self.getpic)
-        # except:
-            # self.picsint.callback.append(self.getpic)
+
         pics = getpics(names, pics, tmpfold, picfold)                        
         
         self.pos = []
@@ -585,11 +479,11 @@ class GridMain(Screen):
         self.onLayoutFinish.append(self.openTest)
         # self.onShown.append(self.openTest)
         
-    def getpic(self):
-        tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
-        picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"  
-        pics = getpics(self.names, self.pics, tmpfold, picfold)
-        # return pics
+    # def getpic(self):
+        # tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
+        # picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"  
+        # pics = getpics(self.names, self.pics, tmpfold, picfold)
+        # # return pics
     
     def cancel(self):
         self.close()
@@ -734,7 +628,8 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     STATE_PAUSED = 2
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
-
+    screen_timeout = 5000
+    
     def __init__(self, session, name, url):
         Screen.__init__(self, session)
         self.skinName = 'MoviePlayer'

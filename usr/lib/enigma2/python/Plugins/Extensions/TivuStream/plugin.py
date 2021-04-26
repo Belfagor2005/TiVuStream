@@ -59,7 +59,6 @@ from os.path import splitext
 from sys import version_info
 from twisted.web.client import downloadPage, getPage, error
 from xml.dom import Node, minidom
-import Components.PluginComponent
 import base64
 import glob
 import os
@@ -1369,19 +1368,19 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.state = self.STATE_PLAYING
         # self.hidetimer = eTimer()
         # self.hidetimer.timeout.get().append(self.ok)
-        self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
-        try:
-            self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
-        except:
-            self.hideTimer.callback.append(self.ok)
+        # self.hideTimer = eTimer()
+        # self.hideTimer.start(5000, True)
+        # try:
+            # self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
+        # except:
+            # self.hideTimer.callback.append(self.ok)
         self.onLayoutFinish.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
 
 		# self.onClose.append(self.__onClose)
 
     def showIMDB(self):
-        if '.mp4' in self.url or '.mkv' in self.url or '.flv' in self.url or '.avi' in self.url:
+        # if '.mp4' in self.url or '.mkv' in self.url or '.flv' in self.url or '.avi' in self.url:
             if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
                 from Plugins.Extensions.TMBD.plugin import TMBD
                 text_clear = self.name
@@ -1396,8 +1395,8 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
             else:
                 text_clear = self.name
                 self.session.open(openMessageBox, text_clear, openMessageBox.TYPE_INFO)
-        else:
-            self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=9)
+        # else:
+            # self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=9)
 
     def openPlay(self,servicetype, url):
         url = url
@@ -1441,26 +1440,26 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.session.nav.playService(srefInit)
         self.close()
 
-    def __setHideTimer(self):
-        self.hidetimer.start(self.screen_timeout)
+    # def __setHideTimer(self):
+        # self.hidetimer.start(self.screen_timeout)
 
-    def showInfobar(self):
-        # self.vlcservice.refresh()
-        self.show()
-        if self.state == self.STATE_PLAYING:
-            self.__setHideTimer()
-        else:
-            pass
+    # def showInfobar(self):
+        # # self.vlcservice.refresh()
+        # self.show()
+        # if self.state == self.STATE_PLAYING:
+            # self.__setHideTimer()
+        # else:
+            # pass
 
-    def hideInfobar(self):
-        self.hide()
-        self.hidetimer.stop()
+    # def hideInfobar(self):
+        # self.hide()
+        # self.hidetimer.stop()
 
-    def ok(self):
-        if self.shown:
-            self.hideInfobar()
-        else:
-            self.showInfobar()
+    # def ok(self):
+        # if self.shown:
+            # self.hideInfobar()
+        # else:
+            # self.showInfobar()
 
     def keyLeft(self):
         self['text'].left()
@@ -2304,11 +2303,11 @@ def main(session, **kwargs):
     # else:
         # session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
-def mainmenu(session, **kwargs):
-    if menuid == 'mainmenu':
-        return [(_('TiVuStream Revolution'), main, 'TiVuStream Revolution', 4)]
-    else:
-        return []
+# def mainmenu(session, **kwargs):
+    # if menuid == 'mainmenu':
+        # return [(_('TiVuStream Revolution'), main, 'TiVuStream Revolution', 4)]
+    # else:
+        # return []
 
 def cfgmain(menuid):
     if menuid == 'mainmenu':
