@@ -215,6 +215,7 @@ def trace_error():
         traceback.print_exc(file=open('/tmp/KeyAdderError.log', 'a'))
     except:
         pass
+        
 def make_request(url):
     try:
         url = checkStr(url)
@@ -224,8 +225,8 @@ def make_request(url):
         response = urlopen(req)
         link = response.read()
         response.close()
-        print("link =", six.ensure_str(link))
-        return six.ensure_str(link)
+        print("link =", link)
+        return link
     except:
         e = URLError #, e:
         print('We failed to open "%s".' % url)
@@ -269,9 +270,9 @@ config.plugins.TivuStream.thumbpic               = ConfigYesNo(default=False)
 
 global Path_Movies
 Path_Movies             = str(config.plugins.TivuStream.pthm3uf.value) + "/"
-if Path_Movies.endswith("//") is True:
+if Path_Movies.endswith("\/\/") is True:
     Path_Movies = Path_Movies[:-1]
-
+print('patch movies: ', Path_Movies)
 
 tvstrvl = config.plugins.TivuStream.cachefold.value + "tivustream"
 tmpfold = config.plugins.TivuStream.cachefold.value + "tivustream/tmp"
@@ -562,6 +563,7 @@ class OpenScript(Screen):
             onserver2 = six.ensure_str(upd_nt_txt)
             with open(destr, 'w') as f:
                 content = make_request(onserver2)
+                content = six.ensure_str(content)
                 f.write(content)
             self['listUpdate'].setText(content)
         except Exception as ex:
@@ -738,6 +740,7 @@ class OpenScript(Screen):
             try:
                 with open(namebqt, 'w') as f:
                     content = make_request(lnk)
+                    content = six.ensure_str(content)
                     print('Resp 2: ', content)
                     f.write(content)
                     os.system('sleep 5')
@@ -859,6 +862,7 @@ class OpenM3u(Screen):
             destx = Path_Movies + 'tivustream.m3u'
             with open(destx, 'w') as f:
                 content = make_request(servernewm3u)
+                content = six.ensure_str(content)
                 print('Resp 1: ', content)
                 f.write(content)
                 os.system('sleep 5')
@@ -1201,6 +1205,7 @@ class M3uPlay(Screen):
             if fileExists(self.name):
                 f1 = open(self.name, 'r+')
                 fpage = f1.read()
+                # fpage.seek(0)
 
                 if "#EXTM3U" and 'tvg-logo' in fpage:
                     print('tvg-logo in fpage: True')
@@ -1242,7 +1247,9 @@ class M3uPlay(Screen):
     #####################################################################################
 
                 else:
+                
                     m3ulist(self.names, self['list'])
+                
                 self["live"].setText('N.' + str(len(self.names)) + " Stream")
 
             else:
@@ -1356,45 +1363,31 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         url = url.replace(':', '%3a')
         self.url = url
         self.name = name
-        # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         self.state = self.STATE_PLAYING
-        # self.hidetimer = eTimer()
-        # self.hidetimer.timeout.get().append(self.ok)
-        # self.hideTimer = eTimer()
-        # self.hideTimer.start(5000, True)
-        # try:
-            # self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
-        # except:
-            # self.hideTimer.callback.append(self.ok)
         self.onLayoutFinish.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
-
 		# self.onClose.append(self.__onClose)
 
     def showIMDB(self):
-        # if '.mp4' in self.url or '.mkv' in self.url or '.flv' in self.url or '.avi' in self.url:
-            if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
-                from Plugins.Extensions.TMBD.plugin import TMBD
-                text_clear = self.name
-                text = charRemove(text_clear)
-                self.session.open(TMBD, text, False)
-            elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
-                from Plugins.Extensions.IMDb.plugin import IMDB
-                text_clear = self.name
-                text = charRemove(text_clear)
-                HHHHH = text
-                self.session.open(IMDB, HHHHH)
-            else:
-                text_clear = self.name
-                self.session.open(openMessageBox, text_clear, openMessageBox.TYPE_INFO)
-        # else:
-            # self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=9)
+        if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
+            from Plugins.Extensions.TMBD.plugin import TMBD
+            text_clear = self.name
+            text = charRemove(text_clear)
+            self.session.open(TMBD, text, False)
+        elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
+            from Plugins.Extensions.IMDb.plugin import IMDB
+            text_clear = self.name
+            text = charRemove(text_clear)
+            HHHHH = text
+            self.session.open(IMDB, HHHHH)
+        else:
+            text_clear = self.name
+            self.session.open(openMessageBox, text_clear, openMessageBox.TYPE_INFO)
 
     def openPlay(self,servicetype, url):
         url = url
         ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
         print('final reference :   ', ref)
-
         sref = eServiceReference(ref)
         sref.setName(self.name)
         self.session.nav.stopService()
@@ -1405,10 +1398,9 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
         ###kiddac test
         print('servicetype1: ', self.servicetype)
-
         url = str(self.url)
         currentindex = 0
-        streamtypelist = ["1", "4097"]
+        streamtypelist = ["4097"]
         if os.path.exists("/usr/bin/gstplayer"):
             streamtypelist.append("5001")
         if os.path.exists("/usr/bin/exteplayer3"):
@@ -1431,28 +1423,6 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.session.nav.stopService()
         self.session.nav.playService(srefInit)
         self.close()
-
-    # def __setHideTimer(self):
-        # self.hidetimer.start(self.screen_timeout)
-
-    # def showInfobar(self):
-        # # self.vlcservice.refresh()
-        # self.show()
-        # if self.state == self.STATE_PLAYING:
-            # self.__setHideTimer()
-        # else:
-            # pass
-
-    # def hideInfobar(self):
-        # self.hide()
-        # self.hidetimer.stop()
-
-    # def ok(self):
-        # if self.shown:
-            # self.hideInfobar()
-        # else:
-            # self.showInfobar()
-
     def keyLeft(self):
         self['text'].left()
 
@@ -1659,13 +1629,13 @@ class OpenConfig(Screen, ConfigListScreen):
                 fp = ''
                 destr = plugin_path + 'update.txt'
                 fp = make_request(upd_fr_txt)
-
+                fp = six.ensure_str(fp)
                 with open(destr, 'w') as f:
                     f.write(fp)
                     f.close()
                 with open(destr, 'r') as fp:
                     count = 0
-                    self.labeltext = ''
+                    fp.seek(0)
                     s1 = fp.readline()
                     s2 = fp.readline()
                     s3 = fp.readline()
@@ -1774,14 +1744,6 @@ class OpenConfig(Screen, ConfigListScreen):
         def createSummary(self):
             from Screens.Setup import SetupSummary
             return SetupSummary
-
-        # def keyLeft(self):
-            # ConfigListScreen.keyLeft(self)
-            # self.createSetup()
-
-        # def keyRight(self):
-            # ConfigListScreen.keyRight(self)
-            # self.createSetup()
 
         def Ok_edit(self):
             ConfigListScreen.keyOK(self)
@@ -2288,18 +2250,6 @@ def main(session, **kwargs):
             session.open(plgnstrt)
     else:
         session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
-
-# def main2(session, **kwargs):
-    # if checkInternet():
-        # session.open(OpenM3u)
-    # else:
-        # session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
-
-# def mainmenu(session, **kwargs):
-    # if menuid == 'mainmenu':
-        # return [(_('TiVuStream Revolution'), main, 'TiVuStream Revolution', 4)]
-    # else:
-        # return []
 
 def cfgmain(menuid):
     if menuid == 'mainmenu':
