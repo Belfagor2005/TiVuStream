@@ -193,22 +193,21 @@ def getpics(names, pics, tmpfold, picfold):
         print("In getpics url =", url)
 
         # print("In getpics url =", url)
-#####################
-        path = urlparse(url).path
-        ext = splitext(path)[1]
-        picf = picfold + "/" + name + ext
-        tpicf = tmpfold + "/" + name + ext #".png"
-####################
-        # if url[-4:] == ".png":
-            # tpicf = tmpfold + '/' +  name + ".png"
-        # elif url[-4:] == ".jpg":
-            # tpicf = tmpfold + '/' + name + ".jpg"
 #-----------------
-        # if ".png" in url:
+        # path = urlparse(url).path
+        # ext = splitext(path)[1]
+        ext = str(os.path.splitext(url)[-1])
+        picf = picfold + "/" + name + ext
+        tpicf = tmpfold + "/" + name + ext 
+        # temppic = tmpfold + "/" + name + ext 
+#-----------------
+        # if ".png" in str(url):
             # tpicf = tmpfold + "/" + name + ".png"
+            # picf = picfold + "/" + name + ".png"
         # else:
             # tpicf = tmpfold + "/" + name + ".jpg"
-        # picf = picfold + "/" + name + ".jpg"
+            # picf = picfold + "/" + name + ".jpg"
+#-----------------
                   
         if fileExists(picf):
             cmd = "cp " + picf + " " + tmpfold
@@ -247,7 +246,7 @@ def getpics(names, pics, tmpfold, picfold):
                         # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
                     # else:
                         # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
-                    cmd = "cp " + plugin_path + defipic +" " + tpicf
+                    cmd = "cp " + plugin_path + defipic + " " + tpicf
                     os.system(cmd)
 
             if not fileExists(tpicf):
@@ -268,9 +267,8 @@ def getpics(names, pics, tmpfold, picfold):
                         from PIL import Image
                     im = Image.open(tpicf)
                     imode = im.mode
-                    if im.mode != "P":
-                        im = im.convert("P")
-                            
+                    # if im.mode != "P":
+                        # im = im.convert("P")
                     w = im.size[0]
                     d = im.size[1]
                     r = float(d)/float(w)
