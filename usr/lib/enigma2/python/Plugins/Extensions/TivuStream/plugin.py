@@ -1,9 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  24/04/2022	 #
+#	  24/04/2021	 #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -165,8 +165,8 @@ except ImportError:
     eDVBDB = None
 
 #changelog 21.01.2021
-currversion = '2.9'
-Version = currversion + ' - 26.04.2021'
+currversion = '3.0'
+Version = currversion + ' - 11.05.2021'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
 name_plug = 'TivuStream Revolution'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
@@ -174,6 +174,7 @@ Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
+res_plugin_path=plugin_path + '/res/'
 
 #================
 def add_skin_font():
@@ -216,16 +217,39 @@ def trace_error():
     except:
         pass
         
-def make_request(url):
-    try:
-        url = checkStr(url)
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+# def make_request(url):
+    # return []
+    # try:
+        # url = checkStr(url)
+        # req = Request(url)
+        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+        # # response = urlopen(req)
         # response = urlopen(req)
-        response = urlopen(req)
+        # link = response.read()
+        # response.close()
+        # print("link =", link)
+        # return link
+    # except:
+        # e = URLError #, e:
+        # print('We failed to open "%s".' % url)
+        # if hasattr(e, 'code'):
+            # print('We failed with error code - %s.' % e.code)
+        # if hasattr(e, 'reason'):
+            # print('We failed to reach a server.')
+            # print('Reason: ', e.reason)
+
+def make_request(url):
+    return []
+    try:
+        import requests
+        link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
+        return link
+    except ImportError:
+        req = Request(url)
+        req.add_header('User-Agent', 'TVS')
+        response = urlopen(req, None, 3)
         link = response.read()
         response.close()
-        print("link =", link)
         return link
     except:
         e = URLError #, e:
@@ -235,7 +259,9 @@ def make_request(url):
         if hasattr(e, 'reason'):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
-
+        return
+    return
+    
 def isExtEplayer3Available():
         return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
 
@@ -322,19 +348,13 @@ imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
 
 global skin_path
-skin_path = plugin_path
 HD = getDesktop(0).size()
 if HD.width() > 1280:
-    if isDreamOS:
-        skin_path = plugin_path + 'res/skins/fhd/dreamOs/'
-    else:
-        skin_path = plugin_path + 'res/skins/fhd/'
+    skin_path=res_plugin_path + 'skins/fhd/'
 else:
-    if isDreamOS:
-        skin_path = plugin_path + 'res/skins/hd/dreamOs/'
-    else:
-        skin_path = plugin_path + 'res/skins/hd/'
-
+    skin_path=res_plugin_path + 'skins/hd/'
+if isDreamOS:
+    skin_path=skin_path + 'dreamOs/'
 
 def remove_line(filename, what):
     if os.path.isfile(filename):
@@ -1595,17 +1615,6 @@ class OpenConfig(Screen, ConfigListScreen):
 
             }, -2)
             
-            # self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'],
-            # {
-                # "red": self.extnok,
-                # "cancel": self.extnok,
-                # 'yellow': self.msgupdt1,
-                # "green": self.cfgok,
-                # "left": self.keyLeft,
-                # "right": self.keyRight,
-                # 'showVirtualKeyboard': self.KeyText,
-                # "ok": self.Ok_edit
-            # }, -1)
             self.list = []
             ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
             self.createSetup()
