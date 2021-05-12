@@ -1,10 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#--------------------#
-#  coded by Lululla  #
-#   skin by MMark    #
-#     22/03/2021     #
-#--------------------#
+'''
+Info http://t.me/tivustream
+****************************************
+*        coded by Lululla              *
+*           thank's Pcd                *
+*             09/05/2021               *
+*       skin by MMark                  *
+****************************************
+'''
+
 from Screens.Screen import Screen
 from Components.config import config
 from Components.Button import Button
@@ -29,7 +34,7 @@ import glob
 import six
 global isDreamOS, skin_path, tmpfold, picfold
 from os.path import splitext
-global defipic
+global defpic, dblank
 
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
 defipic = plugin_path + "res/pics/defaultL.png"
@@ -49,20 +54,19 @@ except:
     isDreamOS = False
 
 skin_path = plugin_path
-
+res_plugin_path = plugin_path + 'res/'
 HD = getDesktop(0).size()
+        
 if HD.width() > 1280:
-    defipic = plugin_path + "res/pics/defaultL.png"
-    if isDreamOS:
-        skin_path = plugin_path + 'res/skins/fhd/dreamOs/'
-    else:
-        skin_path = plugin_path + 'res/skins/fhd/'
+    skin_path = res_plugin_path + 'skins/fhd/'
+    defipic = res_plugin_path + "pics/defaultL.png"
+    dblank = res_plugin_path + "pics/blankL.png"                                                   
 else:
-    defipic = plugin_path + "res/pics/default.png"
-    if isDreamOS:
-        skin_path = plugin_path + 'res/skins/hd/dreamOs/'
-    else:
-        skin_path = plugin_path + 'res/skins/hd/'
+    skin_path = res_plugin_path + 'skins/hd/'
+    defipic = res_plugin_path + "pics/default.png"
+    dblank = res_plugin_path + "pics/blank.png"    
+if isDreamOS:
+    skin_path = skin_path + 'dreamOs/'
 
 try:
     from OpenSSL import SSL
@@ -146,6 +150,7 @@ def getUrl2(url, referer):
 
 
 def getpics(names, pics, tmpfold, picfold):
+    global defpic                 
     print("In getpics tmpfold =", tmpfold)
     print("In getpics picfold =", picfold)
     if HD.width() > 1280:
@@ -154,10 +159,6 @@ def getpics(names, pics, tmpfold, picfold):
         nw = 200
     pix = []
     if config.plugins.TivuStream.thumbpic.value == False:
-        # if HD.width() > 1280:
-            # defpic = plugin_path + "res/pics/defaultL.png"
-        # else:
-            # defpic = plugin_path + "res/pics/default.png"
         defpic = defipic
         npic = len(pics)
         i = 0
@@ -183,6 +184,7 @@ def getpics(names, pics, tmpfold, picfold):
             name = name.replace(")", "")
             name = name.replace(" ", "")
             name = name.replace("'", "")                          
+            name = name.replace("/", "-")                                         
         except:
             pass
         url = pics[j]
@@ -208,7 +210,6 @@ def getpics(names, pics, tmpfold, picfold):
             # tpicf = tmpfold + "/" + name + ".jpg"
             # picf = picfold + "/" + name + ".jpg"
 #-----------------
-                  
         if fileExists(picf):
             cmd = "cp " + picf + " " + tmpfold
             print("In getpics fileExists(picf) cmd =", cmd)
@@ -242,48 +243,37 @@ def getpics(names, pics, tmpfold, picfold):
                         f1.close()
                           
                 except:
-                    # if HD.width() > 1280:
-                        # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                    # else:
-                        # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
-                    cmd = "cp " + plugin_path + defipic + " " + tpicf
+                    cmd = "cp " + defipic + " " + tpicf
                     os.system(cmd)
 
-            if not fileExists(tpicf):
-                print("In getpics not fileExists(tpicf) tpicf=", tpicf)
-                # if HD.width() > 1280:
-                    # cmd = "cp " + plugin_path + "res/pics/defaultL.png " + tpicf
-                # else:
-                    # cmd = "cp " + plugin_path + "res/pics/default.png " + tpicf
-                cmd = "cp " + plugin_path + defpic + " " + tpicf    
-                print("In getpics not fileExists(tpicf) cmd=", cmd)
-                os.system(cmd)
+        if not fileExists(tpicf):
+            print("In getpics not fileExists(tpicf) tpicf=", tpicf)
+            cmd = "cp " + defpic + " " + tpicf    
+            print("In getpics not fileExists(tpicf) cmd=", cmd)
+            os.system(cmd)
 
+        try:                                              
             if isDreamOS == False:
+
                 try:
-                    try:
-                        import Image
-                    except:
-                        from PIL import Image
-                    im = Image.open(tpicf)
-                    imode = im.mode
-                    # if im.mode != "P":
-                        # im = im.convert("P")
-                    w = im.size[0]
-                    d = im.size[1]
-                    r = float(d)/float(w)
-                    d1 = r*nw
-                    if w != nw:
-                        x = int(nw)
-                        y = int(d1)
-                        im = im.resize((x,y), Image.ANTIALIAS)
-                    # tpicf = tmpfold + "/" + name + ".png"
-                    # picf = picfold + "/" + name + ".png"
-                    # im.save(tpicf)
-                    im.save(tpicf, quality=100, optimize=True) 
+                    import Image
                 except:
-                    # tpicf = plugin_path + "/res/pics/default.png" 
-                    tpicf = defipic
+                    from PIL import Image
+                im = Image.open(tpicf)
+                # if im.mode != "P":
+                    # im = im.convert("P")
+                w = im.size[0]
+                d = im.size[1]
+                r = float(d)/float(w)
+                d1 = r*nw
+                if w != nw:
+                    x = int(nw)
+                    y = int(d1)
+                    im = im.resize((x,y), Image.ANTIALIAS)
+                # im.save(tpicf)
+                im.save(tpicf, quality=100, optimize=True) 
+        except:
+            tpicf = defipic
             
         pix.append(j)
         pix[j] = picf
@@ -515,7 +505,7 @@ class GridMain(Screen):
             self.minentry = (self.ipage-1)*10
             print("self.ipage , self.minentry, self.maxentry B=", self.ipage, self.minentry, self.maxentry)
             i1 = 0
-            blpic = plugin_path + "res/pics/Blank.png"
+            blpic = dblank #plugin_path + "res/pics/Blank.png"
             while i1 < 12:
                 self["label" + str(i1+1)].setText(" ")
                 self["pixmap" + str(i1+1)].instance.setPixmapFromFile(blpic)
@@ -541,7 +531,7 @@ class GridMain(Screen):
                 print("pic path exists")
             else:
                 print("pic path exists not")
-            picd = plugin_path + "res/pics/default.png"
+            picd = defpic
             try:
                 self["pixmap" + str(i+1)].instance.setPixmapFromFile(pic) #ok
             except:
@@ -583,11 +573,14 @@ class GridMain(Screen):
         ##  self.paintFrame()
             elif self.ipage == 1:
         #   self.close()
-                self.paintFrame()
+                return
+                # self.paintFrame() #edit lululla
             else:
-                self.paintFrame()
+                # return
+               self.paintFrame()
         else:
-            self.paintFrame()
+            # return
+           self.paintFrame()
 
     def key_down(self):
         print("keydown self.index, self.maxentry = ", self.index, self.maxentry)

@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla	 #
 #	skin by MMark	 #
-#	  24/04/2021	 #
+#	  11/05/2021	 #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -239,7 +239,7 @@ def trace_error():
             # print('Reason: ', e.reason)
 
 def make_request(url):
-    return []
+    # return []
     try:
         import requests
         link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
@@ -580,10 +580,11 @@ class OpenScript(Screen):
     def read(self):
         try:
             destr = plugin_path + 'list.txt'
-            onserver2 = six.ensure_str(upd_nt_txt)
+            # onserver2 = six.ensure_str(upd_nt_txt)
+            onserver2 = upd_nt_txt            
             with open(destr, 'w') as f:
                 content = make_request(onserver2)
-                content = six.ensure_str(content)
+                # content = six.ensure_str(content)
                 f.write(content)
             self['listUpdate'].setText(content)
         except Exception as ex:
@@ -760,7 +761,7 @@ class OpenScript(Screen):
             try:
                 with open(namebqt, 'w') as f:
                     content = make_request(lnk)
-                    content = six.ensure_str(content)
+                    # content = six.ensure_str(content)
                     print('Resp 2: ', content)
                     f.write(content)
                     os.system('sleep 5')
