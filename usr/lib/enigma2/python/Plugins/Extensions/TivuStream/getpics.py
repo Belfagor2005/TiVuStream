@@ -9,24 +9,23 @@ Info http://t.me/tivustream
 *       skin by MMark                  *
 ****************************************
 '''
-
-from Screens.Screen import Screen
-from Components.config import config
-from Components.Button import Button
 from Components.ActionMap import ActionMap
-from Tools.Directories import fileExists
-from Components.Label import Label
-from Components.Sources.List import List
-from Components.Pixmap import Pixmap, MovingPixmap
-from Components.Sources.StaticText import StaticText
 from Components.ActionMap import NumberActionMap
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarNotifications, InfoBarMenu
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from enigma import iServiceInformation, iPlayableService, eServiceReference
-from enigma import eTimer, eActionMap, getDesktop
-from time import time, localtime, strftime
-from Screens.MessageBox import MessageBox
+from Components.Button import Button
+from Components.Label import Label
 from Components.MenuList import MenuList
+from Components.Pixmap import Pixmap, MovingPixmap
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.Sources.List import List
+from Components.Sources.StaticText import StaticText
+from Components.config import config
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarNotifications, InfoBarMenu
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.Directories import fileExists
+from enigma import eTimer, eActionMap, getDesktop
+from enigma import iServiceInformation, iPlayableService, eServiceReference
+from time import time, localtime, strftime
 import os
 import re
 import sys
@@ -38,13 +37,11 @@ global defpic, dblank
 
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
 defipic = plugin_path + "res/pics/defaultL.png"
-PY3 = sys.version_info[0] == 3
-if PY3:
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError, HTTPError
-else:
-    from urllib2 import urlopen, Request
-    from urllib2 import URLError, HTTPError
+PY3 = sys.version_info.major >= 3
+print('Py3: ',PY3)
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves.urllib.error import HTTPError, URLError
 
 isDreamOS = False
 try:
@@ -77,11 +74,6 @@ except:
     sslverify = False
 
 if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
@@ -254,7 +246,6 @@ def getpics(names, pics, tmpfold, picfold):
 
         try:                                              
             if isDreamOS == False:
-
                 try:
                     import Image
                 except:
