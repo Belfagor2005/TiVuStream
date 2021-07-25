@@ -165,7 +165,7 @@ Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
-res_plugin_path=plugin_path + '/res/'
+res_plugin_path=plugin_path + 'res/'
 
 #================
 def add_skin_font():
@@ -175,14 +175,10 @@ def add_skin_font():
 
 def checkInternet():
     try:
-        # response=urlopen("http://google.com", None, 5)
-        response = checkStr(urlopen("http://google.com", None, 5))
-        response.close()
-    except HTTPError:
-        return False
-    except URLError:
-        return False
-    except socket.timeout:
+        socket.setdefaulttimeout(0.5)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
         return False
 
 def ReloadBouquet():

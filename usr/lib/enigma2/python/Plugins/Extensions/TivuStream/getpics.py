@@ -31,6 +31,7 @@ import re
 import sys
 import glob
 import six
+import socket
 global isDreamOS, skin_path, tmpfold, picfold
 from os.path import splitext
 global defpic, dblank
@@ -92,7 +93,15 @@ def checkStr(txt):
         if isinstance(txt, type(six.text_type())):
             txt = txt.encode('utf-8')
     return txt
-
+    
+def checkInternet():
+    try:
+        socket.setdefaulttimeout(0.5)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
+        return False
+        
 def make_request(url):
     try:
         req = Request(url)
