@@ -13,7 +13,7 @@ from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import *
 from Components.Console import Console as iConsole
-from Components.HTMLComponent import *
+# from Components.HTMLComponent import *
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -70,9 +70,9 @@ import socket
 import ssl
 import sys
 import time
-global isDreamOS
+
 import six
-isDreamOS = False
+
 
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
@@ -136,26 +136,45 @@ def ssl_urlopen(url):
 	else:
 		return urlopen(url)
 
+# def checkStr(txt):
+    # if PY3:
+        # if isinstance(txt, type(bytes())):
+            # txt = txt.decode('utf-8')
+    # else:
+        # if isinstance(txt, type(six.text_type())):
+            # txt = txt.encode('utf-8')
+    # return txt
+
 def checkStr(txt):
+    # convert variable to type str both in Python 2 and 3
     if PY3:
-        if isinstance(txt, type(bytes())):
+        # Python 3
+        if type(txt) == type(bytes()):
             txt = txt.decode('utf-8')
     else:
-        if isinstance(txt, type(six.text_type())):
+        #Python 2
+        if type(txt) == type(unicode()):
             txt = txt.encode('utf-8')
+        
     return txt
-
-try:
-    from enigma import eMediaDatabase
-    isDreamOS = True
-except:
-    isDreamOS = False
 
 try:
     from enigma import eDVBDB
 except ImportError:
     eDVBDB = None
 
+try:
+	from Plugins.Extensions.tmdb import tmdb
+	is_tmdb = True
+except Exception:
+	is_tmdb = False
+
+try:
+	from Plugins.Extensions.IMDb.plugin import main as imdb
+	is_imdb = True
+except Exception:
+	is_imdb = False
+    
 #changelog 21.01.2021
 currversion = '3.0'
 Version = currversion + ' - 11.05.2021'
@@ -167,7 +186,6 @@ Maintainer2 = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
 res_plugin_path=plugin_path + 'res/'
-
 #================
 def add_skin_font():
     font_path = plugin_path + 'res/fonts/'
@@ -183,10 +201,15 @@ def checkInternet():
         return False
 
 def ReloadBouquet():
-    if eDVBDB:
+    print('\n----Reloading bouquets----')
+    try:
+        from enigma import eDVBDB
         eDVBDB.getInstance().reloadBouquets()
-    else:
+        print('bouquets reloaded...')        
+    except ImportError:
+        eDVBDB = None
         os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
+        print('bouquets reloaded...')
 
 def OnclearMem():
     try:
@@ -251,10 +274,12 @@ def make_request(url):
     return
 
 def isExtEplayer3Available():
-        return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
+    from enigma import eEnv
+    return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
 
 def isStreamlinkAvailable():
-        return os.path.isdir(eEnv.resolve('/usr/lib/python2.7/site-packages/streamlink'))
+    from enigma import eEnv
+    return os.path.isdir(eEnv.resolve('/usr/lib/python2.7/site-packages/streamlink'))
 
 modechoices = [
                 ("4097", _("IPTV(4097)")),
@@ -267,10 +292,18 @@ if os.path.exists("/usr/bin/gstplayer"):
 if os.path.exists("/usr/bin/exteplayer3"):
     modechoices.append(("5002", _("Exteplayer3(5002)")))
 
+
 sessions = []
 config.plugins.TivuStream                        = ConfigSubsection()
 config.plugins.TivuStream.autoupd                = ConfigYesNo(default=True)
 config.plugins.TivuStream.pthm3uf                = ConfigDirectory(default='/media/hdd/movie')
+try:
+    from Components.UsageConfig import defaultMoviePath
+    downloadpath = defaultMoviePath()
+    config.plugins.TivuStream.pthm3uf  = ConfigDirectory(default=downloadpath)
+except:
+    if os.path.exists("/usr/bin/apt-get"):
+        config.plugins.TivuStream.pthm3uf  = ConfigDirectory(default='/media/hdd/movie')
 # config.plugins.TivuStream.code                   = ConfigNumber(default = 1234)
 config.plugins.TivuStream.code                   = ConfigText(default = "1234")
 config.plugins.TivuStream.bouquettop             = ConfigSelection(default='Bottom', choices=['Bottom', 'Top'])
@@ -341,7 +374,7 @@ if HD.width() > 1280:
     skin_path=res_plugin_path + 'skins/fhd/'
 else:
     skin_path=res_plugin_path + 'skins/hd/'
-if isDreamOS:
+if os.path.exists('/var/lib/dpkg/status'):
     skin_path=skin_path + 'dreamOs/'
 
 def remove_line(filename, what):
@@ -560,7 +593,7 @@ class OpenScript(Screen):
         self['listUpdate'].setText(_('Check List Update wait please...'))
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.read)
         else:
             self.timer.callback.append(self.read)
@@ -1307,6 +1340,22 @@ class M3uPlay(Screen):
             self.session.open(M3uPlay2, name, url)
             return
 
+    def play2(self):
+        if os.path.exists("/usr/sbin/streamlinksrv"):
+            idx = self['list'].getSelectionIndex()
+            name = self.names[idx]
+            url = self.urls[idx]
+            url = url.replace(':', '%3a')
+            print('In revolution url =', url)
+            ref = '5002:0:1:0:0:0:0:0:0:0:' + 'http%3a//127.0.0.1%3a8088/' + str(url)
+            sref = eServiceReference(ref)
+            print('SREF: ', sref)
+            sref.setName(name)
+            self.session.open(M3uPlay2, name, sref)
+            self.close()
+        else:
+            self.session.open(MessageBox, _('Install Streamlink first'), MessageBox.TYPE_INFO, timeout=5)
+            
     def AdjUrlFavo(self):
         idx = self['list'].getSelectionIndex()
         if idx == -1 or None:
@@ -1335,9 +1384,12 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     screen_timeout = 5000
 
     def __init__(self, session, name, url):
+        global SREF, streml
         Screen.__init__(self, session)
+        self.session = session
         self.skinName = 'MoviePlayer'
-        title = 'Play Stream'
+        title = name
+        streaml = False
         # self['list'] = MenuList([])
         InfoBarMenu.__init__(self)
         InfoBarNotifications.__init__(self)
@@ -1371,43 +1423,73 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.url = url
         self.name = name
         self.state = self.STATE_PLAYING
-        self.onLayoutFinish.append(self.cicleStreamType)
+        self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
+        SREF = self.srefOld        
+        # self.onLayoutFinish.append(self.cicleStreamType)
+        # self.onClose.append(self.cancel)
+		# self.onClose.append(self.__onClose)
+        if '8088' in str(self.url):
+            self.onLayoutFinish.append(self.slinkPlay)
+        else:
+            self.onLayoutFinish.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
 		# self.onClose.append(self.__onClose)
+        return        
 
     def showIMDB(self):
-        if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
-            from Plugins.Extensions.TMBD.plugin import TMBD
-            text_clear = self.name
-            text = charRemove(text_clear)
-            self.session.open(TMBD, text, False)
-        elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
-            from Plugins.Extensions.IMDb.plugin import IMDB
-            text_clear = self.name
-            text = charRemove(text_clear)
-            HHHHH = text
-            self.session.open(IMDB, HHHHH)
+        text_clear = self.name
+        if is_tmdb:
+            try:
+                text = charRemove(text_clear)
+                _session.open(tmdb.tmdbScreen, text, 0)
+            except Exception as e:
+                print("[XCF] Tmdb: ", e)
+        elif is_imdb:
+            try:
+                text = charRemove(text_clear)
+                imdb(_session, text)
+            except Exception as e:
+                print("[XCF] imdb: ", e)   
         else:
-            text_clear = self.name
             self.session.open(openMessageBox, text_clear, openMessageBox.TYPE_INFO)
 
-    def openPlay(self,servicetype, url):
-        url = url
-        ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
-        print('final reference :   ', ref)
+    def slinkPlay(self, url):
+        ref = str(url)
+        ref = ref.replace(':', '%3a')
+        ref = ref.replace(' ','%20')
+        print('final reference:   ', ref)
+        sref = eServiceReference(ref)
+        sref.setName(self.name)
+        self.session.nav.stopService()
+        self.session.nav.playService(sref)
+
+    def openPlay(self, servicetype, url):
+        url = url.replace(':', '%3a')
+        url = url.replace(' ','%20')
+        ref = str(servicetype) + ':0:1:0:0:0:0:0:0:0:' + str(url)
+        if streaml == True:
+            ref = str(servicetype) + ':0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + str(url)        
+        print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(self.name)
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
     def cicleStreamType(self):
+        global streml
+        streaml = False
         from itertools import cycle, islice
-        self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
-        ###kiddac test
+        self.servicetype = str(config.plugins.TivuStream.services.value) +':0:1:0:0:0:0:0:0:0:'#  '4097'
         print('servicetype1: ', self.servicetype)
         url = str(self.url)
         currentindex = 0
         streamtypelist = ["4097"]
+        # if "youtube" in str(self.url):
+            # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
+            # return
+        if os.path.exists("/usr/sbin/streamlinksrv"):
+            streamtypelist.append("5002") #ref = '5002:0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + url
+            streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
             streamtypelist.append("5001")
         if os.path.exists("/usr/bin/exteplayer3"):
@@ -1419,17 +1501,49 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
                 currentindex = index
                 break
         nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
-        self.servicetype = int(next(nextStreamType))
+        self.servicetype = str(next(nextStreamType))
         print('servicetype2: ', self.servicetype)
         self.openPlay(self.servicetype, url)
+    # def openPlay(self,servicetype, url):
+        # url = url
+        # ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
+        # print('final reference :   ', ref)
+        # sref = eServiceReference(ref)
+        # sref.setName(self.name)
+        # self.session.nav.stopService()
+        # self.session.nav.playService(sref)
+
+    # def cicleStreamType(self):
+        # from itertools import cycle, islice
+        # self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
+        # ###kiddac test
+        # print('servicetype1: ', self.servicetype)
+        # url = str(self.url)
+        # currentindex = 0
+        # streamtypelist = ["4097"]
+        # if os.path.exists("/usr/bin/gstplayer"):
+            # streamtypelist.append("5001")
+        # if os.path.exists("/usr/bin/exteplayer3"):
+            # streamtypelist.append("5002")
+        # if os.path.exists("/usr/bin/apt-get"):
+            # streamtypelist.append("8193")
+        # for index, item in enumerate(streamtypelist, start=0):
+            # if str(item) == str(self.servicetype):
+                # currentindex = index
+                # break
+        # nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
+        # self.servicetype = int(next(nextStreamType))
+        # print('servicetype2: ', self.servicetype)
+        # self.openPlay(self.servicetype, url)
 
     def keyNumberGlobal(self, number):
         self['text'].number(number)
 
-    def cancel(self):
-        self.session.nav.stopService()
-        self.session.nav.playService(srefInit)
-        self.close()
+    # def cancel(self):
+        # self.session.nav.stopService()
+        # self.session.nav.playService(srefInit)
+        # self.close()
+        
     def keyLeft(self):
         self['text'].left()
 
@@ -1439,14 +1553,29 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     def showVideoInfo(self):
         if self.shown:
             self.hideInfobar()
-        if self.infoCallback is not None:
+        if self.infoCallback != None:
             self.infoCallback()
         return
 
     def showAfterSeek(self):
         if isinstance(self, TvInfoBarShowHide):
             self.doShow()
-
+            
+    def cancel(self):
+        if os.path.exists('/tmp/hls.avi'):
+            os.remove('/tmp/hls.avi')
+        self.session.nav.stopService()
+        self.session.nav.playService(SREF)
+        if self.pcip != 'None':
+            url2 = 'http://' + self.pcip + ':8080/requests/status.xml?command=pl_stop'
+            resp = urlopen(url2)
+        if not self.new_aspect == self.init_aspect:
+            try:
+                self.setAspect(self.init_aspect)
+            except:
+                pass
+        self.close()
+        
     def leavePlayer(self):
         self.close()
 
@@ -1540,7 +1669,7 @@ class AddIpvStream(Screen):
 
     def addServiceToBouquet(self, dest, service = None):
         mutableList = self.getMutableList(dest)
-        if mutableList is not None:
+        if mutableList != None:
             if service is None:
                 return
             if not mutableList.addService(service):
@@ -1548,14 +1677,14 @@ class AddIpvStream(Screen):
         return
 
     def getMutableList(self, root = eServiceReference()):
-        if self.mutableList is not None:
+        if self.mutableList != None:
             return self.mutableList
         else:
             serviceHandler = eServiceCenter.getInstance()
             if not root.valid():
                 root = self.getRoot()
             list = root and serviceHandler.list(root)
-            if list is not None:
+            if list != None:
                 return list.startEdit()
             return
             return
@@ -1656,7 +1785,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
             self.timerx = eTimer()
             self.timerx.start(100, 1)
-            if isDreamOS:
+            if os.path.exists('/var/lib/dpkg/status'):
                 self.timerx_conn = self.timerx.timeout.connect(self.msgupdt2)
             else:
                 self.timerx.callback.append(self.msgupdt2)
@@ -1770,7 +1899,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 print(ex)
 
         def openDirectoryBrowserCB(self, path):
-            if path is not None:
+            if path != None:
                 if self.setting == 'pthm3uf':
                     config.plugins.TivuStream.pthm3uf.setValue(path)
                 elif self.setting == 'cachefold':
@@ -1798,7 +1927,7 @@ class OpenConfig(Screen, ConfigListScreen):
              self.close()
 
         def VirtualKeyBoardCallback(self, callback = None):
-            if callback is not None and len(callback):
+            if callback != None and len(callback):
                 self["config"].getCurrent()[1].setValue(callback)
                 self["config"].invalidate(self["config"].getCurrent())
 
@@ -1901,7 +2030,7 @@ class OpenConsole(Screen):
                str += _("Execution finished!!\n")
             self["text"].setText(str)
             self["text"].lastPage()
-            # if self.finishedCallback is not None:
+            # if self.finishedCallback != None:
                 # self.finishedCallback(retval)
             # if not retval and self.closeOnSuccess:
             self.cancel()
@@ -2017,7 +2146,7 @@ class openMessageBox(Screen):
         self.timeout = timeout
         if timeout > 0:
             self.timer = eTimer()
-            if isDreamOS:
+            if os.path.exists('/var/lib/dpkg/status'):
                 self.timer_conn = self.timer.timeout.connect(self.timerTick)
             else:
                 self.timer.callback.append(self.timerTick)
@@ -2059,7 +2188,7 @@ class openMessageBox(Screen):
         return
 
     def timeoutCallback(self):
-        if self.timeout_default is not None:
+        if self.timeout_default != None:
             self.close(self.timeout_default)
         else:
             self.ok()
@@ -2133,7 +2262,7 @@ class plgnstrt(Screen):
 
     def decodeImage(self, pngori):
         pixmaps = pngori
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
@@ -2149,7 +2278,7 @@ class plgnstrt(Screen):
          1,
          '#FF000000'))
         ptr = self.picload.getData()
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             if self.picload.startDecode(pixmaps, False) == 0:
                 ptr = self.picload.getData()
         else:
@@ -2189,7 +2318,7 @@ class plgnstrt(Screen):
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
         self.timer.start(2000, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
             self.timer.callback.append(self.OpenCheck)
@@ -2232,13 +2361,13 @@ class plgnstrt(Screen):
 def checks():
     chekin= False
     if checkInternet():
-            chekin = True
-    return
+        chekin = True
+        return True
 
 def main(session, **kwargs):
     if checks:
         add_skin_font()
-        # if isDreamOS:
+        # if os.path.exists('/var/lib/dpkg/status'):
             # session.open(OpenScript)
         if PY3:
             session.open(OpenScript)
@@ -2258,7 +2387,7 @@ def cfgmain(menuid):
 
 def Plugins(**kwargs):
     icona = 'logo.png'
-    if not isDreamOS:
+    if not os.path.exists('/var/lib/dpkg/status'):
         icona = skin_path + '/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)
