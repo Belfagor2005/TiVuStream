@@ -72,7 +72,10 @@ import sys
 import time
 
 import six
-
+try:
+    from Plugins.Extensions.TivuStream.Utils import *
+except:
+    from . import Utils
 
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
@@ -136,33 +139,6 @@ def ssl_urlopen(url):
 	else:
 		return urlopen(url)
 
-# def checkStr(txt):
-    # if PY3:
-        # if isinstance(txt, type(bytes())):
-            # txt = txt.decode('utf-8')
-    # else:
-        # if isinstance(txt, type(six.text_type())):
-            # txt = txt.encode('utf-8')
-    # return txt
-
-def checkStr(txt):
-    # convert variable to type str both in Python 2 and 3
-    if PY3:
-        # Python 3
-        if type(txt) == type(bytes()):
-            txt = txt.decode('utf-8')
-    else:
-        #Python 2
-        if type(txt) == type(unicode()):
-            txt = txt.encode('utf-8')
-        
-    return txt
-
-try:
-    from enigma import eDVBDB
-except ImportError:
-    eDVBDB = None
-
 try:
 	from Plugins.Extensions.tmdb import tmdb
 	is_tmdb = True
@@ -192,63 +168,6 @@ def add_skin_font():
     addFont(font_path + 'verdana_r.ttf', 'OpenFont1', 100, 1)
     addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
 
-def checkInternet():
-    try:
-        socket.setdefaulttimeout(0.5)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
-        return True
-    except:
-        return False
-
-def ReloadBouquet():
-    print('\n----Reloading bouquets----')
-    try:
-        from enigma import eDVBDB
-        eDVBDB.getInstance().reloadBouquets()
-        print('bouquets reloaded...')        
-    except ImportError:
-        eDVBDB = None
-        os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
-        print('bouquets reloaded...')
-
-def OnclearMem():
-    try:
-        os.system("sync")
-        os.system("echo 1 > /proc/sys/vm/drop_caches")
-        os.system("echo 2 > /proc/sys/vm/drop_caches")
-        os.system("echo 3 > /proc/sys/vm/drop_caches")
-    except:
-        pass
-
-def trace_error():
-    import traceback
-    try:
-        traceback.print_exc(file=sys.stdout)
-        traceback.print_exc(file=open('/tmp/KeyAdderError.log', 'a'))
-    except:
-        pass
-
-# def make_request(url):
-    # return []
-    # try:
-        # url = checkStr(url)
-        # req = Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-        # # response = urlopen(req)
-        # response = urlopen(req)
-        # link = response.read()
-        # response.close()
-        # print("link =", link)
-        # return link
-    # except:
-        # e = URLError #, e:
-        # print('We failed to open "%s".' % url)
-        # if hasattr(e, 'code'):
-            # print('We failed with error code - %s.' % e.code)
-        # if hasattr(e, 'reason'):
-            # print('We failed to reach a server.')
-            # print('Reason: ', e.reason)
-
 def make_request(url):
     # return []
     try:
@@ -272,14 +191,6 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
-
-def isExtEplayer3Available():
-    from enigma import eEnv
-    return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
-
-def isStreamlinkAvailable():
-    from enigma import eEnv
-    return os.path.isdir(eEnv.resolve('/usr/lib/python2.7/site-packages/streamlink'))
 
 modechoices = [
                 ("4097", _("IPTV(4097)")),
@@ -369,12 +280,12 @@ imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
 
 global skin_path
-HD = getDesktop(0).size()
-if HD.width() > 1280:
+# HD = getDesktop(0).size()
+if isFHD():
     skin_path=res_plugin_path + 'skins/fhd/'
 else:
     skin_path=res_plugin_path + 'skins/hd/'
-if os.path.exists('/var/lib/dpkg/status'):
+if DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
 def remove_line(filename, what):
@@ -395,7 +306,7 @@ def m3ulistEntry(download):
     backcol = 0
     blue = 4282611429
     png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting2.png'
-    if HD.width() > 1280:
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -497,7 +408,7 @@ class tvList(MenuList):
         self.l.setFont(7, gFont('OpenFont2', 34))
         self.l.setFont(8, gFont('OpenFont2', 36))
         self.l.setFont(9, gFont('OpenFont2', 40))
-        if HD.width() > 1280:
+        if isFHD():
             self.l.setItemHeight(50)
         else:
             self.l.setItemHeight(40)
@@ -505,7 +416,7 @@ class tvList(MenuList):
 def tvListEntry(name,png):
     res = [name]
     png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting.png'
-    if HD.width() > 1280:
+    if isFHD():
             res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
             res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -593,7 +504,7 @@ class OpenScript(Screen):
         self['listUpdate'].setText(_('Check List Update wait please...'))
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.read)
         else:
             self.timer.callback.append(self.read)
@@ -1785,7 +1696,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
             self.timerx = eTimer()
             self.timerx.start(100, 1)
-            if os.path.exists('/var/lib/dpkg/status'):
+            if DreamOS():
                 self.timerx_conn = self.timerx.timeout.connect(self.msgupdt2)
             else:
                 self.timerx.callback.append(self.msgupdt2)
@@ -2146,7 +2057,7 @@ class openMessageBox(Screen):
         self.timeout = timeout
         if timeout > 0:
             self.timer = eTimer()
-            if os.path.exists('/var/lib/dpkg/status'):
+            if DreamOS():
                 self.timer_conn = self.timer.timeout.connect(self.timerTick)
             else:
                 self.timer.callback.append(self.timerTick)
@@ -2262,7 +2173,7 @@ class plgnstrt(Screen):
 
     def decodeImage(self, pngori):
         pixmaps = pngori
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
@@ -2278,7 +2189,7 @@ class plgnstrt(Screen):
          1,
          '#FF000000'))
         ptr = self.picload.getData()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             if self.picload.startDecode(pixmaps, False) == 0:
                 ptr = self.picload.getData()
         else:
@@ -2318,7 +2229,7 @@ class plgnstrt(Screen):
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
         self.timer.start(2000, 1)
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
             self.timer.callback.append(self.OpenCheck)
@@ -2367,7 +2278,7 @@ def checks():
 def main(session, **kwargs):
     if checks:
         add_skin_font()
-        # if os.path.exists('/var/lib/dpkg/status'):
+        # if DreamOS():
             # session.open(OpenScript)
         if PY3:
             session.open(OpenScript)
@@ -2398,64 +2309,3 @@ def Plugins(**kwargs):
         result.append(mainDescriptor)
     return result
 
-def charRemove(text):
-    char = ["1080p",
-     "2018",
-     "2019",
-     "2020",
-     "2021",
-     "480p",
-     "4K",
-     "720p",
-     "ANIMAZIONE",
-     "APR",
-     "AVVENTURA",
-     "BIOGRAFICO",
-     "BDRip",
-     "BluRay",
-     "CINEMA",
-     "COMMEDIA",
-     "DOCUMENTARIO",
-     "DRAMMATICO",
-     "FANTASCIENZA",
-     "FANTASY",
-     "FEB",
-     "GEN",
-     "GIU",
-     "HDCAM",
-     "HDTC",
-     "HDTS",
-     "LD",
-     "MAFIA",
-     "MAG",
-     "MARVEL",
-     "MD",
-     "ORROR",
-     "NEW_AUDIO",
-     "POLIZ",
-     "R3",
-     "R6",
-     "SD",
-     "SENTIMENTALE",
-     "TC",
-     "TEEN",
-     "TELECINE",
-     "TELESYNC",
-     "THRILLER",
-     "Uncensored",
-     "V2",
-     "WEBDL",
-     "WEBRip",
-     "WEB",
-     "WESTERN",
-     "-",
-     "_",
-     ".",
-     "+",
-     "[",
-     "]"]
-
-    myreplace = text
-    for ch in char:
-            myreplace = myreplace.replace(ch, "").replace("  ", " ").replace("       ", " ").strip()
-    return myreplace
