@@ -1,19 +1,22 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-#--------------------#
-#  coded by Lululla	 #
-#	skin by MMark	 #
-#	  11/05/2021	 #
-#--------------------#
-#Info http://t.me/tivustream
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+'''
+Info http://t.me/tivustream
+****************************************
+*        coded by Lululla              *
+*                                      *
+*             30/11/2021               *
+****************************************
+'''
 # from __future__ import print_function
 from . import _
+# from Components.HTMLComponent import *
+# import socket
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import *
 from Components.Console import Console as iConsole
-# from Components.HTMLComponent import *
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -36,7 +39,8 @@ from Plugins.Extensions.TivuStream.getpics import getpics
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
-from Screens.InfoBar import MoviePlayer, InfoBar
+from Screens.InfoBar import InfoBar
+from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications, InfoBarMenu #, InfoBarSubtitleSupport
 from Screens.InputBox import InputBox
 from Screens.LocationBox import LocationBox
@@ -51,7 +55,8 @@ from Tools.Directories import resolveFilename, fileExists, copyfile, pathExists
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
-from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
+from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
 from enigma import eSize, eListbox, eListboxPythonMultiContent, eServiceCenter, eServiceReference, iPlayableService
 from enigma import eTimer
 from enigma import getDesktop, ePicLoad, gPixmapPtr
@@ -66,7 +71,6 @@ import os
 import random
 import re
 import shutil
-import socket
 import ssl
 import sys
 import time
@@ -81,7 +85,7 @@ PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.request import Request
-from six.moves.urllib.error import HTTPError, URLError
+# from six.moves.urllib.error import HTTPError, URLError
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import urlencode
@@ -169,32 +173,31 @@ def add_skin_font():
     addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
 
 def make_request(url):
-    # return []
+    link = []
     try:
         import requests
+        if six.PY3:
+            url = url.encode()
         link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
         return link
     except ImportError:
+        print("Here in client2 getUrl url =", url)
+        if six.PY3:
+            url = url.encode()
         req = Request(url)
-        req.add_header('User-Agent', 'TVS')
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urlopen(req, None, 3)
-        link = response.read()
+        link=response.read().decode('utf-8') #03/09/2021
         response.close()
+        print("Here in client2 link =", link)
         return link
     except:
-        e = URLError #, e:
-        print('We failed to open "%s".' % url)
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
-        return
+        return ''
     return
 
 modechoices = [
-                ("4097", _("IPTV(4097)")),
-                ("1", _("Dvb(1)")),
+                ("4097", _("ServiceMp3(4097)")),
+                ("1", _("Hardware(1)")),
                 ("8193", _("eServiceUri(8193)")),
                 ]
 
@@ -468,7 +471,7 @@ class OpenScript(Screen):
         skin = skin_path + '/OpenScript.xml'
         f = open(skin, 'r')
         self.skin = f.read()
-        # f.close()
+        f.close()
         Screen.__init__(self, session)
         self.setup_title = _('Channel List')
         self['list'] = tvList([])
@@ -534,7 +537,6 @@ class OpenScript(Screen):
             self.menu_list.append(x)
             idx += 1
         self['list'].setList(list)
-
 
     def okRun(self, result):
         if result:
@@ -1196,9 +1198,7 @@ class M3uPlay(Screen):
                         self.gridmaint.callback.append(self.gridpic)
                     # self.session.open(GridMain, self.names, self.urls, self.pics)
     #####################################################################################
-
                 else:
-
                     m3ulist(self.names, self['list'])
 
                 self["live"].setText('N.' + str(len(self.names)) + " Stream")
@@ -1308,8 +1308,12 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         TvInfoBarShowHide.__init__(self)
         InfoBarAudioSelection.__init__(self)
         # InfoBarSubtitleSupport.__init__(self)
-        self['actions'] = ActionMap(['WizardActions',
-         'MoviePlayerActions',
+        try:
+            self.init_aspect = int(self.getAspect())
+        except:
+            self.init_aspect = 0
+        self.new_aspect = self.init_aspect
+        self['actions'] = ActionMap(['MoviePlayerActions',
          'MovieSelectionActions',
          'MediaPlayerActions',
          'EPGSelectActions',
@@ -1320,57 +1324,111 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
          'InfobarActions',
          'InfobarSeekActions'], {'leavePlayer': self.cancel,
          'epg': self.showIMDB,
-         'info': self.showIMDB,
+         'info': self.showinfo,
          # 'info': self.cicleStreamType,
          'tv': self.cicleStreamType,
-         'stop': self.leavePlayer,
+         'stop': self.cancel,
          'cancel': self.cancel,
          'back': self.cancel}, -1)
         self.allowPiP = False
         self.service = None
         service = None
         InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')
-        url = url.replace(':', '%3a')
-        self.url = url
-        self.name = name
+        self.url = url.replace(':', '%3a').replace(' ','%20')
+        self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
-        self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
-        SREF = self.srefOld        
-        # self.onLayoutFinish.append(self.cicleStreamType)
-        # self.onClose.append(self.cancel)
-		# self.onClose.append(self.__onClose)
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()       
         if '8088' in str(self.url):
-            self.onLayoutFinish.append(self.slinkPlay)
+            self.onFirstExecBegin.append(self.slinkPlay)
         else:
-            self.onLayoutFinish.append(self.cicleStreamType)
+            self.onFirstExecBegin.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
-		# self.onClose.append(self.__onClose)
-        return        
+    def getAspect(self):
+        return AVSwitch().getAspectRatioSetting()
+
+    def getAspectString(self, aspectnum):
+        return {0: _('4:3 Letterbox'),
+         1: _('4:3 PanScan'),
+         2: _('16:9'),
+         3: _('16:9 always'),
+         4: _('16:10 Letterbox'),
+         5: _('16:10 PanScan'),
+         6: _('16:9 Letterbox')}[aspectnum]
+
+    def setAspect(self, aspect):
+        map = {0: '4_3_letterbox',
+         1: '4_3_panscan',
+         2: '16_9',
+         3: '16_9_always',
+         4: '16_10_letterbox',
+         5: '16_10_panscan',
+         6: '16_9_letterbox'}
+        config.av.aspectratio.setValue(map[aspect])
+        try:
+            AVSwitch().setAspectRatio(aspect)
+        except:
+            pass
+
+    def av(self):
+        temp = int(self.getAspect())
+        temp = temp + 1
+        if temp > 6:
+            temp = 0
+        self.new_aspect = temp
+        self.setAspect(temp)
+
+    def showinfo(self):
+        debug = True
+        sTitle = ''
+        sServiceref = ''
+        try:
+            servicename, serviceurl = getserviceinfo(sref)
+            if servicename != None:
+                sTitle = servicename
+            else:
+                sTitle = ''
+            if serviceurl != None:
+                sServiceref = serviceurl
+            else:
+                sServiceref = ''
+            currPlay = self.session.nav.getCurrentService()
+            sTagCodec = currPlay.info().getInfoString(iServiceInformation.sTagCodec)
+            sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+            sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+            message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec: ' + str(sTagAudioCodec)
+            self.mbox = self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
+        except:
+            pass
+        return
 
     def showIMDB(self):
-        text_clear = self.name
-        if is_tmdb:
-            try:
-                text = charRemove(text_clear)
-                _session.open(tmdb.tmdbScreen, text, 0)
-            except Exception as e:
-                print("[XCF] Tmdb: ", e)
-        elif is_imdb:
-            try:
-                text = charRemove(text_clear)
-                imdb(_session, text)
-            except Exception as e:
-                print("[XCF] imdb: ", e)   
+        TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
+        IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
+        if os.path.exists(TMDB):
+            from Plugins.Extensions.TMBD.plugin import TMBD
+            text_clear = self.name
+                   
+                
+            text = charRemove(text_clear)
+            self.session.open(TMBD, text, False)
+        elif os.path.exists(IMDb):
+            from Plugins.Extensions.IMDb.plugin import IMDB
+            text_clear = self.name
+                
+            text = charRemove(text_clear)
+            HHHHH = text
+            self.session.open(IMDB, HHHHH)
+                                           
         else:
-            self.session.open(openMessageBox, text_clear, openMessageBox.TYPE_INFO)
+            text_clear = self.name
+            self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
 
     def slinkPlay(self, url):
-        ref = str(url)
-        ref = ref.replace(':', '%3a')
-        ref = ref.replace(' ','%20')
+        name = self.name
+        ref = "{0}:{1}".format(url.replace(":", "%3A"), name.replace(":", "%3A"))
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(self.name)
+        sref.setName(name)
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
@@ -1382,7 +1440,7 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
             ref = str(servicetype) + ':0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + str(url)        
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(self.name)
+        sref.setName(name)
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
@@ -1390,15 +1448,18 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         global streml
         streaml = False
         from itertools import cycle, islice
-        self.servicetype = str(config.plugins.TivuStream.services.value) +':0:1:0:0:0:0:0:0:0:'#  '4097'
+        self.servicetype = str(config.plugins.TivuStream.services.value) #+':0:1:0:0:0:0:0:0:0:'#  '4097'
         print('servicetype1: ', self.servicetype)
         url = str(self.url)
+        if str(os.path.splitext(self.url)[-1]) == ".m3u8":
+            if self.servicetype == "1":
+                self.servicetype = "4097"   
         currentindex = 0
         streamtypelist = ["4097"]
         # if "youtube" in str(self.url):
             # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
             # return
-        if os.path.exists("/usr/sbin/streamlinksrv"):
+        if isStreamlinkAvailable():
             streamtypelist.append("5002") #ref = '5002:0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + url
             streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
@@ -1415,51 +1476,19 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.servicetype = str(next(nextStreamType))
         print('servicetype2: ', self.servicetype)
         self.openPlay(self.servicetype, url)
-    # def openPlay(self,servicetype, url):
-        # url = url
-        # ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
-        # print('final reference :   ', ref)
-        # sref = eServiceReference(ref)
-        # sref.setName(self.name)
-        # self.session.nav.stopService()
-        # self.session.nav.playService(sref)
-
-    # def cicleStreamType(self):
-        # from itertools import cycle, islice
-        # self.servicetype = str(config.plugins.TivuStream.services.value) #'4097'
-        # ###kiddac test
-        # print('servicetype1: ', self.servicetype)
-        # url = str(self.url)
-        # currentindex = 0
-        # streamtypelist = ["4097"]
-        # if os.path.exists("/usr/bin/gstplayer"):
-            # streamtypelist.append("5001")
-        # if os.path.exists("/usr/bin/exteplayer3"):
-            # streamtypelist.append("5002")
-        # if os.path.exists("/usr/bin/apt-get"):
-            # streamtypelist.append("8193")
-        # for index, item in enumerate(streamtypelist, start=0):
-            # if str(item) == str(self.servicetype):
-                # currentindex = index
-                # break
-        # nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
-        # self.servicetype = int(next(nextStreamType))
-        # print('servicetype2: ', self.servicetype)
-        # self.openPlay(self.servicetype, url)
-
-    def keyNumberGlobal(self, number):
-        self['text'].number(number)
-
-    # def cancel(self):
-        # self.session.nav.stopService()
-        # self.session.nav.playService(srefInit)
-        # self.close()
         
-    def keyLeft(self):
-        self['text'].left()
+    def up(self):
+        pass        
+        
+    def down(self):
+        # pass
+        self.up()
 
-    def keyRight(self):
-        self['text'].right()
+    def doEofInternal(self, playing):
+        self.close()
+
+    def __evEOF(self):
+        self.end = True
 
     def showVideoInfo(self):
         if self.shown:
@@ -1485,8 +1514,9 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
                 self.setAspect(self.init_aspect)
             except:
                 pass
+        streaml = False
         self.close()
-        
+
     def leavePlayer(self):
         self.close()
 
@@ -1608,9 +1638,7 @@ class AddIpvStream(Screen):
 
 
 class OpenConfig(Screen, ConfigListScreen):
-
         def __init__(self, session):
-
             skin = skin_path + '/OpenConfig.xml'
             f = open(skin, 'r')
             self.skin = f.read()
@@ -1631,7 +1659,6 @@ class OpenConfig(Screen, ConfigListScreen):
             self['text'] = Label(info)
             self["description"] = Label(_(''))
             self.cbUpdate = False
-
             self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"  ], {
                 'cancel': self.extnok,
                 "red": self.extnok,
@@ -1639,9 +1666,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 'yellow': self.msgupdt1,
                 'showVirtualKeyboard': self.KeyText,
                 'ok': self.Ok_edit,
-
             }, -2)
-
             self.list = []
             ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
             self.createSetup()
@@ -1649,7 +1674,6 @@ class OpenConfig(Screen, ConfigListScreen):
             self.onLayoutFinish.append(self.layoutFinished)
             if self.setInfo not in self['config'].onSelectionChanged:
                 self['config'].onSelectionChanged.append(self.setInfo)
-
 
         def checkUpdate(self):
             # server_ref()
@@ -1661,7 +1685,6 @@ class OpenConfig(Screen, ConfigListScreen):
                 # fp = checkStr(urlopen(req))
                 # fp = fp.read()
                 # print("fp3 =", fp)
-
                 fp = ''
                 destr = plugin_path + 'update.txt'
                 fp = make_request(upd_fr_txt)
@@ -1759,12 +1782,10 @@ class OpenConfig(Screen, ConfigListScreen):
                 self['description'].setText(_("Show Plugin in Main Menu"))
             return
 
-
         def changedEntry(self):
             sel = self['config'].getCurrent()
             for x in self.onChangedEntry:
                 x()
-
             try:
                 if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
                     self.createSetup()
@@ -2156,7 +2177,7 @@ class plgnstrt(Screen):
         # self['text'] = ScrollLabel()
         self['text'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
-         'DirectionActions','ColorActions', 'SetupActions'], {'ok': self.clsgo,
+         'DirectionActions', 'ColorActions', 'SetupActions'], {'ok': self.clsgo,
          'cancel': self.clsgo,
          'back': self.clsgo,
          'red': self.clsgo,
@@ -2169,7 +2190,6 @@ class plgnstrt(Screen):
         self.onFirstExecBegin.append(self.loadDefaultImage)
         # self.onLayoutFinish.append(self.image_downloaded)
         self.onLayoutFinish.append(self.checkDwnld)
-
 
     def decodeImage(self, pngori):
         pixmaps = pngori
