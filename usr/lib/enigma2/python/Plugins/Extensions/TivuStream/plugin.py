@@ -59,7 +59,7 @@ from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
 from enigma import eSize, eListbox, eListboxPythonMultiContent, eServiceCenter, eServiceReference, iPlayableService
 from enigma import eTimer
-from enigma import getDesktop, ePicLoad, gPixmapPtr
+from enigma import ePicLoad, gPixmapPtr
 from enigma import loadPNG, gFont
 from os.path import splitext
 from sys import version_info
@@ -85,7 +85,6 @@ PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.request import Request
-# from six.moves.urllib.error import HTTPError, URLError
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import urlencode
@@ -157,7 +156,7 @@ except Exception:
     
 #changelog 21.01.2021
 currversion = '3.0'
-Version = currversion + ' - 11.05.2021'
+Version = currversion + ' - 06.12.2021'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
 name_plug = 'TivuStream Revolution'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
@@ -171,29 +170,6 @@ def add_skin_font():
     font_path = plugin_path + 'res/fonts/'
     addFont(font_path + 'verdana_r.ttf', 'OpenFont1', 100, 1)
     addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
-
-def make_request(url):
-    link = []
-    try:
-        import requests
-        if six.PY3:
-            url = url.encode()
-        link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
-        return link
-    except ImportError:
-        print("Here in client2 getUrl url =", url)
-        if six.PY3:
-            url = url.encode()
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urlopen(req, None, 3)
-        link=response.read().decode('utf-8') #03/09/2021
-        response.close()
-        print("Here in client2 link =", link)
-        return link
-    except:
-        return ''
-    return
 
 modechoices = [
                 ("4097", _("ServiceMp3(4097)")),
@@ -283,22 +259,13 @@ imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
 
 global skin_path
-# HD = getDesktop(0).size()
 if isFHD():
     skin_path=res_plugin_path + 'skins/fhd/'
 else:
     skin_path=res_plugin_path + 'skins/hd/'
+
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
-
-def remove_line(filename, what):
-    if os.path.isfile(filename):
-        file_read = open(filename).readlines()
-        file_write = open(filename, 'w')
-        for line in file_read:
-            if what not in line:
-                file_write.write(line)
-        file_write.close()
 
 def m3ulistEntry(download):
     res = [download]
@@ -398,7 +365,6 @@ class TvInfoBarShowHide():
         print(text + " %s\n" % obj)
 
 class tvList(MenuList):
-
     def __init__(self, list):
         MenuList.__init__(self, list, False, eListboxPythonMultiContent)
         self.l.setFont(0, gFont('OpenFont2', 20))
@@ -518,7 +484,7 @@ class OpenScript(Screen):
             # onserver2 = six.ensure_str(upd_nt_txt)
             onserver2 = upd_nt_txt
             with open(destr, 'w') as f:
-                content = make_request(onserver2)
+                content = ReadUrl2(onserver2)
                 # content = six.ensure_str(content)
                 f.write(content)
             self['listUpdate'].setText(content)
@@ -693,7 +659,7 @@ class OpenScript(Screen):
             namebqt = ('/etc/enigma2/%s' % bqtname)
             try:
                 with open(namebqt, 'w') as f:
-                    content = make_request(lnk)
+                    content = ReadUrl2(lnk)
                     # content = six.ensure_str(content)
                     print('Resp 2: ', content)
                     f.write(content)
@@ -740,7 +706,6 @@ class OpenScript(Screen):
             eDVBDB.getInstance().reloadBouquets()
             return
 
-
     def messagerun(self):
         self.session.openWithCallback(self.messagerun2, openMessageBox, _('Install the selected list?'), openMessageBox.TYPE_YESNO)
 
@@ -753,7 +718,7 @@ class OpenScript(Screen):
 
     def reloadSettings(self, result):
         if result:
-           ReloadBouquet()
+           ReloadBouquets()
 
     def messagedellist(self):
         self.session.openWithCallback(self.deletelist, openMessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?', openMessageBox.TYPE_YESNO)
@@ -766,13 +731,12 @@ class OpenScript(Screen):
                     if os.path.exists(file):
                         os.remove(file)
                         os.system("sed -i '/userbouquet.tivustream/d' /etc/enigma2/bouquets.tv")
-
                     radio = '/etc/enigma2/subbouquet.tivustream_radio.radio'
                     if os.path.exists(radio):
                         os.remove(radio)
                         os.system("sed -i '/subbouquet.tivustream/d' /etc/enigma2/bouquets.radio")
             self.mbox = self.session.open(openMessageBox, _('TiVuStream Revolution channel lists successfully deleted'), openMessageBox.TYPE_INFO, timeout=4)
-            ReloadBouquet()
+            ReloadBouquets()
 
     def M3uPlay(self):
         tivustream = 'tivustream'
@@ -816,7 +780,7 @@ class OpenM3u(Screen):
         try:
             destx = Path_Movies + 'tivustream.m3u'
             with open(destx, 'w') as f:
-                content = make_request(servernewm3u)
+                content = ReadUrl2(servernewm3u)
                 content = six.ensure_str(content)
                 print('Resp 1: ', content)
                 f.write(content)
@@ -940,7 +904,7 @@ class OpenM3u(Screen):
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
         self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
-        ReloadBouquet()
+        ReloadBouquets()
 
     def create_bouquet(self):
         idx = self['list'].getSelectionIndex()
@@ -986,7 +950,7 @@ class OpenM3u(Screen):
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
         self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
-        ReloadBouquet()
+        ReloadBouquets()
 
     def cancel(self):
         if self.convert == False:
@@ -1032,7 +996,6 @@ class M3uPlay(Screen):
          "instantRecord": self.runRec,
          "ShortRecord": self.runRec,
          'ok': self.runChannel}, -2)
-
         self.name = name
         # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onLayoutFinish.append(self.playList)
@@ -1285,7 +1248,6 @@ class M3uPlay(Screen):
             self.session.nav.playService(srefInit)
             self.close()
 
-
 class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
     STATE_IDLE = 0
     STATE_PLAYING = 1
@@ -1408,7 +1370,6 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
                    
-                
             text = charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
@@ -1481,7 +1442,6 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         pass        
         
     def down(self):
-        # pass
         self.up()
 
     def doEofInternal(self, playing):
@@ -1521,7 +1481,6 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.close()
 
 class AddIpvStream(Screen):
-
     def __init__(self, session, name, url):
         self.session = session
         skin = skin_path + '/AddIpvStream.xml'
@@ -1676,18 +1635,10 @@ class OpenConfig(Screen, ConfigListScreen):
                 self['config'].onSelectionChanged.append(self.setInfo)
 
         def checkUpdate(self):
-            # server_ref()
             try:
-                # fp = ''
-                # destr = plugin_path + 'update.txt'
-                # req = Request(upd_fr_txt)
-                # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-                # fp = checkStr(urlopen(req))
-                # fp = fp.read()
-                # print("fp3 =", fp)
                 fp = ''
                 destr = plugin_path + 'update.txt'
-                fp = make_request(upd_fr_txt)
+                fp = ReadUrl2(upd_fr_txt)
                 fp = six.ensure_str(fp)
                 with open(destr, 'w') as f:
                     f.write(fp)
@@ -1863,7 +1814,6 @@ class OpenConfig(Screen, ConfigListScreen):
                 self["config"].getCurrent()[1].setValue(callback)
                 self["config"].invalidate(self["config"].getCurrent())
 
-
         def KeyText(self):
             sel = self['config'].getCurrent()
             if sel:
@@ -1912,7 +1862,6 @@ class OpenConfig(Screen, ConfigListScreen):
             self.session.open(TryQuitMainloop, 3)
 
 class OpenConsole(Screen):
-
     # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False,endstr=''):
         self.session = session
@@ -2162,7 +2111,6 @@ class openMessageBox(Screen):
         return str(type(self)) + '(' + self.text + ')'
 
 class plgnstrt(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + '/Plgnstrt.xml'
@@ -2248,7 +2196,7 @@ class plgnstrt(Screen):
         self.icount = 0
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
-        self.timer.start(2000, 1)
+        self.timer.start(1500, 1)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
