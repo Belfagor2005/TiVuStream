@@ -1,17 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
-Info http://t.me/tivustream
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             30/11/2021               *
+*             01/12/2021               *
 ****************************************
+Info http://t.me/tivustream
 '''
 # from __future__ import print_function
 from . import _
 # from Components.HTMLComponent import *
-# import socket
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -88,8 +87,8 @@ from six.moves.urllib.request import Request
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import urlencode
-from six.moves.urllib.request import urlretrieve    
-import six.moves.urllib.request
+from six.moves.urllib.request import urlretrieve
+# import six.moves.urllib.request
 
 try:
     import io
@@ -153,7 +152,7 @@ try:
 	is_imdb = True
 except Exception:
 	is_imdb = False
-    
+
 #changelog 21.01.2021
 currversion = '3.0'
 Version = currversion + ' - 06.12.2021'
@@ -174,14 +173,16 @@ def add_skin_font():
 modechoices = [
                 ("4097", _("ServiceMp3(4097)")),
                 ("1", _("Hardware(1)")),
-                ("8193", _("eServiceUri(8193)")),
                 ]
 
 if os.path.exists("/usr/bin/gstplayer"):
     modechoices.append(("5001", _("Gstreamer(5001)")))
 if os.path.exists("/usr/bin/exteplayer3"):
     modechoices.append(("5002", _("Exteplayer3(5002)")))
-
+if os.path.exists("/usr/sbin/streamlinksrv"):
+    modechoices.append(("5002", _("Streamlink(5002)")))
+if os.path.exists("/usr/bin/apt-get"):
+    modechoices.append(("8193", _("eServiceUri(8193)")))
 
 sessions = []
 config.plugins.TivuStream                        = ConfigSubsection()
@@ -1229,7 +1230,7 @@ class M3uPlay(Screen):
             self.close()
         else:
             self.session.open(MessageBox, _('Install Streamlink first'), MessageBox.TYPE_INFO, timeout=5)
-            
+
     def AdjUrlFavo(self):
         idx = self['list'].getSelectionIndex()
         if idx == -1 or None:
@@ -1248,7 +1249,17 @@ class M3uPlay(Screen):
             self.session.nav.playService(srefInit)
             self.close()
 
-class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
+# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
+class M3uPlay2(
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarSubtitleSupport,
+    InfoBarNotifications,
+    TvInfoBarShowHide,
+    Screen
+):
     STATE_IDLE = 0
     STATE_PLAYING = 1
     STATE_PAUSED = 2
@@ -1257,19 +1268,24 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     screen_timeout = 5000
 
     def __init__(self, session, name, url):
-        global SREF, streml
+        global SREF, streaml
         Screen.__init__(self, session)
         self.session = session
+        global _session
+        _session = session
         self.skinName = 'MoviePlayer'
         title = name
         streaml = False
-        # self['list'] = MenuList([])
-        InfoBarMenu.__init__(self)
-        InfoBarNotifications.__init__(self)
-        InfoBarBase.__init__(self, steal_current_service=True)
-        TvInfoBarShowHide.__init__(self)
-        InfoBarAudioSelection.__init__(self)
-        # InfoBarSubtitleSupport.__init__(self)
+
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+
+                InfoBarAudioSelection, \
+                InfoBarSubtitleSupport, \
+                InfoBarNotifications, \
+                TvInfoBarShowHide:
+            x.__init__(self)
         try:
             self.init_aspect = int(self.getAspect())
         except:
@@ -1295,11 +1311,13 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.allowPiP = False
         self.service = None
         service = None
-        InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')
-        self.url = url.replace(':', '%3a').replace(' ','%20')
+        self.pcip = 'None'
+        self.icount = 0
+        self.desc = desc
+        self.url = url
         self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
-        SREF = self.session.nav.getCurrentlyPlayingServiceReference()       
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
             self.onFirstExecBegin.append(self.slinkPlay)
         else:
@@ -1369,17 +1387,17 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         if os.path.exists(TMDB):
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
-                   
+
             text = charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
-                
+
             text = charRemove(text_clear)
             HHHHH = text
             self.session.open(IMDB, HHHHH)
-                                           
+
         else:
             text_clear = self.name
             self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
@@ -1394,11 +1412,14 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.session.nav.playService(sref)
 
     def openPlay(self, servicetype, url):
-        url = url.replace(':', '%3a')
-        url = url.replace(' ','%20')
-        ref = str(servicetype) + ':0:1:0:0:0:0:0:0:0:' + str(url)
+        name = self.name
+
+        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+        print('reference:   ', ref)
         if streaml == True:
-            ref = str(servicetype) + ':0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + str(url)        
+            url = 'http://127.0.0.1:8088/' + str(url)
+            ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+            print('streaml reference:   ', ref)
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(name)
@@ -1414,7 +1435,7 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         url = str(self.url)
         if str(os.path.splitext(self.url)[-1]) == ".m3u8":
             if self.servicetype == "1":
-                self.servicetype = "4097"   
+                self.servicetype = "4097"
         currentindex = 0
         streamtypelist = ["4097"]
         # if "youtube" in str(self.url):
@@ -1437,10 +1458,10 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.servicetype = str(next(nextStreamType))
         print('servicetype2: ', self.servicetype)
         self.openPlay(self.servicetype, url)
-        
+
     def up(self):
-        pass        
-        
+        pass
+
     def down(self):
         self.up()
 
@@ -1460,9 +1481,9 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
     def showAfterSeek(self):
         if isinstance(self, TvInfoBarShowHide):
             self.doShow()
-            
+
     def cancel(self):
-        if os.path.exists('/tmp/hls.avi'):
+        if os.path.isfile('/tmp/hls.avi'):
             os.remove('/tmp/hls.avi')
         self.session.nav.stopService()
         self.session.nav.playService(SREF)
@@ -2183,6 +2204,7 @@ class plgnstrt(Screen):
                 pass
 
     def loadDefaultImage(self, failure=None):
+        import random
         print("*** failure *** %s" % failure)
         # if self["poster"].instance:
         global pngori
@@ -2238,6 +2260,8 @@ class plgnstrt(Screen):
         self.session.openWithCallback(self.close, OpenScript)
 
 def checks():
+    from Plugins.Extensions.revolution.Utils import checkInternet
+    checkInternet()
     chekin= False
     if checkInternet():
         chekin = True
@@ -2246,8 +2270,6 @@ def checks():
 def main(session, **kwargs):
     if checks:
         add_skin_font()
-        # if DreamOS():
-            # session.open(OpenScript)
         if PY3:
             session.open(OpenScript)
         else:
@@ -2266,7 +2288,7 @@ def cfgmain(menuid):
 
 def Plugins(**kwargs):
     icona = 'logo.png'
-    if not os.path.exists('/var/lib/dpkg/status'):
+    if not DreamOS():
         icona = skin_path + '/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)
