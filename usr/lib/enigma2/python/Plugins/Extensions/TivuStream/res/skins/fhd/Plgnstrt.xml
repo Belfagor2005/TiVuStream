@@ -13,7 +13,7 @@
 	<eLabel position="75,45" size="8,915" zPosition="1" backgroundColor="#30403f3f" />
 	<eLabel position="75,953" size="1763,8" zPosition="1" backgroundColor="#30403f3f" />
 
-    	<widget source="text" render="tvsRunningText" position="1072,324" size="730,609" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
+   <widget source="text" render="tvsRunningText" position="1072,324" size="730,609" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
 			
 	<!-- <widget name="text" position="219,71" size="1450,877" font="OpenFont2;30" halign="center" foregroundColor="#33ccff" transparent="1" zPosition="5" />   -->
 </screen>

@@ -7,7 +7,7 @@
 	<widget name="Maintainer2" position="340,45" size="266,20" font="Regular;16" halign="lrft" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/key_menu.png" scale="strech" position="650,60" size="53,23" zPosition="3" />
 	<!-- Menu List -->
-	<widget name="list" position="146,103" size="553,433" itemHeight="33" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" 
+	<widget name="list" position="146,103" size="553,433" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" 
 		foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#000b2049" backgroundColorSelected="#0b2049" 
 		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sliderb.png" />
 	<widget name="listUpdate"  position="146,533" size="546,33" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" valign="center" />

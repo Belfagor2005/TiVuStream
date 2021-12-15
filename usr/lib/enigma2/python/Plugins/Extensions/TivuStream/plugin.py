@@ -275,6 +275,35 @@ else:
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
+class tvList(MenuList):
+    def __init__(self, list):
+        MenuList.__init__(self, list, False, eListboxPythonMultiContent)
+        self.l.setFont(0, gFont('OpenFont2', 20))
+        self.l.setFont(1, gFont('OpenFont2', 22))
+        self.l.setFont(2, gFont('OpenFont2', 24))
+        self.l.setFont(3, gFont('OpenFont2', 26))
+        self.l.setFont(4, gFont('OpenFont2', 28))
+        self.l.setFont(5, gFont('OpenFont2', 30))
+        self.l.setFont(6, gFont('OpenFont2', 32))
+        self.l.setFont(7, gFont('OpenFont2', 34))
+        self.l.setFont(8, gFont('OpenFont2', 36))
+        self.l.setFont(9, gFont('OpenFont2', 40))
+        if isFHD():
+            self.l.setItemHeight(50)
+        else:
+            self.l.setItemHeight(50)
+
+def tvListEntry(name,png):
+    res = [name]
+    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
+    if isFHD():
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    else:
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    return res
+    
 def m3ulistEntry(download):
     res = [download]
     white = 16777215
@@ -372,34 +401,7 @@ class TvInfoBarShowHide():
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
 
-class tvList(MenuList):
-    def __init__(self, list):
-        MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        self.l.setFont(0, gFont('OpenFont2', 20))
-        self.l.setFont(1, gFont('OpenFont2', 22))
-        self.l.setFont(2, gFont('OpenFont2', 24))
-        self.l.setFont(3, gFont('OpenFont2', 26))
-        self.l.setFont(4, gFont('OpenFont2', 28))
-        self.l.setFont(5, gFont('OpenFont2', 30))
-        self.l.setFont(6, gFont('OpenFont2', 32))
-        self.l.setFont(7, gFont('OpenFont2', 34))
-        self.l.setFont(8, gFont('OpenFont2', 36))
-        self.l.setFont(9, gFont('OpenFont2', 40))
-        if isFHD():
-            self.l.setItemHeight(50)
-        else:
-            self.l.setItemHeight(40)
 
-def tvListEntry(name,png):
-    res = [name]
-    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
-    if isFHD():
-            res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
-            res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-            res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
-            res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    return res
 
 
 Panel_list = [
@@ -1021,7 +1023,7 @@ class M3uPlay(Screen):
             self.names = []
             self.urls = []
             self.pics = []
-            pic = plugin_path + "res/pics/default.png"
+            pic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
             search = result
             try:
                 if fileExists(self.name):
@@ -1124,7 +1126,8 @@ class M3uPlay(Screen):
         self.names = []
         self.urls = []
         self.pics = []
-        pic = plugin_path + "res/pics/default.png"
+        pic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
+        
         try:
             if fileExists(self.name):
                 f1 = open(self.name, 'r+')
@@ -1287,7 +1290,6 @@ class M3uPlay2(
         for x in InfoBarBase, \
                 InfoBarMenu, \
                 InfoBarSeek, \
-
                 InfoBarAudioSelection, \
                 InfoBarSubtitleSupport, \
                 InfoBarNotifications, \

@@ -6,7 +6,7 @@
 	<ePixmap position="146,86" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sep.png" zPosition="5" />
 	<widget name="Maintainer2" position="340,45" size="266,20" font="Regular;16" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
 	<!-- Menu List -->
-	<widget name="list" position="146,103" size="686,433" font="Regular;20" itemHeight="33" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" 
+	<widget name="list" position="146,103" size="686,433" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" 
 		foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" 
 		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/hd/sliderb.png" />
 	<!-- Widget -->
