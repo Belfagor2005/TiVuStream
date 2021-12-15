@@ -40,7 +40,9 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications, InfoBarMenu #, InfoBarSubtitleSupport
+from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
+	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.InputBox import InputBox
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
@@ -56,10 +58,17 @@ from Tools.LoadPixmap import LoadPixmap
 from enigma import *
 from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
-from enigma import eSize, eListbox, eListboxPythonMultiContent, eServiceCenter, eServiceReference, iPlayableService
+from enigma import eListbox, eListboxPythonMultiContent 
 from enigma import eTimer
 from enigma import ePicLoad, gPixmapPtr
-from enigma import loadPNG, gFont
+from enigma import gFont
+from enigma import eServiceCenter
+from enigma import eServiceReference
+from enigma import eSize, ePicLoad
+from enigma import iServiceInformation
+from enigma import loadPNG 
+from enigma import quitMainloop
+from enigma import iPlayableService 
 from os.path import splitext
 from sys import version_info
 from twisted.web.client import downloadPage, getPage, error
@@ -153,17 +162,17 @@ try:
 except Exception:
 	is_imdb = False
 
-#changelog 21.01.2021
+#changelog 12.12.2021
 currversion = '3.0'
-Version = currversion + ' - 06.12.2021'
+Version = currversion + ' - 12.12.2021'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
 name_plug = 'TivuStream Revolution'
-plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
 Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
-res_plugin_path=plugin_path + 'res/'
+plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
+res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('TivuStream'))
 #================
 def add_skin_font():
     font_path = plugin_path + 'res/fonts/'
@@ -228,13 +237,13 @@ def server_ref():
     server = ''
     host = ''
     TEST1 = 'aHR0cHM6Ly9wYXRidXdlYi5jb20='
-    ServerS1 = base64.b64decode(TEST1)
+    ServerS1 = b64decoder(TEST1)
     data_s1 = 'L2lwdHYv' #
-    FTP_1 = base64.b64decode(data_s1)
+    FTP_1 = b64decoder(data_s1)
     TEST2 = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmc='
-    ServerS2 = base64.b64decode(TEST2)
+    ServerS2 = b64decoder(TEST2)
     data_s2 = 'L2lwdHYv' #
-    FTP_2 = base64.b64decode(data_s2)
+    FTP_2 = b64decoder(data_s2)
     if config.plugins.TivuStream.server.value == 'PATBUWEB' :
         host = ServerS1
         server = ServerS1 + FTP_1
@@ -244,27 +253,25 @@ def server_ref():
     upd_fr_txt = ('%splugin/update.txt' % server)
     # upd_nt_txt = ('%se2liste/list.txt' % server)
     tex = 'aHR0cDovL3RpdnVzdHJlYW0ud2Vic2l0ZS9pb3MvbGlzdC50eHQ='
-    upd_nt_txt = base64.b64decode(tex)
+    upd_nt_txt = b64decoder(tex)
     return server, host, upd_fr_txt
 server_ref()
 nnewtv = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=='
-servernew = base64.b64decode(nnewtv)
+servernew = b64decoder(nnewtv)
 nnewm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbC5waHA/cD01JnVhPVRpVnVTdHJlYW0mZj0x'
-servernewm3u = base64.b64decode(nnewm3u)
+servernewm3u = b64decoder(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
-m3uest = base64.b64decode(estm3u)
+m3uest = b64decoder(estm3u)
 
-global pngori
+global pngori, skin_path
 nasarandom = "http://patbuweb.com/back-tvstream/"
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
-pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
+pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 
-global skin_path
 if isFHD():
-    skin_path=res_plugin_path + 'skins/fhd/'
+    skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
 else:
-    skin_path=res_plugin_path + 'skins/hd/'
-
+    skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
@@ -276,13 +283,13 @@ def m3ulistEntry(download):
     col = 16777215
     backcol = 0
     blue = 4282611429
-    png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting2.png'
+    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT| RT_VALIGN_CENTER)) 
     return res
 
 def m3ulist(data, list):
@@ -385,13 +392,13 @@ class tvList(MenuList):
 
 def tvListEntry(name,png):
     res = [name]
-    png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting.png'
+    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
     if isFHD():
             res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
             res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
             res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
-            res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+            res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -498,7 +505,7 @@ class OpenScript(Screen):
                 del self.menu_list[0]
         list = []
         idx = 0
-        png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/setting.png'
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
         for x in Panel_list:
             list.append(tvListEntry(x, png))
             self.menu_list.append(x)
@@ -621,7 +628,7 @@ class OpenScript(Screen):
 
     def instal_listTv(self, namex, lnk):
         name = namex
-        lnk = base64.b64decode(lnk)
+        lnk = b64decoder(lnk)
         print('link  : ', lnk)
         pin = 2808
         pin2 = str(config.plugins.TivuStream.code.value)
@@ -2192,7 +2199,7 @@ class plgnstrt(Screen):
         return
 
     def image_downloaded(self):
-        pngori = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
+        pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
         if os.path.exists(pngori):
             print('image pngori: ',pngori)
             try:
