@@ -91,14 +91,23 @@ except:
 
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import urlencode
-from six.moves.urllib.request import urlretrieve
-# import six.moves.urllib.request
-
+if PY3:
+        import http.client
+        from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib.error import URLError, HTTPError
+        from urllib.request import urlopen, Request
+        from urllib.parse import urlparse
+        from urllib.parse import parse_qs, urlencode, quote
+        unicode = str; unichr = chr; long = int
+        PY3 = True
+else:
+# if os.path.exists('/usr/lib/python2.7'):
+        from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib2 import urlopen, Request, URLError, HTTPError
+        from urlparse import urlparse, parse_qs
+        from urllib import urlencode, quote
+        import httplib
+        import six
 try:
     import io
 except:
@@ -162,7 +171,7 @@ try:
 except Exception:
 	is_imdb = False
 
-#changelog 12.12.2021
+#changelog 18.12.2021
 currversion = '3.0'
 Version = currversion + ' - 12.12.2021'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
@@ -174,10 +183,10 @@ service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
 res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('TivuStream'))
 #================
-def add_skin_font():
-    font_path = plugin_path + 'res/fonts/'
-    addFont(font_path + 'verdana_r.ttf', 'OpenFont1', 100, 1)
-    addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
+# def add_skin_font():
+    # font_path = plugin_path + 'res/fonts/'
+    # addFont(font_path + 'verdana_r.ttf', 'OpenFont1', 100, 1)
+    # addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
 
 modechoices = [
                 ("4097", _("ServiceMp3(4097)")),
@@ -267,7 +276,8 @@ global pngori, skin_path
 nasarandom = "http://patbuweb.com/back-tvstream/"
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
-
+png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
+pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
 if isFHD():
     skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
 else:
@@ -275,33 +285,46 @@ else:
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
+# class tvList(MenuList):
+    # def __init__(self, list):
+        # MenuList.__init__(self, list, False, eListboxPythonMultiContent)
+        # self.l.setFont(0, gFont('OpenFont2', 20))
+        # self.l.setFont(1, gFont('OpenFont2', 22))
+        # self.l.setFont(2, gFont('OpenFont2', 24))
+        # self.l.setFont(3, gFont('OpenFont2', 26))
+        # self.l.setFont(4, gFont('OpenFont2', 28))
+        # self.l.setFont(5, gFont('OpenFont2', 30))
+        # self.l.setFont(6, gFont('OpenFont2', 32))
+        # self.l.setFont(7, gFont('OpenFont2', 34))
+        # self.l.setFont(8, gFont('OpenFont2', 36))
+        # self.l.setFont(9, gFont('OpenFont2', 40))
+        # if isFHD():
+            # self.l.setItemHeight(50)
+        # else:
+            # self.l.setItemHeight(50)
+
+
 class tvList(MenuList):
     def __init__(self, list):
-        MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        self.l.setFont(0, gFont('OpenFont2', 20))
-        self.l.setFont(1, gFont('OpenFont2', 22))
-        self.l.setFont(2, gFont('OpenFont2', 24))
-        self.l.setFont(3, gFont('OpenFont2', 26))
-        self.l.setFont(4, gFont('OpenFont2', 28))
-        self.l.setFont(5, gFont('OpenFont2', 30))
-        self.l.setFont(6, gFont('OpenFont2', 32))
-        self.l.setFont(7, gFont('OpenFont2', 34))
-        self.l.setFont(8, gFont('OpenFont2', 36))
-        self.l.setFont(9, gFont('OpenFont2', 40))
+        MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         if isFHD():
             self.l.setItemHeight(50)
+            textfont=int(34)
+            self.l.setFont(0, gFont('Regular', textfont))
         else:
             self.l.setItemHeight(50)
+            textfont=int(22)
+            self.l.setFont(0, gFont('Regular', textfont))
 
 def tvListEntry(name,png):
     res = [name]
     png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
     if isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 4), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
     
 def m3ulistEntry(download):
@@ -312,13 +335,13 @@ def m3ulistEntry(download):
     col = 16777215
     backcol = 0
     blue = 4282611429
-    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
     if isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=7, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT| RT_VALIGN_CENTER)) 
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT| RT_VALIGN_CENTER)) 
     return res
 
 def m3ulist(data, list):
@@ -2278,7 +2301,7 @@ def checks():
 
 def main(session, **kwargs):
     if checks:
-        add_skin_font()
+        # add_skin_font()
         if PY3:
             session.open(OpenScript)
         else:
