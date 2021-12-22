@@ -1,71 +1,94 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
-Info http://t.me/tivustream
 ****************************************
 *        coded by Lululla              *
 *           thank's Pcd                *
-*             09/05/2021               *
+*             11/12/2021               *
 *       skin by MMark                  *
 ****************************************
+Info http://t.me/tivustream
 '''
+from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
-from Components.ActionMap import NumberActionMap
 from Components.Button import Button
 from Components.Label import Label
 from Components.MenuList import MenuList
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Components.Pixmap import Pixmap, MovingPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from Components.config import config
+from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo,ConfigEnableDisable
+from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
+	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
+from Screens.InfoBar import InfoBar
+from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarNotifications, InfoBarMenu
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists
-from enigma import eTimer, eActionMap, getDesktop
-from enigma import iServiceInformation, iPlayableService, eServiceReference
+from Tools.Directories import resolveFilename
+from enigma import eEnv, iPlayableService
+from enigma import eServiceCenter
+from enigma import eServiceReference
+from enigma import eTimer, eActionMap
+from enigma import iServiceInformation
 from time import time, localtime, strftime
+import glob
 import os
 import re
-import sys
-import glob
 import six
 import socket
-global isDreamOS, skin_path, tmpfold, picfold
+import sys
+global skin_path, tmpfold, picfold
 from os.path import splitext
 global defpic, dblank
-
-plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/'
-defipic = plugin_path + "res/pics/defaultL.png"
+import six
+try:
+    from Plugins.Extensions.TivuStream.Utils import *
+except:
+    from . import Utils
+    
+try:
+    import Image
+except:
+    from PIL import Image
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
-from six.moves.urllib.error import HTTPError, URLError
 
-isDreamOS = False
-try:
-    from enigma import eMediaDatabase
-    isDreamOS = True
-except:
-    isDreamOS = False
-
-skin_path = plugin_path
-res_plugin_path = plugin_path + 'res/'
-HD = getDesktop(0).size()
-        
-if HD.width() > 1280:
-    skin_path = res_plugin_path + 'skins/fhd/'
-    defipic = res_plugin_path + "pics/defaultL.png"
-    dblank = res_plugin_path + "pics/blankL.png"                                                   
+if PY3:
+        import http.client
+        from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib.error import URLError, HTTPError
+        from urllib.request import urlopen, Request
+        from urllib.parse import urlparse
+        from urllib.parse import parse_qs, urlencode, quote
+        unicode = str; unichr = chr; long = int
+        PY3 = True
 else:
-    skin_path = res_plugin_path + 'skins/hd/'
-    defipic = res_plugin_path + "pics/default.png"
-    dblank = res_plugin_path + "pics/blank.png"    
-if isDreamOS:
-    skin_path = skin_path + 'dreamOs/'
+# if os.path.exists('/usr/lib/python2.7'):
+        from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib2 import urlopen, Request, URLError, HTTPError
+        from urlparse import urlparse, parse_qs
+        from urllib import urlencode, quote
+        import httplib
+        import six
 
+plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
+defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/defaultL.png".format('TivuStream'))
+dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blankL.png".format('TivuStream'))
+skin_path = plugin_path
+if isFHD():
+    skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
+else:
+    skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
+    defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
+    dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blank.png".format('TivuStream'))
+if DreamOS():
+    skin_path = skin_path + 'dreamOs/'
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -73,8 +96,11 @@ try:
     sslverify = True
 except:
     sslverify = False
-
 if sslverify:
+    try:
+        from urlparse import urlparse
+    except:
+        from urllib.parse import urlparse
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
@@ -84,30 +110,13 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-            
-def checkStr(txt):
-    if PY3:
-        if isinstance(txt, type(bytes())):
-            txt = txt.decode('utf-8')
-    else:
-        if isinstance(txt, type(six.text_type())):
-            txt = txt.encode('utf-8')
-    return txt
-    
-def checkInternet():
-    try:
-        socket.setdefaulttimeout(0.5)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
-        return True
-    except:
-        return False
-        
+
 def make_request(url):
     try:
         req = Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
         response = urlopen(req)
-        # response = checkStr(urlopen(req))        
+        # response = checkStr(urlopen(req))
         link = response.read()
         response.close()
         print("link =", link)
@@ -120,47 +129,19 @@ def make_request(url):
         if hasattr(e, 'reason'):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
-            
-def getUrl(url):
-    try:
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-        response = urlopen(req)
-        # response = checkStr(urlopen(req))        
-        link = response.read()
-        response.close()
-        print("link =", link)
-        return link
-    except:
-        e = URLError #, e:
-        print('We failed to open "%s".' % url)
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
-            
-def getUrl2(url, referer):
-    req = Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-    req.add_header('Referer', referer)
-    response = urlopen(req)
-    link=response.read()
-    response.close()
-    return link
 
 
 def getpics(names, pics, tmpfold, picfold):
-    global defpic                 
+    global defpic
     print("In getpics tmpfold =", tmpfold)
     print("In getpics picfold =", picfold)
-    if HD.width() > 1280:
+    if isFHD():
         nw = 300
     else:
         nw = 200
+    defpic = defpic
     pix = []
     if config.plugins.TivuStream.thumbpic.value == False:
-        defpic = defipic
         npic = len(pics)
         i = 0
         while i < npic:
@@ -179,13 +160,9 @@ def getpics(names, pics, tmpfold, picfold):
         if name is None:
             name = "Video"
         try:
-            name = name.replace("&", "")
-            name = name.replace(":", "")
-            name = name.replace("(", "-")
-            name = name.replace(")", "")
-            name = name.replace(" ", "")
-            name = name.replace("'", "")                          
-            name = name.replace("/", "-")                                         
+            name = name.replace("&", "").replace(":", "").replace("(", "-")
+            name = name.replace(")", "").replace(" ", "").replace("'", "")
+            name = name.replace("/", "-")
         except:
             pass
         url = pics[j]
@@ -193,29 +170,26 @@ def getpics(names, pics, tmpfold, picfold):
             url = ""
         url = url.replace(" ", "%20")
         url = url.replace("ExQ", "=")
-        print("In getpics url =", url)
-
+        url = url.replace("AxNxD", "&")
         # print("In getpics url =", url)
 #-----------------
-        # path = urlparse(url).path
-        # ext = splitext(path)[1]
         ext = str(os.path.splitext(url)[-1])
         picf = picfold + "/" + name + ext
-        tpicf = tmpfold + "/" + name + ext 
-        # temppic = tmpfold + "/" + name + ext 
+        tpicf = tmpfold + "/" + name + ext
 #-----------------
-        # if ".png" in str(url):
-            # tpicf = tmpfold + "/" + name + ".png"
-            # picf = picfold + "/" + name + ".png"
-        # else:
-            # tpicf = tmpfold + "/" + name + ".jpg"
-            # picf = picfold + "/" + name + ".jpg"
 #-----------------
         if fileExists(picf):
+            if ('Stagione') in str(name):
+                cmd = "rm " + picf
+                os.system(cmd)
             cmd = "cp " + picf + " " + tmpfold
             print("In getpics fileExists(picf) cmd =", cmd)
             os.system(cmd)
-
+#-----------------
+        if fileExists(tpicf):
+            if ('Stagione') in str(name):
+                cmd = "rm " + tpicf
+                os.system(cmd)
         if not fileExists(picf):
             if plugin_path in url:
                 try:
@@ -242,24 +216,42 @@ def getpics(names, pics, tmpfold, picfold):
                         f1=open(tpicf,"wb")
                         f1.write(fpage)
                         f1.close()
-                          
+
                 except:
-                    cmd = "cp " + defipic + " " + tpicf
+                    cmd = "cp " + defpic + " " + tpicf
                     os.system(cmd)
 
         if not fileExists(tpicf):
             print("In getpics not fileExists(tpicf) tpicf=", tpicf)
-            cmd = "cp " + defpic + " " + tpicf    
+            cmd = "cp " + defpic + " " + tpicf
             print("In getpics not fileExists(tpicf) cmd=", cmd)
             os.system(cmd)
 
-        try:                                              
-            if isDreamOS == False:
-                try:
-                    import Image
-                except:
-                    from PIL import Image
-                im = Image.open(tpicf)
+        # try:
+            # if isDreamOS == False:
+                # try:
+                    # import Image
+                # except:
+                    # from PIL import Image
+            # else:
+                # tpicf = defpic
+            # #end kiddac code
+        # if isFHD():
+            # nw = 220
+        # else:
+            # nw = 180
+        if os.path.exists(tpicf):
+            try:
+                im = Image.open(tpicf)#.convert('RGBA')
+                # imode = im.mode
+                # if im.mode == "JPEG":
+                    # im.save(tpicf)
+                    # # in most case, resulting jpg file is resized small one
+                # if imode.mode in ["RGBA", "P"]:
+                    # imode = imode.convert("RGB")
+                    # rgb_im.save(tpicf)
+                # if imode != "P":
+                    # im = im.convert("P")
                 # if im.mode != "P":
                     # im = im.convert("P")
                 w = im.size[0]
@@ -270,114 +262,47 @@ def getpics(names, pics, tmpfold, picfold):
                     x = int(nw)
                     y = int(d1)
                     im = im.resize((x,y), Image.ANTIALIAS)
-                # im.save(tpicf)
-                im.save(tpicf, quality=100, optimize=True) 
-        except:
-            tpicf = defipic
-            
+                im.save(tpicf, quality=100, optimize=True)
+                # im.save(tpicf, 'PNG')
+                # im.save(tpicf, 'JPG')
+                # # im.save(tpicf)
+            except Exception as e:
+                   print("******* picon resize failed *******")
+                   print(e)
+        else:
+            print("******* make picon failed *******")
+            tpicf = defpic
+        # except:
+            # print("******* make picon failed *******")
+            # tpicf = defpic
+
         pix.append(j)
         pix[j] = picf
         j = j+1
     cmd1 = "cp " + tmpfold + "/* " + picfold + " && rm " + tmpfold + "/* &"
-    print("In getpics final cmd1=", cmd1)
+    # print("In getpics final cmd1=", cmd1)
     os.system(cmd1)
     return pix
-
-
-class TvInfoBarShowHide():
-    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
-    fancy animations. """
-    STATE_HIDDEN = 0
-    STATE_HIDING = 1
-    STATE_SHOWING = 2
-    STATE_SHOWN = 3
-
-    def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
-         "hide": self.hide}, 0)
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
-        self.__state = self.STATE_SHOWN
-        self.__locked = 0
-        self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
-        try:
-            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
-        except:
-            self.hideTimer.callback.append(self.doTimerHide)
-        self.onShow.append(self.__onShow)
-        self.onHide.append(self.__onHide)
-
-    def serviceStarted(self):
-        if self.execing:
-            if config.usage.show_infobar_on_zap.value:
-                self.doShow()
-
-    def __onShow(self):
-        self.__state = self.STATE_SHOWN
-        self.startHideTimer()
-
-    def startHideTimer(self):
-        if self.__state == self.STATE_SHOWN and not self.__locked:
-            idx = config.usage.infobar_timeout.index
-            if idx:
-                self.hideTimer.start(idx * 1500, True)
-
-    def __onHide(self):
-        self.__state = self.STATE_HIDDEN
-
-    def doShow(self):
-        self.show()
-        self.startHideTimer()
-
-    def doTimerHide(self):
-        self.hideTimer.stop()
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-
-    def toggleShow(self):
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-            self.hideTimer.stop()
-        elif self.__state == self.STATE_HIDDEN:
-            self.show()
-
-    def lockShow(self):
-        self.__locked = self.__locked + 1
-        if self.execing:
-            self.show()
-            self.hideTimer.stop()
-
-    def unlockShow(self):
-        self.__locked = self.__locked - 1
-        if self.execing:
-            self.startHideTimer()
-
-    def debug(obj, text = ""):
-        print(text + " %s\n" % obj)
 
 class GridMain(Screen):
 
     def __init__(self, session, names, urls, pics = []):
-
         skin = skin_path + '/GridMain.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
         Screen.__init__(self, session)
         self['title'] = Label(_('..:: TiVuStream Revolution ::..' ))
-
         tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
-        picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"        
+        picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"
         # pics = getpics(names, pics, tmpfold, picfold)
         self["info"] = Label()
         list = names
         self.picsint = eTimer()
         self.picsint.start(1000, True)
-
-        pics = getpics(names, pics, tmpfold, picfold)                        
-        
+        pics = getpics(names, pics, tmpfold, picfold)
         self.pos = []
-        if HD.width() > 1280:
+        if isFHD():
             self.pos.append([35,80])
             self.pos.append([395,80])
             self.pos.append([755,80])
@@ -400,54 +325,30 @@ class GridMain(Screen):
             self.pos.append([740,350])
             self.pos.append([980,350])
 
-        list = []
         self.name = "TivuStream"
         self.pics = pics
-        self.urls = urls        
-        self.names = names 
-        self.names1 = names  
+        self.urls = urls
+        self.names = names
+        self.names1 = names
         self["info"] = Label()
+        list = []
         list = names
         self["menu"] = List(list)
-        # for x in list:
-               # pass#print  "x in list =", x
         ip = 0
         self["frame"] = MovingPixmap()
-        self["label1"] = StaticText()
-        self["label2"] = StaticText()
-        self["label3"] = StaticText()
-        self["label4"] = StaticText()
-        self["label5"] = StaticText()
-        self["label6"] = StaticText()
-        self["label7"] = StaticText()
-        self["label8"] = StaticText()
-        self["label9"] = StaticText()
-        self["label10"] = StaticText()
-        self["label11"] = StaticText()
-        self["label12"] = StaticText()
-        self["label13"] = StaticText()
-        self["label14"] = StaticText()
-        self["label15"] = StaticText()
-        self["label16"] = StaticText()
-
-        self["pixmap1"] = Pixmap()
-        self["pixmap2"] = Pixmap()
-        self["pixmap3"] = Pixmap()
-        self["pixmap4"] = Pixmap()
-        self["pixmap5"] = Pixmap()
-        self["pixmap6"] = Pixmap()
-        self["pixmap7"] = Pixmap()
-        self["pixmap8"] = Pixmap()
-        self["pixmap9"] = Pixmap()
-        self["pixmap10"] = Pixmap()
-        self["pixmap11"] = Pixmap()
-        self["pixmap12"] = Pixmap()
-        self["pixmap13"] = Pixmap()
-        self["pixmap14"] = Pixmap()
-        self["pixmap15"] = Pixmap()
-        self["pixmap16"] = Pixmap()
         i = 0
-        self["actions"] = NumberActionMap(["OkCancelActions", "MenuActions", "DirectionActions", "NumberActions"],
+        while i<16:
+              self["label" + str(i+1)] = StaticText()
+              self["pixmap" + str(i+1)] = Pixmap()
+              i = i+1
+        i = 0
+        ip = 0
+        self.index = 0
+        self.ipage = 1
+        self.icount = 0
+        ln = len(self.names1)
+        self.npage = int(float(ln/10)) + 1
+        self["actions"] = ActionMap(["OkCancelActions", "MenuActions", "DirectionActions", "NumberActions"],
                 {
                 "ok": self.okClicked,
                 "cancel": self.cancel,
@@ -456,23 +357,18 @@ class GridMain(Screen):
                 "up": self.key_up,
                 "down": self.key_down,
                 })
-        self.index = 0
-        ln = len(self.names1)
-        self.npage = int(float(ln/10)) + 1
-        self.ipage = 1
-        self.icount = 0
         global srefInit
         self.initialservice = self.session.nav.getCurrentlyPlayingServiceReference()
-        srefInit = self.initialservice        
+        srefInit = self.initialservice
         self.onLayoutFinish.append(self.openTest)
         # self.onShown.append(self.openTest)
-        
+
     # def getpic(self):
         # tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
-        # picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"  
+        # picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"
         # pics = getpics(self.names, self.pics, tmpfold, picfold)
         # # return pics
-    
+
     def cancel(self):
         self.close()
 
@@ -488,6 +384,10 @@ class GridMain(Screen):
         print("ifr =", ifr)
         ipos = self.pos[ifr]
         print("ipos =", ipos)
+        inf = self.index
+        # if inf != None or inf != -1:
+            # self["info"].setText(self.infos[inf])
+            # print('infos: ', inf)
         self["frame"].moveTo( ipos[0], ipos[1], 1)
         self["frame"].startMoving()
 
@@ -496,7 +396,6 @@ class GridMain(Screen):
         if self.ipage < self.npage:
             self.maxentry = (10*self.ipage)-1
             self.minentry = (self.ipage-1)*10
-            #self.index 0-11
             print("self.ipage , self.minentry, self.maxentry =", self.ipage, self.minentry, self.maxentry)
 
         elif self.ipage == self.npage:
@@ -505,7 +404,7 @@ class GridMain(Screen):
             self.minentry = (self.ipage-1)*10
             print("self.ipage , self.minentry, self.maxentry B=", self.ipage, self.minentry, self.maxentry)
             i1 = 0
-            blpic = dblank #plugin_path + "res/pics/Blank.png"
+            blpic = dblank
             while i1 < 12:
                 self["label" + str(i1+1)].setText(" ")
                 self["pixmap" + str(i1+1)].instance.setPixmapFromFile(blpic)
@@ -540,7 +439,7 @@ class GridMain(Screen):
         self.index = self.minentry
         print("self.minentry, self.index =", self.minentry, self.index)
         self.paintFrame()
-        
+
     def key_left(self):
         self.index -= 1
         if self.index < 0:
@@ -561,25 +460,17 @@ class GridMain(Screen):
     def key_up(self):
         print("keyup self.index, self.minentry = ", self.index, self.minentry)
         self.index = self.index - 5
-        #   if self.index < 0:
-        #       self.index = self.maxentry
-        #       self.paintFrame()
         print("keyup self.index, self.minentry 2 = ", self.index, self.minentry)
         print("keyup self.ipage = ", self.ipage)
         if self.index < (self.minentry):
             if self.ipage > 1:
                 self.ipage = self.ipage - 1
                 self.openTest()
-        ##  self.paintFrame()
             elif self.ipage == 1:
-        #   self.close()
                 return
-                # self.paintFrame() #edit lululla
             else:
-                # return
                self.paintFrame()
         else:
-            # return
            self.paintFrame()
 
     def key_down(self):
@@ -602,7 +493,7 @@ class GridMain(Screen):
                 print("keydown self.index, self.maxentry 3= ", self.index, self.maxentry)
                 self.paintFrame()
         else:
-            self.paintFrame()   #pcd fix
+            self.paintFrame()
 
     def okClicked(self):
         itype = self.index
@@ -612,28 +503,138 @@ class GridMain(Screen):
         return
 
 
+class TvInfoBarShowHide():
+    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
+    fancy animations. """
+    STATE_HIDDEN = 0
+    STATE_HIDING = 1
+    STATE_SHOWING = 2
+    STATE_SHOWN = 3
+    skipToggleShow = False
 
-class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
+    def __init__(self):
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
+         "hide": self.hide}, 0)
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
+        self.__state = self.STATE_SHOWN
+        self.__locked = 0
+        self.hideTimer = eTimer()
+        try:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
+        except:
+            self.hideTimer.callback.append(self.doTimerHide)
+        self.hideTimer.start(5000, True)
+        self.onShow.append(self.__onShow)
+        self.onHide.append(self.__onHide)
+
+    def OkPressed(self):
+        self.toggleShow()
+
+    def toggleShow(self):
+        if self.skipToggleShow:
+            self.skipToggleShow = False
+            return
+        if self.__state == self.STATE_HIDDEN:
+            self.show()
+            self.hideTimer.stop()
+        else:
+            self.hide()
+            self.startHideTimer()
+
+    def serviceStarted(self):
+        if self.execing:
+            if config.usage.show_infobar_on_zap.value:
+                self.doShow()
+
+    def __onShow(self):
+        self.__state = self.STATE_SHOWN
+        self.startHideTimer()
+
+    def startHideTimer(self):
+        if self.__state == self.STATE_SHOWN and not self.__locked:
+            self.hideTimer.stop()
+            idx = config.usage.infobar_timeout.index
+            if idx:
+                self.hideTimer.start(idx * 1500, True)
+
+    def __onHide(self):
+        self.__state = self.STATE_HIDDEN
+
+    def doShow(self):
+        self.hideTimer.stop()
+        self.show()
+        self.startHideTimer()
+
+    def doTimerHide(self):
+        self.hideTimer.stop()
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+
+    def lockShow(self):
+        try:
+            self.__locked += 1
+        except:
+            self.__locked = 0
+        if self.execing:
+            self.show()
+            self.hideTimer.stop()
+            self.skipToggleShow = False
+
+    def unlockShow(self):
+        try:
+            self.__locked -= 1
+        except:
+            self.__locked = 0
+        if self.__locked < 0:
+            self.__locked = 0
+        if self.execing:
+            self.startHideTimer()
+
+    def debug(obj, text = ""):
+        print(text + " %s\n" % obj)
+
+
+# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
+class M3uPlay2(
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarSubtitleSupport,
+    InfoBarNotifications,
+    TvInfoBarShowHide,
+    Screen
+):
     STATE_IDLE = 0
     STATE_PLAYING = 1
     STATE_PAUSED = 2
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
-    screen_timeout = 5000
-    
+    screen_timeout = 4000
+
     def __init__(self, session, name, url):
+        global SREF, streaml
         Screen.__init__(self, session)
+        self.session = session
+        global _session
+        _session = session
         self.skinName = 'MoviePlayer'
-        title = 'Play Stream'
-        self['list'] = MenuList([])
-        InfoBarMenu.__init__(self)
-        InfoBarNotifications.__init__(self)
-        InfoBarBase.__init__(self, steal_current_service=True)
-        TvInfoBarShowHide.__init__(self)
-        InfoBarAudioSelection.__init__(self)
-        # InfoBarSubtitleSupport.__init__(self)
-        self['actions'] = ActionMap(['WizardActions',
-         'MoviePlayerActions',
+        title = name
+        streaml = False
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarSubtitleSupport, \
+                InfoBarNotifications, \
+                TvInfoBarShowHide:
+            x.__init__(self)
+        try:
+            self.init_aspect = int(self.getAspect())
+        except:
+            self.init_aspect = 0
+        self.new_aspect = self.init_aspect
+        self['actions'] = ActionMap(['MoviePlayerActions',
          'MovieSelectionActions',
          'MediaPlayerActions',
          'EPGSelectActions',
@@ -651,73 +652,139 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.allowPiP = False
         self.service = None
         service = None
-        InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')
-        url = url.replace(':', '%3a')
+        self.pcip = 'None'
+        self.icount = 0
         self.url = url
         self.name = name
-        # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         self.state = self.STATE_PLAYING
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onLayoutFinish.append(self.openPlay)
         self.onClose.append(self.cancel)
 
+    def getAspect(self):
+        return AVSwitch().getAspectRatioSetting()
 
-    def showIMDB(self):
-        # if '.mp4' in self.url or '.mkv' in self.url or '.flv' in self.url or '.avi' in self.url:
-            if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
-                from Plugins.Extensions.TMBD.plugin import TMBD
-                text_clear = self.name
-                text = charRemove(text_clear)
-                self.session.open(TMBD, text, False)
-            elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
-                from Plugins.Extensions.IMDb.plugin import IMDB
-                text_clear = self.name
-                text = charRemove(text_clear)
-                HHHHH = text
-                self.session.open(IMDB, HHHHH)
+    def getAspectString(self, aspectnum):
+        return {0: _('4:3 Letterbox'),
+         1: _('4:3 PanScan'),
+         2: _('16:9'),
+         3: _('16:9 always'),
+         4: _('16:10 Letterbox'),
+         5: _('16:10 PanScan'),
+         6: _('16:9 Letterbox')}[aspectnum]
+
+    def setAspect(self, aspect):
+        map = {0: '4_3_letterbox',
+         1: '4_3_panscan',
+         2: '16_9',
+         3: '16_9_always',
+         4: '16_10_letterbox',
+         5: '16_10_panscan',
+         6: '16_9_letterbox'}
+        config.av.aspectratio.setValue(map[aspect])
+        try:
+            AVSwitch().setAspectRatio(aspect)
+        except:
+            pass
+
+    def av(self):
+        temp = int(self.getAspect())
+        temp = temp + 1
+        if temp > 6:
+            temp = 0
+        self.new_aspect = temp
+        self.setAspect(temp)
+
+    def showinfo(self):
+        # debug = True
+        sTitle = ''
+        sServiceref = ''
+        try:
+            servicename, serviceurl = getserviceinfo(sref)
+            if servicename != None:
+                sTitle = servicename
             else:
-                text_clear = self.name
-                self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
-        # else:
-            # self.session.open(MessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), MessageBox.TYPE_INFO, timeout=9)
+                sTitle = ''
+            if serviceurl != None:
+                sServiceref = serviceurl
+            else:
+                sServiceref = ''
+            currPlay = self.session.nav.getCurrentService()
+            sTagCodec = currPlay.info().getInfoString(iServiceInformation.sTagCodec)
+            sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+            sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+            message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec : ' + str(sTagAudioCodec)
+            self.mbox = self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
+        except:
+            pass
+        return
+    def showIMDB(self):
+        TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
+        IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
+        if os.path.exists(TMDB):
+            from Plugins.Extensions.TMBD.plugin import TMBD
+            text_clear = self.name
+
+            text = charRemove(text_clear)
+            self.session.open(TMBD, text, False)
+        elif os.path.exists(IMDb):
+            from Plugins.Extensions.IMDb.plugin import IMDB
+            text_clear = self.name
+
+            text = charRemove(text_clear)
+            HHHHH = text
+            self.session.open(IMDB, HHHHH)
+
+        else:
+            text_clear = self.name
+            self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
 
     def openPlay(self):
         url = str(self.url)
+        name = self.name
+        servicetype = '4097'
         ref = '4097:0:1:0:0:0:0:0:0:0:' + url
         if config.plugins.TivuStream.services.value == 'Gstreamer':
-                ref = '5001:0:1:0:0:0:0:0:0:0:' + url
+                # ref = '5001:0:1:0:0:0:0:0:0:0:' + url
+                servicetype = '5001'
         elif config.plugins.TivuStream.services.value == 'Exteplayer3':
-                ref = '5002:0:1:0:0:0:0:0:0:0:' + url
+                # ref = '5002:0:1:0:0:0:0:0:0:0:' + url
+                servicetype = '5002'
         elif config.plugins.TivuStream.services.value == 'eServiceUri':
-                ref = '8193:0:1:0:0:0:0:0:0:0:' + url
+                # ref = '8193:0:1:0:0:0:0:0:0:0:' + url
+                servicetype = '8193'
         elif config.plugins.TivuStream.services.value == 'Dvb':
                 ref = '1:0:1:0:0:0:0:0:0:0:' + url
+                servicetype = '1'
         else:
-            if config.plugins.TivuStream.services.value == 'Iptv':
-                ref = '4097:0:1:0:0:0:0:0:0:0:' + url
+            # if config.plugins.TivuStream.services.value == 'Iptv':
+              ref =   "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
+        print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(self.name)
+        sref.setName(name)
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
     def keyNumberGlobal(self, number):
         self['text'].number(number)
+    def up(self):
+        pass
 
-    def cancel(self):
-        self.session.nav.stopService()
-        self.session.nav.playService(srefInit)
+    def down(self):
+        # pass
+        self.up()
+
+    def doEofInternal(self, playing):
         self.close()
+
+    def __evEOF(self):
+        self.end = True
 
     def ok(self):
         if self.shown:
             self.hideInfobar()
         else:
             self.showInfobar()
-
-    def keyLeft(self):
-        self['text'].left()
-
-    def keyRight(self):
-        self['text'].right()
 
     def showVideoInfo(self):
         if self.shown:
@@ -730,66 +797,17 @@ class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         if isinstance(self, TvInfoBarShowHide):
             self.doShow()
 
+    def cancel(self):
+        if os.path.isfile('/tmp/hls.avi'):
+            os.remove('/tmp/hls.avi')
+        self.session.nav.stopService()
+        self.session.nav.playService(SREF)
+        if not self.new_aspect == self.init_aspect:
+            try:
+                self.setAspect(self.init_aspect)
+            except:
+                pass
+        streaml = False
+        self.close()
     def leavePlayer(self):
         self.close()
-
-def charRemove(text):
-                char = ["1080p",
-                 "2018",
-                 "2019",
-                 "2020",
-                 "480p",
-                 "4K",
-                 "720p",
-                 "ANIMAZIONE",
-                 "APR",
-                 "AVVENTURA",
-                 "BIOGRAFICO",
-                 "BDRip",
-                 "BluRay",
-                 "CINEMA",
-                 "COMMEDIA",
-                 "DOCUMENTARIO",
-                 "DRAMMATICO",
-                 "FANTASCIENZA",
-                 "FANTASY",
-                 "FEB",
-                 "GEN",
-                 "GIU",
-                 "HDCAM",
-                 "HDTC",
-                 "HDTS",
-                 "LD",
-                 "MAFIA",
-                 "MAG",
-                 "MARVEL",
-                 "MD",
-                 "ORROR",
-                 "NEW_AUDIO",
-                 "POLIZ",
-                 "R3",
-                 "R6",
-                 "SD",
-                 "SENTIMENTALE",
-                 "TC",
-                 "TEEN",
-                 "TELECINE",
-                 "TELESYNC",
-                 "THRILLER",
-                 "Uncensored",
-                 "V2",
-                 "WEBDL",
-                 "WEBRip",
-                 "WEB",
-                 "WESTERN",
-                 "-",
-                 "_",
-                 ".",
-                 "+",
-                 "[",
-                 "]"]
-
-                myreplace = text
-                for ch in char:
-                        myreplace = myreplace.replace(ch, "").replace("  ", " ").replace("       ", " ").strip()
-                return myreplace

@@ -82,7 +82,6 @@ import shutil
 import ssl
 import sys
 import time
-
 import six
 try:
     from Plugins.Extensions.TivuStream.Utils import *
@@ -133,7 +132,6 @@ if sys.version_info >= (2, 7, 9):
     # pass
 # else:
     # ssl._create_default_https_context = _create_unverified_https_context
-
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -183,11 +181,6 @@ service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
 res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('TivuStream'))
 #================
-# def add_skin_font():
-    # font_path = plugin_path + 'res/fonts/'
-    # addFont(font_path + 'verdana_r.ttf', 'OpenFont1', 100, 1)
-    # addFont(font_path + 'verdana_r.ttf', 'OpenFont2', 100, 1)
-
 modechoices = [
                 ("4097", _("ServiceMp3(4097)")),
                 ("1", _("Hardware(1)")),
@@ -285,25 +278,6 @@ else:
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
-# class tvList(MenuList):
-    # def __init__(self, list):
-        # MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        # self.l.setFont(0, gFont('OpenFont2', 20))
-        # self.l.setFont(1, gFont('OpenFont2', 22))
-        # self.l.setFont(2, gFont('OpenFont2', 24))
-        # self.l.setFont(3, gFont('OpenFont2', 26))
-        # self.l.setFont(4, gFont('OpenFont2', 28))
-        # self.l.setFont(5, gFont('OpenFont2', 30))
-        # self.l.setFont(6, gFont('OpenFont2', 32))
-        # self.l.setFont(7, gFont('OpenFont2', 34))
-        # self.l.setFont(8, gFont('OpenFont2', 36))
-        # self.l.setFont(9, gFont('OpenFont2', 40))
-        # if isFHD():
-            # self.l.setItemHeight(50)
-        # else:
-            # self.l.setItemHeight(50)
-
-
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
@@ -352,80 +326,6 @@ def m3ulist(data, list):
         mlist.append(m3ulistEntry(name))
         icount = icount + 1
     list.setList(mlist)
-
-class TvInfoBarShowHide():
-    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
-    fancy animations. """
-    STATE_HIDDEN = 0
-    STATE_HIDING = 1
-    STATE_SHOWING = 2
-    STATE_SHOWN = 3
-
-    def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
-         "hide": self.hide}, 0)
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
-        self.__state = self.STATE_SHOWN
-        self.__locked = 0
-        self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
-        try:
-            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
-        except:
-            self.hideTimer.callback.append(self.doTimerHide)
-        self.onShow.append(self.__onShow)
-        self.onHide.append(self.__onHide)
-
-    def serviceStarted(self):
-        if self.execing:
-            if config.usage.show_infobar_on_zap.value:
-                self.doShow()
-
-    def __onShow(self):
-        self.__state = self.STATE_SHOWN
-        self.startHideTimer()
-
-    def startHideTimer(self):
-        if self.__state == self.STATE_SHOWN and not self.__locked:
-            idx = config.usage.infobar_timeout.index
-            if idx:
-                self.hideTimer.start(idx * 1500, True)
-
-    def __onHide(self):
-        self.__state = self.STATE_HIDDEN
-
-    def doShow(self):
-        self.show()
-        self.startHideTimer()
-
-    def doTimerHide(self):
-        self.hideTimer.stop()
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-
-    def toggleShow(self):
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-            self.hideTimer.stop()
-        elif self.__state == self.STATE_HIDDEN:
-            self.show()
-
-    def lockShow(self):
-        self.__locked = self.__locked + 1
-        if self.execing:
-            self.show()
-            self.hideTimer.stop()
-
-    def unlockShow(self):
-        self.__locked = self.__locked - 1
-        if self.execing:
-            self.startHideTimer()
-
-    def debug(obj, text = ""):
-        print(text + " %s\n" % obj)
-
-
-
 
 Panel_list = [
  ('LIVE TUTTI'),
@@ -1282,6 +1182,78 @@ class M3uPlay(Screen):
             self.session.nav.playService(srefInit)
             self.close()
 
+
+class TvInfoBarShowHide():
+    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
+    fancy animations. """
+    STATE_HIDDEN = 0
+    STATE_HIDING = 1
+    STATE_SHOWING = 2
+    STATE_SHOWN = 3
+
+    def __init__(self):
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
+         "hide": self.hide}, 0)
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
+        self.__state = self.STATE_SHOWN
+        self.__locked = 0
+        self.hideTimer = eTimer()
+        self.hideTimer.start(5000, True)
+        try:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
+        except:
+            self.hideTimer.callback.append(self.doTimerHide)
+        self.onShow.append(self.__onShow)
+        self.onHide.append(self.__onHide)
+
+    def serviceStarted(self):
+        if self.execing:
+            if config.usage.show_infobar_on_zap.value:
+                self.doShow()
+
+    def __onShow(self):
+        self.__state = self.STATE_SHOWN
+        self.startHideTimer()
+
+    def startHideTimer(self):
+        if self.__state == self.STATE_SHOWN and not self.__locked:
+            idx = config.usage.infobar_timeout.index
+            if idx:
+                self.hideTimer.start(idx * 1500, True)
+
+    def __onHide(self):
+        self.__state = self.STATE_HIDDEN
+
+    def doShow(self):
+        self.show()
+        self.startHideTimer()
+
+    def doTimerHide(self):
+        self.hideTimer.stop()
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+
+    def toggleShow(self):
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+            self.hideTimer.stop()
+        elif self.__state == self.STATE_HIDDEN:
+            self.show()
+
+    def lockShow(self):
+        self.__locked = self.__locked + 1
+        if self.execing:
+            self.show()
+            self.hideTimer.stop()
+
+    def unlockShow(self):
+        self.__locked = self.__locked - 1
+        if self.execing:
+            self.startHideTimer()
+
+    def debug(obj, text = ""):
+        print(text + " %s\n" % obj)
+
 # class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
 class M3uPlay2(
     InfoBarBase,
@@ -1345,7 +1317,7 @@ class M3uPlay2(
         service = None
         self.pcip = 'None'
         self.icount = 0
-        self.desc = desc
+        self.desc = ''
         self.url = url
         self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
@@ -1436,7 +1408,7 @@ class M3uPlay2(
 
     def slinkPlay(self, url):
         name = self.name
-        ref = "{0}:{1}".format(url.replace(":", "%3A"), name.replace(":", "%3A"))
+        ref = "{0}:{1}".format(url.replace(":", "%3a"), name.replace(":", "%3a"))
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(name)
@@ -1446,11 +1418,11 @@ class M3uPlay2(
     def openPlay(self, servicetype, url):
         name = self.name
 
-        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
         print('reference:   ', ref)
         if streaml == True:
             url = 'http://127.0.0.1:8088/' + str(url)
-            ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+            ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
             print('streaml reference:   ', ref)
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
