@@ -25,7 +25,9 @@ from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, Inf
 	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarNotifications, InfoBarMenu
+from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
+	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Directories import SCOPE_PLUGINS
@@ -130,16 +132,41 @@ def make_request(url):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
 
+#menulist
+pos = []
+if isFHD():
+    pos.append([35,80])
+    pos.append([395,80])
+    pos.append([755,80])
+    pos.append([1115,80])
+    pos.append([1475,80])
+    pos.append([35,530])
+    pos.append([395,530])
+    pos.append([755,530])
+    pos.append([1115,530])
+    pos.append([1475,530])
+else:
+    pos.append([20,50])
+    pos.append([260,50])
+    pos.append([500,50])
+    pos.append([740,50])
+    pos.append([980,50])
+    pos.append([20,350])
+    pos.append([260,350])
+    pos.append([500,350])
+    pos.append([740,350])
+    pos.append([980,350])
 
 def getpics(names, pics, tmpfold, picfold):
     global defpic
+    defpic = defpic
     print("In getpics tmpfold =", tmpfold)
     print("In getpics picfold =", picfold)
     if isFHD():
         nw = 300
     else:
         nw = 200
-    defpic = defpic
+
     pix = []
     if config.plugins.TivuStream.thumbpic.value == False:
         npic = len(pics)
@@ -163,6 +190,7 @@ def getpics(names, pics, tmpfold, picfold):
             name = name.replace("&", "").replace(":", "").replace("(", "-")
             name = name.replace(")", "").replace(" ", "").replace("'", "")
             name = name.replace("/", "-")
+            name = decodeHtml(name)
         except:
             pass
         url = pics[j]
@@ -222,66 +250,66 @@ def getpics(names, pics, tmpfold, picfold):
                     os.system(cmd)
 
         if not fileExists(tpicf):
+        # else:
             print("In getpics not fileExists(tpicf) tpicf=", tpicf)
             cmd = "cp " + defpic + " " + tpicf
             print("In getpics not fileExists(tpicf) cmd=", cmd)
             os.system(cmd)
-
-        # try:
-            # if isDreamOS == False:
-                # try:
-                    # import Image
-                # except:
-                    # from PIL import Image
-            # else:
-                # tpicf = defpic
-            # #end kiddac code
-        # if isFHD():
-            # nw = 220
-        # else:
-            # nw = 180
-        if os.path.exists(tpicf):
             try:
-                im = Image.open(tpicf)#.convert('RGBA')
-                # imode = im.mode
-                # if im.mode == "JPEG":
-                    # im.save(tpicf)
-                    # # in most case, resulting jpg file is resized small one
-                # if imode.mode in ["RGBA", "P"]:
-                    # imode = imode.convert("RGB")
-                    # rgb_im.save(tpicf)
-                # if imode != "P":
-                    # im = im.convert("P")
-                # if im.mode != "P":
-                    # im = im.convert("P")
-                w = im.size[0]
-                d = im.size[1]
-                r = float(d)/float(w)
-                d1 = r*nw
-                if w != nw:
-                    x = int(nw)
-                    y = int(d1)
-                    im = im.resize((x,y), Image.ANTIALIAS)
-                im.save(tpicf, quality=100, optimize=True)
-                # im.save(tpicf, 'PNG')
-                # im.save(tpicf, 'JPG')
-                # # im.save(tpicf)
+                #start kiddac code
+                size = [200, 200]
+                if isFHD():
+                    size = [300, 300]
+                im = Image.open(tpicf).convert('RGBA')
+                im.thumbnail(size, Image.ANTIALIAS)
+                # crop and center image
+                bg = Image.new('RGBA', size, (255, 255, 255, 0))
+                imagew, imageh = im.size
+                im_alpha = im.convert('RGBA').split()[-1]
+                bgwidth, bgheight = bg.size
+                bg_alpha = bg.convert('RGBA').split()[-1]
+                temp = Image.new('L', (bgwidth, bgheight), 0)
+                temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
+                bg_alpha = ImageChops.screen(bg_alpha, temp)
+                bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
+                im = bg
+                im.save(tpicf, 'PNG')
+
+  
+            #end kiddac code                
+                # im = Image.open(tpicf)#.convert('RGBA')
+                # # imode = im.mode
+                # # if im.mode == "JPEG":
+                    # # im.save(tpicf)
+                    # # # in most case, resulting jpg file is resized small one
+                # # if imode.mode in ["RGBA", "P"]:
+                    # # imode = imode.convert("RGB")
+                    # # rgb_im.save(tpicf)
+                # # if imode != "P":
+                    # # im = im.convert("P")
+                # # if im.mode != "P":
+                    # # im = im.convert("P")
+                # w = im.size[0]
+                # d = im.size[1]
+                # r = float(d)/float(w)
+                # d1 = r*nw
+                # if w != nw:
+                    # x = int(nw)
+                    # y = int(d1)
+                    # im = im.resize((x,y), Image.ANTIALIAS)
+                # im.save(tpicf, quality=100, optimize=True)
             except Exception as e:
                    print("******* picon resize failed *******")
                    print(e)
         else:
-            print("******* make picon failed *******")
             tpicf = defpic
-        # except:
-            # print("******* make picon failed *******")
-            # tpicf = defpic
-
         pix.append(j)
         pix[j] = picf
         j = j+1
     cmd1 = "cp " + tmpfold + "/* " + picfold + " && rm " + tmpfold + "/* &"
     # print("In getpics final cmd1=", cmd1)
     os.system(cmd1)
+    os.system('sleep 1')
     return pix
 
 class GridMain(Screen):
@@ -302,29 +330,7 @@ class GridMain(Screen):
         self.picsint.start(1000, True)
         pics = getpics(names, pics, tmpfold, picfold)
         self.pos = []
-        if isFHD():
-            self.pos.append([35,80])
-            self.pos.append([395,80])
-            self.pos.append([755,80])
-            self.pos.append([1115,80])
-            self.pos.append([1475,80])
-            self.pos.append([35,530])
-            self.pos.append([395,530])
-            self.pos.append([755,530])
-            self.pos.append([1115,530])
-            self.pos.append([1475,530])
-        else:
-            self.pos.append([20,50])
-            self.pos.append([260,50])
-            self.pos.append([500,50])
-            self.pos.append([740,50])
-            self.pos.append([980,50])
-            self.pos.append([20,350])
-            self.pos.append([260,350])
-            self.pos.append([500,350])
-            self.pos.append([740,350])
-            self.pos.append([980,350])
-
+        self.pos = pos
         self.name = "TivuStream"
         self.pics = pics
         self.urls = urls
@@ -655,11 +661,12 @@ class M3uPlay2(
         self.pcip = 'None'
         self.icount = 0
         self.url = url
-        self.name = name
+        self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
+        self.onClose.append(self.cancel)                                     
         self.onLayoutFinish.append(self.openPlay)
-        self.onClose.append(self.cancel)
+
 
     def getAspect(self):
         return AVSwitch().getAspectRatioSetting()
@@ -809,5 +816,6 @@ class M3uPlay2(
                 pass
         streaml = False
         self.close()
+        
     def leavePlayer(self):
         self.close()
