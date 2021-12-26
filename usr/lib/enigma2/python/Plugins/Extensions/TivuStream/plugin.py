@@ -171,8 +171,8 @@ except Exception:
 
 #changelog 18.12.2021
 currversion = '3.0'
-Version = currversion + ' - 12.12.2021'
-title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
+# Version = currversion + ' - 12.12.2021'
+title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
 Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
@@ -1088,12 +1088,12 @@ class M3uPlay(Screen):
     #self.onShown.append(self.openTest)
                 if config.plugins.TivuStream.thumb.value == True:
                     self.gridmaint = eTimer()
-                    self.gridmaint.start(3000, True)
                     try:
                         self.gridmaint_conn = self.gridmaint.timeout.connect(self.gridpic)
                     except:
                         self.gridmaint.callback.append(self.gridpic)
                     # self.session.open(GridMain, self.names, self.urls, self.pics)
+                    self.gridmaint.start(3000, True)
     #####################################################################################
                 else:
                     m3ulist(self.names, self['list'])
