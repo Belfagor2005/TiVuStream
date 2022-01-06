@@ -216,7 +216,7 @@ config.plugins.TivuStream.strtext                = ConfigYesNo(default=True)
 config.plugins.TivuStream.strtmain               = ConfigYesNo(default=True)
 config.plugins.TivuStream.thumb                  = ConfigYesNo(default=False)
 config.plugins.TivuStream.thumbpic               = ConfigYesNo(default=False)
-
+global pngori, skin_path
 global Path_Movies
 Path_Movies             = str(config.plugins.TivuStream.pthm3uf.value) + "/"
 if Path_Movies.endswith("\/\/") is True:
@@ -264,19 +264,18 @@ nnewm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbC5waHA/cD01JnVhPVRpVnVTd
 servernewm3u = b64decoder(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
 m3uest = b64decoder(estm3u)
-
-global pngori, skin_path
-nasarandom = "http://patbuweb.com/back-tvstream/"
+nasara = "aHR0cDovL3BhdGJ1d2ViLmNvbS9iYWNrLXR2c3RyZWFtLw=="
+nasarandom = b64decoder(nasara)
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 if isFHD():
     skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
-else:
-    skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
+
 
 class tvList(MenuList):
     def __init__(self, list):
@@ -339,7 +338,6 @@ Panel_list = [
  # ('ESTERO2'),
  ('REGIONALI'),
  ('RELAX'),
-
  ('MOVIE TUTTI'),
  ('SERIE'),
  ('SERIE TV: 0-9'),
@@ -355,12 +353,10 @@ Panel_list = [
  ('FILM: M-R'),
  ('FILM: S-Z'),
  ('FILM IN VERSIONE ORIGINALE'),
-
  ('RADIO TUTTI'),
  ('RADIO ITALIA'),
  ('RADIO INT'),
  ('DASH RADIO'),
-
  ('LIVE XXX'),
  ('MOVIE XXX')]
 
@@ -390,13 +386,13 @@ class OpenScript(Screen):
          {'ok': self.messagerun,
          'file': self.M3uPlay,
          'menu': self.scsetup,
-         'red': self.close,
+         'red': self.cancel,
          'green': self.messagereload,
-         'info': self.close,
+         'info': self.cancel,
          'yellow': self.messagedellist,
          'blue': self.M3uPlay,
-         'back': self.close,
-         'cancel': self.close}, -1)
+         'back': self.cancel,
+         'cancel': self.cancel}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -677,6 +673,10 @@ class OpenScript(Screen):
 
     def scsetup(self):
         self.session.open(OpenConfig)
+
+    def cancel(self):
+        deletetmp()
+        self.close()
 
 class OpenM3u(Screen):
     def __init__(self, session):
@@ -1327,6 +1327,7 @@ class M3uPlay2(
         else:
             self.onFirstExecBegin.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
+
     def getAspect(self):
         return AVSwitch().getAspectRatioSetting()
 
