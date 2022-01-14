@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             01/12/2021               *
+*             14/01/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -169,9 +169,9 @@ try:
 except Exception:
 	is_imdb = False
 
-#changelog 18.12.2021
+#changelog 14/01/2022
 currversion = '3.0'
-# Version = currversion + ' - 12.12.2021'
+# Version = currversion + ' - 14/01/2022'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
 Credits = 'Info http://t.me/tivustream'
@@ -1254,7 +1254,6 @@ class TvInfoBarShowHide():
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
 
-# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
 class M3uPlay2(
     InfoBarBase,
     InfoBarMenu,

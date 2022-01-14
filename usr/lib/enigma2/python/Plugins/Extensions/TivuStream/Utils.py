@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#12.01.2021
+#14.01.2021
 #a common tips used from Lululla
 #
 import sys
@@ -290,14 +290,14 @@ try:
     from Plugins.Extensions.tmdb import tmdb
     is_tmdb = True
 except Exception as e:
-    print('error: ', str(e))
+    print('error: ', str(e))                            
     is_tmdb = False
 
 try:
     from Plugins.Extensions.IMDb.plugin import main as imdb
     is_imdb = True
 except Exception as e:
-    print('error: ', str(e))
+    print('error: ', str(e))                            
     is_imdb = False
 
 def substr(data,start,end):
@@ -601,11 +601,10 @@ def ReadUrl(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', RequestAgent())
         try:
-            r = urllib2.urlopen(req,None,TIMEOUT_URL,context=CONTEXT)
+          r = urllib2.urlopen(req,None,TIMEOUT_URL,context=CONTEXT)
         except Exception as e:
-            print('error: ', str(e))
-            r = urllib2.urlopen(req,None,TIMEOUT_URL)
-            # CreateLog(_("ReadUrl1 - Errore: %s") % e)
+          r = urllib2.urlopen(req,None,TIMEOUT_URL)
+          print("CreateLog Codifica ReadUrl: %s." % str(e))
         link = r.read()
         r.close()
 
@@ -618,7 +617,7 @@ def ReadUrl(url):
                 dec = "utf-8"
             except Exception as e:
                 dcod = 1
-                print("ReadUrl2 - Errore: %s." % str(e))
+                print("ReadUrl2 - Error: ", str(e))
             if dcod == 1:
                 dcod = 0
                 try:
@@ -626,7 +625,7 @@ def ReadUrl(url):
                     dec = "cp437"
                 except Exception as e:
                     dcod = 1
-                    print("ReadUrl3 - Errore: %s." % str(e))
+                    print("ReadUrl3 - Error:", str(e))
             if dcod == 1:
                 dcod = 0
                 try:
@@ -634,7 +633,7 @@ def ReadUrl(url):
                     dec = "iso-8859-1"
                 except Exception as e:
                     dcod = 1
-                    CreateLog("ReadUrl4 - Errore: %s." % str(e))
+                    print("CreateLog Codific ReadUrl: ", str(e))
             link = tlink
 
         elif str(type(link)).find('str') != -1:
@@ -642,7 +641,7 @@ def ReadUrl(url):
 
         print("CreateLog Codifica ReadUrl: %s." % dec)
     except Exception as e:
-        print("ReadUrl5 - Errore: %s." % str(e))
+        print("ReadUrl5 - Error: ", str(e))
         link = None
     return link
 
