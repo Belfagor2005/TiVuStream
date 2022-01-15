@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             14/01/2022               *
+*             15/01/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -292,12 +292,11 @@ class tvList(MenuList):
 def tvListEntry(name,png):
     res = [name]
     png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
+    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
+    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
     
 def m3ulistEntry(download):
@@ -309,12 +308,11 @@ def m3ulistEntry(download):
     backcol = 0
     blue = 4282611429
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
+    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))     
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT| RT_VALIGN_CENTER)) 
     return res
 
 def m3ulist(data, list):
@@ -328,16 +326,18 @@ def m3ulist(data, list):
 
 Panel_list = [
  ('LIVE TUTTI'),
- ('TOP ITALIA'),
+ ('CANALI RAI'),
+ ('CANALI MEDIASET'), 
+ ('PLUTO TV'),
+ ('SAMSUNG PLUS'), 
+ ('REGIONALI'), 
  ('SPORT ITALIA'),
  ('SPORT LIVE'),
  ('SPORT ESTERI'),
  ('MUSICA'),
+ ('RELAX'), 
  ('NEWS'),
  ('ESTERO'),
- # ('ESTERO2'),
- ('REGIONALI'),
- ('RELAX'),
  ('MOVIE TUTTI'),
  ('SERIE'),
  ('SERIE TV: 0-9'),
@@ -444,9 +444,12 @@ class OpenScript(Screen):
         if sel == ("LIVE TUTTI"):
                 namex = "livetutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0w"
-        elif sel == ("TOP ITALIA"):
-                namex = "topitalia"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0x"
+        elif sel == ("CANALI RAI"):
+                namex = "rai"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOQ=="
+        elif sel == ("CANALI MEDIASET"):
+                namex = "mediaset"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0zMA=="                
         elif sel == ("SPORT ITALIA"):
                 namex = "sportitalia"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0y"
@@ -456,22 +459,28 @@ class OpenScript(Screen):
         elif sel == ("SPORT ESTERI"):
                 namex = "sportesteri"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
+        elif sel == ("PLUTO TV"):
+                namex = "plutotv"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="     
+        elif sel == ("SAMSUNG PLUS"):
+                namex = "samsungtv"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOA=="     
+        elif sel == ("REGIONALI"):
+                namex = "regionali"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"                
         elif sel == ("MUSICA"):
                 namex = "musica"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
+        elif sel == ("RELAX"):
+                namex = "relax"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
+
         elif sel == ("NEWS"):
                 namex = "news"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
         elif sel == ("ESTERO"):
                 namex = "estero"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
-        elif sel == ("REGIONALI"):
-                namex = "regionali"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
-        elif sel == ("RELAX"):
-                namex = "relax"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
-
         elif sel == ("MOVIE TUTTI"):
                 namex = "movietutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0w"
@@ -630,6 +639,7 @@ class OpenScript(Screen):
                     if bouquetTvString not in f:
                         f.write(bouquetTvString)
                         f.close()
+                    in_bouquets = 1
             self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
             eDVBDB.getInstance().reloadServicelist()
             eDVBDB.getInstance().reloadBouquets()
@@ -836,6 +846,7 @@ class OpenM3u(Screen):
                     with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
+                    in_bouquets = 1
         self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
         ReloadBouquets()
 
@@ -882,6 +893,7 @@ class OpenM3u(Screen):
                     with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
+                    in_bouquets = 1
         self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
         ReloadBouquets()
 
