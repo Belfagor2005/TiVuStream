@@ -58,7 +58,7 @@ from Tools.LoadPixmap import LoadPixmap
 from enigma import *
 from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
-from enigma import eListbox, eListboxPythonMultiContent 
+from enigma import eListbox, eListboxPythonMultiContent
 from enigma import eTimer
 from enigma import ePicLoad, gPixmapPtr
 from enigma import gFont
@@ -66,9 +66,9 @@ from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import eSize, ePicLoad
 from enigma import iServiceInformation
-from enigma import loadPNG 
+from enigma import loadPNG
 from enigma import quitMainloop
-from enigma import iPlayableService 
+from enigma import iPlayableService
 from os.path import splitext
 from sys import version_info
 from twisted.web.client import downloadPage, getPage, error
@@ -115,10 +115,7 @@ try:
     import http.cookiejar
 except:
     import cookielib
-try:
-    import httplib
-except:
-    import http.client
+
 
 if sys.version_info >= (2, 7, 9):
 	try:
@@ -126,12 +123,7 @@ if sys.version_info >= (2, 7, 9):
 		sslContext = ssl._create_unverified_context()
 	except:
 		sslContext = None
-# try:
-    # _create_unverified_https_context = ssl._create_unverified_context
-# except AttributeError:
-    # pass
-# else:
-    # ssl._create_default_https_context = _create_unverified_https_context
+
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -170,7 +162,7 @@ except Exception:
 	is_imdb = False
 
 #changelog 14/01/2022
-currversion = '3.0'
+currversion = '3.1'
 # Version = currversion + ' - 14/01/2022'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
@@ -280,25 +272,28 @@ if DreamOS():
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
+        self.l.setItemHeight(50)
+        textfont=int(22)
+        self.l.setFont(0, gFont('Regular', textfont))        
         if isFHD():
             self.l.setItemHeight(50)
             textfont=int(34)
             self.l.setFont(0, gFont('Regular', textfont))
-        else:
-            self.l.setItemHeight(50)
-            textfont=int(22)
-            self.l.setFont(0, gFont('Regular', textfont))
+        # else:
+            # self.l.setItemHeight(50)
+            # textfont=int(22)
+            # self.l.setFont(0, gFont('Regular', textfont))
 
 def tvListEntry(name,png):
     res = [name]
     png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
     res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
-    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
+    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
-    
+
 def m3ulistEntry(download):
     res = [download]
     white = 16777215
@@ -309,7 +304,7 @@ def m3ulistEntry(download):
     blue = 4282611429
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
     res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
-    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))     
+    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -327,17 +322,19 @@ def m3ulist(data, list):
 Panel_list = [
  ('LIVE TUTTI'),
  ('CANALI RAI'),
- ('CANALI MEDIASET'), 
+ ('CANALI MEDIASET'),
  ('PLUTO TV'),
- ('SAMSUNG PLUS'), 
- ('REGIONALI'), 
+ ('SAMSUNG PLUS'),
+ ('REGIONALI'),
  ('SPORT ITALIA'),
  ('SPORT LIVE'),
  ('SPORT ESTERI'),
  ('MUSICA'),
- ('RELAX'), 
- ('NEWS'),
- ('ESTERO'),
+ ('RELAX'),
+ ('NEWS ITALIA'),
+ ('NEWS INTERNATIONAL'),
+ ('INTERNATIONAL'),
+ ('INTERNATIONAL II'), 
  ('MOVIE TUTTI'),
  ('SERIE'),
  ('SERIE TV: 0-9'),
@@ -444,30 +441,36 @@ class OpenScript(Screen):
         if sel == ("LIVE TUTTI"):
                 namex = "livetutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0w"
+
         elif sel == ("CANALI RAI"):
                 namex = "rai"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOQ=="
         elif sel == ("CANALI MEDIASET"):
                 namex = "mediaset"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0zMA=="                
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0zMA=="
+
         elif sel == ("SPORT ITALIA"):
                 namex = "sportitalia"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0y"
+
         elif sel == ("SPORT LIVE"):
                 namex = "sportlive"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0z"
         elif sel == ("SPORT ESTERI"):
                 namex = "sportesteri"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
+
+
         elif sel == ("PLUTO TV"):
                 namex = "plutotv"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="     
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="
         elif sel == ("SAMSUNG PLUS"):
                 namex = "samsungtv"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOA=="     
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOA=="
+
         elif sel == ("REGIONALI"):
                 namex = "regionali"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"                
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
         elif sel == ("MUSICA"):
                 namex = "musica"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
@@ -475,15 +478,25 @@ class OpenScript(Screen):
                 namex = "relax"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
 
-        elif sel == ("NEWS"):
-                namex = "news"
+        elif sel == ("NEWS ITALIA"):
+                namex = "newsitalia"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
-        elif sel == ("ESTERO"):
-                namex = "estero"
+        elif sel == ("NEWS INTERNATIONAL"):
+                namex = "newsinternational"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
+
+        elif sel == ("INTERNATIONAL"):
+                namex = "international"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTgmdD0w"
+
+        elif sel == ("INTERNATIONAL II"):
+                namex = "internationals"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTkmdD0w"
+                
         elif sel == ("MOVIE TUTTI"):
                 namex = "movietutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0w"
+                
         elif sel == ("SERIE"):
                 namex = "serie"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMA=="
@@ -629,6 +642,7 @@ class OpenScript(Screen):
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
                 os.system('chmod 0644 /etc/enigma2/%s' %groupname )
+                linetv = 1
             z = open(dirgroupname)
             for line in z:
                 if bqtname in line:
@@ -1062,7 +1076,7 @@ class M3uPlay(Screen):
         self.urls = []
         self.pics = []
         pic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
-        
+
         try:
             if fileExists(self.name):
                 f1 = open(self.name, 'r+')
@@ -2285,7 +2299,13 @@ def checks():
 
 def main(session, **kwargs):
     if checks:
-        # add_skin_font()
+
+        try:
+            from Plugins.Extensions.TivuStream.Update import upd_done
+            upd_done()
+        except:
+            pass
+
         if PY3:
             session.open(OpenScript)
         else:

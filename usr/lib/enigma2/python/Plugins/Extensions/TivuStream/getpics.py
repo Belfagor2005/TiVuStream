@@ -4,11 +4,12 @@
 ****************************************
 *        coded by Lululla              *
 *           thank's Pcd                *
-*             11/12/2021               *
+*             13/01/2022               *
 *       skin by MMark                  *
 ****************************************
 Info http://t.me/tivustream
 '''
+from __future__ import print_function
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -38,7 +39,7 @@ from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import eTimer, eActionMap
 from enigma import iServiceInformation
-from time import time, localtime, strftime
+from time import time, localtime, strftime, sleep
 import glob
 import os
 import re
@@ -53,11 +54,12 @@ try:
     from Plugins.Extensions.TivuStream.Utils import *
 except:
     from . import Utils
-    
+
 try:
-    import Image
-except:
     from PIL import Image
+except:
+    import Image
+
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
 
@@ -113,24 +115,6 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-def make_request(url):
-    try:
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-        response = urlopen(req)
-        # response = checkStr(urlopen(req))
-        link = response.read()
-        response.close()
-        print("link =", link)
-        return link
-    except:
-        e = URLError #, e:
-        print('We failed to open "%s".' % url)
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
 
 #menulist
 pos = []
@@ -200,12 +184,10 @@ def getpics(names, pics, tmpfold, picfold):
         url = url.replace("ExQ", "=")
         url = url.replace("AxNxD", "&")
         # print("In getpics url =", url)
-#-----------------
+
         ext = str(os.path.splitext(url)[-1])
         picf = picfold + "/" + name + ext
         tpicf = tmpfold + "/" + name + ext
-#-----------------
-#-----------------
         if fileExists(picf):
             if ('Stagione') in str(name):
                 cmd = "rm " + picf
@@ -213,7 +195,6 @@ def getpics(names, pics, tmpfold, picfold):
             cmd = "cp " + picf + " " + tmpfold
             print("In getpics fileExists(picf) cmd =", cmd)
             os.system(cmd)
-#-----------------
         if fileExists(tpicf):
             if ('Stagione') in str(name):
                 cmd = "rm " + tpicf
@@ -275,8 +256,8 @@ def getpics(names, pics, tmpfold, picfold):
                 im = bg
                 im.save(tpicf, 'PNG')
 
-  
-            #end kiddac code                
+
+            #end kiddac code
                 # im = Image.open(tpicf)#.convert('RGBA')
                 # # imode = im.mode
                 # # if im.mode == "JPEG":
@@ -300,7 +281,7 @@ def getpics(names, pics, tmpfold, picfold):
                 # im.save(tpicf, quality=100, optimize=True)
             except Exception as e:
                    print("******* picon resize failed *******")
-                   print(e)
+                   print(str(e))
         else:
             tpicf = defpic
         pix.append(j)
@@ -324,11 +305,12 @@ class GridMain(Screen):
         tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
         picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"
         # pics = getpics(names, pics, tmpfold, picfold)
-        self["info"] = Label()
-        list = names
+
         self.picsint = eTimer()
         self.picsint.start(1000, True)
         pics = getpics(names, pics, tmpfold, picfold)
+        sleep(3)
+        list = []
         self.pos = []
         self.pos = pos
         self.name = "TivuStream"
@@ -336,11 +318,13 @@ class GridMain(Screen):
         self.urls = urls
         self.names = names
         self.names1 = names
-        self["info"] = Label()
-        list = []
         list = names
+        self["info"] = Label()
+
+
+
         self["menu"] = List(list)
-        ip = 0
+
         self["frame"] = MovingPixmap()
         i = 0
         while i<16:
@@ -368,12 +352,6 @@ class GridMain(Screen):
         srefInit = self.initialservice
         self.onLayoutFinish.append(self.openTest)
         # self.onShown.append(self.openTest)
-
-    # def getpic(self):
-        # tmpfold = config.plugins.TivuStream.cachefold.value + "/tivustream/tmp"
-        # picfold = config.plugins.TivuStream.cachefold.value + "/tivustream/pic"
-        # pics = getpics(self.names, self.pics, tmpfold, picfold)
-        # # return pics
 
     def cancel(self):
         self.close()
@@ -533,6 +511,34 @@ class TvInfoBarShowHide():
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
 
+    def serviceStarted(self):
+        if self.execing:
+            if config.usage.show_infobar_on_zap.value:
+                self.doShow()
+
+    def __onShow(self):
+        self.__state = self.STATE_SHOWN
+        self.startHideTimer()
+
+    def __onHide(self):
+        self.__state = self.STATE_HIDDEN
+    def startHideTimer(self):
+        if self.__state == self.STATE_SHOWN and not self.__locked:
+            self.hideTimer.stop()
+            idx = config.usage.infobar_timeout.index
+            if idx:
+                self.hideTimer.start(idx * 1500, True)
+
+    def doShow(self):
+        self.hideTimer.stop()
+        self.show()
+        self.startHideTimer()
+
+    def doTimerHide(self):
+        self.hideTimer.stop()
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+
     def OkPressed(self):
         self.toggleShow()
 
@@ -546,36 +552,6 @@ class TvInfoBarShowHide():
         else:
             self.hide()
             self.startHideTimer()
-
-    def serviceStarted(self):
-        if self.execing:
-            if config.usage.show_infobar_on_zap.value:
-                self.doShow()
-
-    def __onShow(self):
-        self.__state = self.STATE_SHOWN
-        self.startHideTimer()
-
-    def startHideTimer(self):
-        if self.__state == self.STATE_SHOWN and not self.__locked:
-            self.hideTimer.stop()
-            idx = config.usage.infobar_timeout.index
-            if idx:
-                self.hideTimer.start(idx * 1500, True)
-
-    def __onHide(self):
-        self.__state = self.STATE_HIDDEN
-
-    def doShow(self):
-        self.hideTimer.stop()
-        self.show()
-        self.startHideTimer()
-
-    def doTimerHide(self):
-        self.hideTimer.stop()
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-
     def lockShow(self):
         try:
             self.__locked += 1
@@ -600,7 +576,6 @@ class TvInfoBarShowHide():
         print(text + " %s\n" % obj)
 
 
-# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
 class M3uPlay2(
     InfoBarBase,
     InfoBarMenu,
@@ -664,7 +639,7 @@ class M3uPlay2(
         self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
-        self.onClose.append(self.cancel)                                     
+        self.onClose.append(self.cancel)
         self.onLayoutFinish.append(self.openPlay)
 
 
@@ -772,8 +747,7 @@ class M3uPlay2(
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
-    def keyNumberGlobal(self, number):
-        self['text'].number(number)
+
     def up(self):
         pass
 
@@ -796,7 +770,7 @@ class M3uPlay2(
     def showVideoInfo(self):
         if self.shown:
             self.hideInfobar()
-        if self.infoCallback is not None:
+        if self.infoCallback != None:
             self.infoCallback()
         return
 
@@ -816,6 +790,6 @@ class M3uPlay2(
                 pass
         streaml = False
         self.close()
-        
+
     def leavePlayer(self):
         self.close()
