@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             15/01/2022               *
+*             22/01/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -274,7 +274,7 @@ class tvList(MenuList):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         self.l.setItemHeight(50)
         textfont=int(22)
-        self.l.setFont(0, gFont('Regular', textfont))        
+        self.l.setFont(0, gFont('Regular', textfont))
         if isFHD():
             self.l.setItemHeight(50)
             textfont=int(34)
@@ -325,16 +325,38 @@ Panel_list = [
  ('CANALI MEDIASET'),
  ('PLUTO TV'),
  ('SAMSUNG PLUS'),
+
  ('REGIONALI'),
+ ('ABRUZZO'),
+ ('BASILICATA'),
+ ('CALABRIA'),
+ ('CAMPANIA'),
+ ('EMILIA ROMAGNA'),
+ ('FRIULI VENEZIA GIULIA'),
+ ('LAZIO'),
+ ('LIGURIA'),
+ ('LOMBARDIA'),
+ ('MOLISE'),
+ ('PIEMONTE'),
+ ('PUGLIA'),
+ ('SARDEGNA'),
+ ('SICILIA'),
+ ('TOSCANA'),
+ ('TRENTINO ALTO ADIGE'),
+ ('UMBRIA'),
+ ("VALLE D'AOSTA"),
+ ('VENETO'),
+
  ('SPORT ITALIA'),
  ('SPORT LIVE'),
  ('SPORT ESTERI'),
+
  ('MUSICA'),
  ('RELAX'),
  ('NEWS ITALIA'),
  ('NEWS INTERNATIONAL'),
  ('INTERNATIONAL'),
- ('INTERNATIONAL II'), 
+ ('INTERNATIONAL II'),
  ('MOVIE TUTTI'),
  ('SERIE'),
  ('SERIE TV: 0-9'),
@@ -460,7 +482,6 @@ class OpenScript(Screen):
                 namex = "sportesteri"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
 
-
         elif sel == ("PLUTO TV"):
                 namex = "plutotv"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="
@@ -471,6 +492,68 @@ class OpenScript(Screen):
         elif sel == ("REGIONALI"):
                 namex = "regionali"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
+        elif sel == ("ABRUZZO"):
+                namex = "abruzzo"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MA=="
+        elif sel == ("BASILICATA"):
+                namex = "basilicata"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MQ=="
+        elif sel == ("CALABRIA"):
+                namex = "calabria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Mg=="
+        elif sel == ("CAMPANIA"):
+                namex = "campania"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Mw=="
+        elif sel == ("EMILIA ROMAGNA"):
+                namex = "emiliaromagna"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00NA=="
+        elif sel == ("FRIULI VENEZIA GIULIA"):
+                namex = "friuli"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00NQ=="
+        elif sel == ("LAZIO"):
+                namex = "lazio"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Ng=="
+        elif sel == ("LIGURIA"):
+                namex = "liguria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Nw=="
+        elif sel == ("LOMBARDIA"):
+                namex = "lombardia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00OA=="
+        elif sel == ("MARCHE"):
+                namex = "marche"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00OQ=="
+        elif sel == ("MOLISE"):
+                namex = "molise"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01MA=="
+        elif sel == ("PIEMONTE"):
+                namex = "piemonte"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01MQ=="
+        elif sel == ("PUGLIA"):
+                namex = "puglia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Mg=="
+        elif sel == ("SARDEGNA"):
+                namex = "sardegna"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Mw=="
+        elif sel == ("SICILIA"):
+                namex = "sicilia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01NA=="
+        elif sel == ("TOSCANA"):
+                namex = "toscana"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01NQ=="
+        elif sel == ("TRENTINO ALTO ADIGE"):
+                namex = "trentino"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Ng=="
+        elif sel == ("UMBRIA"):
+                namex = "umbria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Nw=="
+        elif sel == ("VALLE D'AOSTA"):
+                namex = "valledaosta"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01OA=="
+        elif sel == ("VENETO"):
+                namex = "veneto"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01OQ=="
+
+
         elif sel == ("MUSICA"):
                 namex = "musica"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
@@ -492,11 +575,11 @@ class OpenScript(Screen):
         elif sel == ("INTERNATIONAL II"):
                 namex = "internationals"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTkmdD0w"
-                
+
         elif sel == ("MOVIE TUTTI"):
                 namex = "movietutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0w"
-                
+
         elif sel == ("SERIE"):
                 namex = "serie"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMA=="
