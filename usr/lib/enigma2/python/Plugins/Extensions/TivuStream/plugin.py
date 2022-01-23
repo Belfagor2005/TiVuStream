@@ -1307,11 +1307,12 @@ class TvInfoBarShowHide():
         self.__state = self.STATE_SHOWN
         self.__locked = 0
         self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
+        
         try:
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
         except:
             self.hideTimer.callback.append(self.doTimerHide)
+        self.hideTimer.start(5000, True)
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
 
@@ -1333,10 +1334,6 @@ class TvInfoBarShowHide():
     def __onHide(self):
         self.__state = self.STATE_HIDDEN
 
-    def doShow(self):
-        self.show()
-        self.startHideTimer()
-
     def doTimerHide(self):
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
@@ -1348,18 +1345,33 @@ class TvInfoBarShowHide():
             self.hideTimer.stop()
         elif self.__state == self.STATE_HIDDEN:
             self.show()
+       
+    def doShow(self):
+        self.hideTimer.stop()
+        self.show()
+        self.startHideTimer()
+
 
     def lockShow(self):
-        self.__locked = self.__locked + 1
+        try:
+            self.__locked += 1
+        except:
+            self.__locked = 0
         if self.execing:
             self.show()
             self.hideTimer.stop()
+            self.skipToggleShow = False
 
     def unlockShow(self):
-        self.__locked = self.__locked - 1
+        try:
+            self.__locked -= 1
+        except:
+            self.__locked = 0
+        if self.__locked < 0:
+            self.__locked = 0
         if self.execing:
             self.startHideTimer()
-
+            
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
 

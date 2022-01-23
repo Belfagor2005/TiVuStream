@@ -529,6 +529,7 @@ class TvInfoBarShowHide():
 
     def __onHide(self):
         self.__state = self.STATE_HIDDEN
+
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
             self.hideTimer.stop()
@@ -559,6 +560,7 @@ class TvInfoBarShowHide():
         else:
             self.hide()
             self.startHideTimer()
+            
     def lockShow(self):
         try:
             self.__locked += 1
