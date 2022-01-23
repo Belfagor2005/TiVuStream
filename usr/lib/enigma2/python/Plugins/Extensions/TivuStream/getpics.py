@@ -228,7 +228,7 @@ def getpics(names, pics, tmpfold, picfold):
                         f1.close()
                     else:
                         print("Going in urlopen url =", url)
-                        fpage = getUrl(url)
+                        fpage = AdultUrl(url)
                         f1=open(tpicf,"wb")
                         f1.write(fpage)
                         f1.close()
