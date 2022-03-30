@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             01/12/2021               *
+*             22/03/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -58,7 +58,7 @@ from Tools.LoadPixmap import LoadPixmap
 from enigma import *
 from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
-from enigma import eListbox, eListboxPythonMultiContent 
+from enigma import eListbox, eListboxPythonMultiContent
 from enigma import eTimer
 from enigma import ePicLoad, gPixmapPtr
 from enigma import gFont
@@ -66,9 +66,9 @@ from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import eSize, ePicLoad
 from enigma import iServiceInformation
-from enigma import loadPNG 
+from enigma import loadPNG
 from enigma import quitMainloop
-from enigma import iPlayableService 
+from enigma import iPlayableService
 from os.path import splitext
 from sys import version_info
 from twisted.web.client import downloadPage, getPage, error
@@ -100,7 +100,6 @@ if PY3:
         unicode = str; unichr = chr; long = int
         PY3 = True
 else:
-# if os.path.exists('/usr/lib/python2.7'):
         from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
         from urllib2 import urlopen, Request, URLError, HTTPError
         from urlparse import urlparse, parse_qs
@@ -115,10 +114,7 @@ try:
     import http.cookiejar
 except:
     import cookielib
-try:
-    import httplib
-except:
-    import http.client
+
 
 if sys.version_info >= (2, 7, 9):
 	try:
@@ -126,12 +122,7 @@ if sys.version_info >= (2, 7, 9):
 		sslContext = ssl._create_unverified_context()
 	except:
 		sslContext = None
-# try:
-    # _create_unverified_https_context = ssl._create_unverified_context
-# except AttributeError:
-    # pass
-# else:
-    # ssl._create_default_https_context = _create_unverified_https_context
+
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -169,10 +160,10 @@ try:
 except Exception:
 	is_imdb = False
 
-#changelog 18.12.2021
-currversion = '3.0'
-Version = currversion + ' - 12.12.2021'
-title_plug = '..:: TivuStream Revolution V. %s ::..' % Version
+#changelog 14/03/2022
+currversion = '3.1'
+# Version = currversion + ' - 14/01/2022'
+title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
 Credits = 'Info http://t.me/tivustream'
 Maintainer2 = 'Maintener @Lululla'
@@ -216,7 +207,7 @@ config.plugins.TivuStream.strtext                = ConfigYesNo(default=True)
 config.plugins.TivuStream.strtmain               = ConfigYesNo(default=True)
 config.plugins.TivuStream.thumb                  = ConfigYesNo(default=False)
 config.plugins.TivuStream.thumbpic               = ConfigYesNo(default=False)
-
+global pngori, skin_path
 global Path_Movies
 Path_Movies             = str(config.plugins.TivuStream.pthm3uf.value) + "/"
 if Path_Movies.endswith("\/\/") is True:
@@ -264,19 +255,18 @@ nnewm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbC5waHA/cD01JnVhPVRpVnVTd
 servernewm3u = b64decoder(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
 m3uest = b64decoder(estm3u)
-
-global pngori, skin_path
-nasarandom = "http://patbuweb.com/back-tvstream/"
+nasara = "aHR0cDovL3BhdGJ1d2ViLmNvbS9iYWNrLXR2c3RyZWFtLw=="
+nasarandom = b64decoder(nasara)
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 if isFHD():
     skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
-else:
-    skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 if DreamOS():
     skin_path=skin_path + 'dreamOs/'
+
 
 class tvList(MenuList):
     def __init__(self, list):
@@ -290,17 +280,17 @@ class tvList(MenuList):
             textfont=int(22)
             self.l.setFont(0, gFont('Regular', textfont))
 
-def tvListEntry(name,png):
+def tvListEntry(name, png):
     res = [name]
-    png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))        
     return res
-    
+
 def m3ulistEntry(download):
     res = [download]
     white = 16777215
@@ -315,7 +305,7 @@ def m3ulistEntry(download):
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT| RT_VALIGN_CENTER)) 
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))        
     return res
 
 def m3ulist(data, list):
@@ -329,17 +319,42 @@ def m3ulist(data, list):
 
 Panel_list = [
  ('LIVE TUTTI'),
- ('TOP ITALIA'),
+ ('CANALI RAI'),
+ ('CANALI MEDIASET'),
+ ('PLUTO TV'),
+ ('SAMSUNG PLUS'),
+
+ ('REGIONALI'),
+ ('ABRUZZO'),
+ ('BASILICATA'),
+ ('CALABRIA'),
+ ('CAMPANIA'),
+ ('EMILIA ROMAGNA'),
+ ('FRIULI VENEZIA GIULIA'),
+ ('LAZIO'),
+ ('LIGURIA'),
+ ('LOMBARDIA'),
+ ('MOLISE'),
+ ('PIEMONTE'),
+ ('PUGLIA'),
+ ('SARDEGNA'),
+ ('SICILIA'),
+ ('TOSCANA'),
+ ('TRENTINO ALTO ADIGE'),
+ ('UMBRIA'),
+ ("VALLE D'AOSTA"),
+ ('VENETO'),
+
  ('SPORT ITALIA'),
  ('SPORT LIVE'),
  ('SPORT ESTERI'),
- ('MUSICA'),
- ('NEWS'),
- ('ESTERO'),
- # ('ESTERO2'),
- ('REGIONALI'),
- ('RELAX'),
 
+ ('MUSICA'),
+ ('RELAX'),
+ ('NEWS ITALIA'),
+ ('NEWS INTERNATIONAL'),
+ ('INTERNATIONAL'),
+ ('INTERNATIONAL II'),
  ('MOVIE TUTTI'),
  ('SERIE'),
  ('SERIE TV: 0-9'),
@@ -355,12 +370,10 @@ Panel_list = [
  ('FILM: M-R'),
  ('FILM: S-Z'),
  ('FILM IN VERSIONE ORIGINALE'),
-
  ('RADIO TUTTI'),
  ('RADIO ITALIA'),
  ('RADIO INT'),
  ('DASH RADIO'),
-
  ('LIVE XXX'),
  ('MOVIE XXX')]
 
@@ -376,8 +389,6 @@ class OpenScript(Screen):
         self['list'] = tvList([])
         self.icount = 0
         server_ref()
-        # tivustream = ''
-        # estero = ''
         self['listUpdate'] = Label()
         self['title'] = Label(_(title_plug))
         self['Maintainer2'] = Label('%s' % Maintainer2)
@@ -390,13 +401,13 @@ class OpenScript(Screen):
          {'ok': self.messagerun,
          'file': self.M3uPlay,
          'menu': self.scsetup,
-         'red': self.close,
+         'red': self.cancel,
          'green': self.messagereload,
-         'info': self.close,
+         'info': self.cancel,
          'yellow': self.messagedellist,
          'blue': self.M3uPlay,
-         'back': self.close,
-         'cancel': self.close}, -1)
+         'back': self.cancel,
+         'cancel': self.cancel}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -414,11 +425,9 @@ class OpenScript(Screen):
     def read(self):
         try:
             destr = plugin_path + 'list.txt'
-            # onserver2 = six.ensure_str(upd_nt_txt)
             onserver2 = upd_nt_txt
             with open(destr, 'w') as f:
                 content = ReadUrl2(onserver2)
-                # content = six.ensure_str(content)
                 f.write(content)
             self['listUpdate'].setText(content)
         except Exception as ex:
@@ -448,37 +457,123 @@ class OpenScript(Screen):
         if sel == ("LIVE TUTTI"):
                 namex = "livetutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0w"
-        elif sel == ("TOP ITALIA"):
-                namex = "topitalia"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0x"
+
+        elif sel == ("CANALI RAI"):
+                namex = "rai"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOQ=="
+        elif sel == ("CANALI MEDIASET"):
+                namex = "mediaset"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0zMA=="
+
         elif sel == ("SPORT ITALIA"):
                 namex = "sportitalia"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0y"
+
         elif sel == ("SPORT LIVE"):
                 namex = "sportlive"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0z"
         elif sel == ("SPORT ESTERI"):
                 namex = "sportesteri"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
-        elif sel == ("MUSICA"):
-                namex = "musica"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
-        elif sel == ("NEWS"):
-                namex = "news"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
-        elif sel == ("ESTERO"):
-                namex = "estero"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
+
+        elif sel == ("PLUTO TV"):
+                namex = "plutotv"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="
+        elif sel == ("SAMSUNG PLUS"):
+                namex = "samsungtv"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOA=="
+
         elif sel == ("REGIONALI"):
                 namex = "regionali"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
+        elif sel == ("ABRUZZO"):
+                namex = "abruzzo"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MA=="
+        elif sel == ("BASILICATA"):
+                namex = "basilicata"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MQ=="
+        elif sel == ("CALABRIA"):
+                namex = "calabria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Mg=="
+        elif sel == ("CAMPANIA"):
+                namex = "campania"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Mw=="
+        elif sel == ("EMILIA ROMAGNA"):
+                namex = "emiliaromagna"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00NA=="
+        elif sel == ("FRIULI VENEZIA GIULIA"):
+                namex = "friuli"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00NQ=="
+        elif sel == ("LAZIO"):
+                namex = "lazio"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Ng=="
+        elif sel == ("LIGURIA"):
+                namex = "liguria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00Nw=="
+        elif sel == ("LOMBARDIA"):
+                namex = "lombardia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00OA=="
+        elif sel == ("MARCHE"):
+                namex = "marche"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00OQ=="
+        elif sel == ("MOLISE"):
+                namex = "molise"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01MA=="
+        elif sel == ("PIEMONTE"):
+                namex = "piemonte"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01MQ=="
+        elif sel == ("PUGLIA"):
+                namex = "puglia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Mg=="
+        elif sel == ("SARDEGNA"):
+                namex = "sardegna"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Mw=="
+        elif sel == ("SICILIA"):
+                namex = "sicilia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01NA=="
+        elif sel == ("TOSCANA"):
+                namex = "toscana"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01NQ=="
+        elif sel == ("TRENTINO ALTO ADIGE"):
+                namex = "trentino"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Ng=="
+        elif sel == ("UMBRIA"):
+                namex = "umbria"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01Nw=="
+        elif sel == ("VALLE D'AOSTA"):
+                namex = "valledaosta"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01OA=="
+        elif sel == ("VENETO"):
+                namex = "veneto"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01OQ=="
+
+
+        elif sel == ("MUSICA"):
+                namex = "musica"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
         elif sel == ("RELAX"):
                 namex = "relax"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
 
+        elif sel == ("NEWS ITALIA"):
+                namex = "newsitalia"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
+        elif sel == ("NEWS INTERNATIONAL"):
+                namex = "newsinternational"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
+
+        elif sel == ("INTERNATIONAL"):
+                namex = "international"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTgmdD0w"
+
+        elif sel == ("INTERNATIONAL II"):
+                namex = "internationals"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTkmdD0w"
+
         elif sel == ("MOVIE TUTTI"):
                 namex = "movietutti"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0w"
+
         elif sel == ("SERIE"):
                 namex = "serie"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTImdD0xMA=="
@@ -546,7 +641,7 @@ class OpenScript(Screen):
                 namex = "=="
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=="
         else:
-                self.mbox = self.session.open(openMessageBox, _('Bouquet not installed'), openMessageBox.TYPE_ERROR, timeout=4)
+                self.mbox = self.session.open(MessageBox, _('Bouquet not installed'), MessageBox.TYPE_ERROR, timeout=4)
                 return
         self.instal_listTv(namex, lnk)
 
@@ -562,12 +657,12 @@ class OpenScript(Screen):
         bouquetTvString = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "' + str(groupname) + '" ORDER BY bouquet\n'
         dirgroupname = ('/etc/enigma2/%s' % groupname)
         if name == '==' :
-            self.mbox = self.session.open(openMessageBox, _('CONNECTION ERROR OR UNKNOWN'), openMessageBox.TYPE_ERROR, timeout=4)
+            self.mbox = self.session.open(MessageBox, _('CONNECTION ERROR OR UNKNOWN'), MessageBox.TYPE_ERROR, timeout=4)
             return
         else:
             if name == 'livexxx' or name == 'moviexxx':
                 if str(config.plugins.TivuStream.code.value) != str(pin):
-                    self.mbox = self.session.open(openMessageBox, _('You are not allowed!'), openMessageBox.TYPE_INFO, timeout=8)
+                    self.mbox = self.session.open(MessageBox, _('You are not allowed!'), MessageBox.TYPE_INFO, timeout=8)
                     return
                 else:
                     print('pass xxx')
@@ -593,14 +688,13 @@ class OpenScript(Screen):
             try:
                 with open(namebqt, 'w') as f:
                     content = ReadUrl2(lnk)
-                    # content = six.ensure_str(content)
                     print('Resp 2: ', content)
                     f.write(content)
                     os.system('sleep 5')
                     f.close()
             except Exception as ex:
                 print(ex)
-            self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
+            self.mbox = self.session.open(MessageBox, _('Check out the favorites list ...'), MessageBox.TYPE_INFO, timeout=5)
             x = open ('/etc/enigma2/bouquets.tv', 'r')
             for line in x:
                 if bouquetTvString in line:
@@ -624,6 +718,7 @@ class OpenScript(Screen):
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
                 os.system('chmod 0644 /etc/enigma2/%s' %groupname )
+                linetv = 1
             z = open(dirgroupname)
             for line in z:
                 if bqtname in line:
@@ -634,27 +729,28 @@ class OpenScript(Screen):
                     if bouquetTvString not in f:
                         f.write(bouquetTvString)
                         f.close()
-            self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
+                    in_bouquets = 1
+            self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
             eDVBDB.getInstance().reloadServicelist()
             eDVBDB.getInstance().reloadBouquets()
             return
 
     def messagerun(self):
-        self.session.openWithCallback(self.messagerun2, openMessageBox, _('Install the selected list?'), openMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.messagerun2, MessageBox, _('Install the selected list?'), MessageBox.TYPE_YESNO)
 
     def messagerun2(self, result):
         if result:
-            self.session.openWithCallback(self.okRun, openMessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=3)
+            self.session.openWithCallback(self.okRun, MessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=3)
 
     def messagereload(self):
-        self.session.openWithCallback(self.reloadSettings, openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
+        self.session.openWithCallback(self.reloadSettings, MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
 
     def reloadSettings(self, result):
         if result:
            ReloadBouquets()
 
     def messagedellist(self):
-        self.session.openWithCallback(self.deletelist, openMessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?', openMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.deletelist, MessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?', MessageBox.TYPE_YESNO)
 
     def deletelist(self, result):
         if result:
@@ -668,7 +764,7 @@ class OpenScript(Screen):
                     if os.path.exists(radio):
                         os.remove(radio)
                         os.system("sed -i '/subbouquet.tivustream/d' /etc/enigma2/bouquets.radio")
-            self.mbox = self.session.open(openMessageBox, _('TiVuStream Revolution channel lists successfully deleted'), openMessageBox.TYPE_INFO, timeout=4)
+            self.mbox = self.session.open(MessageBox, _('TiVuStream Revolution channel lists successfully deleted'), MessageBox.TYPE_INFO, timeout=4)
             ReloadBouquets()
 
     def M3uPlay(self):
@@ -678,13 +774,17 @@ class OpenScript(Screen):
     def scsetup(self):
         self.session.open(OpenConfig)
 
+    def cancel(self):
+        deletetmp()
+        self.close()
+
 class OpenM3u(Screen):
     def __init__(self, session):
         self.session = session
         skin = skin_path + '/OpenM3u.xml'
         f = open(skin, 'r')
         self.skin = f.read()
-        # f.close()
+        f.close()
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
@@ -709,16 +809,15 @@ class OpenM3u(Screen):
          'ok': self.runList}, -2)
         self.convert = False
         self.name = Path_Movies
-        # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         try:
             destx = Path_Movies + 'tivustream.m3u'
-            with open(destx, 'w') as f:
+            with open(destx, 'w') as e:
                 content = ReadUrl2(servernewm3u)
                 content = six.ensure_str(content)
                 print('Resp 1: ', content)
-                f.write(content)
+                e.write(content)
                 os.system('sleep 5')
-                f.close()
+                e.close()
         except Exception as ex:
             print(ex)
             print('Exception exit : ', ex)
@@ -763,7 +862,7 @@ class OpenM3u(Screen):
         if idx == -1 or None:
             return
         else:
-            self.session.openWithCallback(self.callMyMsg1, openMessageBox, _("Do you want to remove?"), openMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
 
     def callMyMsg1(self, result):
         if result:
@@ -772,7 +871,7 @@ class OpenM3u(Screen):
             dom = path
             if fileExists(dom):
                 os.remove(dom)
-            self.session.open(openMessageBox, dom +' has been successfully deleted\nwait time to refresh the list...', openMessageBox.TYPE_INFO, timeout=5)
+            self.session.open(MessageBox, dom +' has been successfully deleted\nwait time to refresh the list...', MessageBox.TYPE_INFO, timeout=5)
             del self.Movies[idx]
             del self.names[idx]
             self.onShown.append(self.openList)
@@ -801,7 +900,7 @@ class OpenM3u(Screen):
         name = self.names[idx]
         pth = Path_Movies #self.name
         if not os.path.exists(pth):
-            self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
+            self.mbox = self.session.open(MessageBox, _('Check in your Config Plugin - Path Movie'), MessageBox.TYPE_INFO, timeout=5)
             return
         bqtname = 'userbouquet.%s.tv' % name
         desk_tmp = ''
@@ -825,7 +924,7 @@ class OpenM3u(Screen):
                     else:
                         desk_tmp = '%s\r\n' % line.split('<')[1].split('>')[1]
             outfile.close()
-        self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
+        self.mbox = self.session.open(MessageBox, _('Check out the favorites list ...'), MessageBox.TYPE_INFO, timeout=5)
         if os.path.isfile('/etc/enigma2/bouquets.tv'):
             for line in open('/etc/enigma2/bouquets.tv'):
                 if bqtname in line:
@@ -836,7 +935,8 @@ class OpenM3u(Screen):
                     with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
-        self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
+                    in_bouquets = 1
+        self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
         ReloadBouquets()
 
     def create_bouquet(self):
@@ -845,7 +945,7 @@ class OpenM3u(Screen):
         name = self.names[idx]
         pth = Path_Movies #self.name
         if not os.path.exists(pth):
-            self.mbox = self.session.open(openMessageBox, _('Check in your Config Plugin - Path Movie'), openMessageBox.TYPE_INFO, timeout=5)
+            self.mbox = self.session.open(MessageBox, _('Check in your Config Plugin - Path Movie'), MessageBox.TYPE_INFO, timeout=5)
             return
         bqtname = 'userbouquet.%s.tv' % name
         # self.iConsole = iConsole()
@@ -870,7 +970,7 @@ class OpenM3u(Screen):
                     else:
                         desk_tmp = '%s\r\n' % line.split('<')[1].split('>')[1]
             outfile.close()
-        self.mbox = self.session.open(openMessageBox, _('Check out the favorites list ...'), openMessageBox.TYPE_INFO, timeout=5)
+        self.mbox = self.session.open(MessageBox, _('Check out the favorites list ...'), MessageBox.TYPE_INFO, timeout=5)
         if os.path.isfile('/etc/enigma2/bouquets.tv'):
             for line in open('/etc/enigma2/bouquets.tv'):
                 if bqtname in line:
@@ -882,7 +982,8 @@ class OpenM3u(Screen):
                     with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
                         outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
                         outfile.close()
-        self.mbox = self.session.open(openMessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), openMessageBox.TYPE_INFO, timeout=5)
+                    in_bouquets = 1
+        self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
         ReloadBouquets()
 
     def cancel(self):
@@ -930,7 +1031,6 @@ class M3uPlay(Screen):
          "ShortRecord": self.runRec,
          'ok': self.runChannel}, -2)
         self.name = name
-        # self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onLayoutFinish.append(self.playList)
 
     def search_m3u(self):
@@ -989,14 +1089,14 @@ class M3uPlay(Screen):
         if idx == -1 or None:
             return
         if self.downloading == True:
-            self.session.open(openMessageBox, _('You are already downloading!!!'), openMessageBox.TYPE_INFO, timeout=5)
+            self.session.open(MessageBox, _('You are already downloading!!!'), MessageBox.TYPE_INFO, timeout=5)
         else:
             if '.mp4' in urlm3u or '.mkv' in urlm3u or '.flv' in urlm3u or '.avi' in urlm3u :
                 self.downloading = True
-                self.session.openWithCallback(self.download_m3u, openMessageBox, _("DOWNLOAD VIDEO?" ) , type=openMessageBox.TYPE_YESNO, timeout = 10, default = False)
+                self.session.openWithCallback(self.download_m3u, MessageBox, _("DOWNLOAD VIDEO?" ) , type=MessageBox.TYPE_YESNO, timeout = 10, default = False)
             else:
                 self.downloading = False
-                self.session.open(openMessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), openMessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), MessageBox.TYPE_INFO, timeout=5)
 
     def download_m3u(self, result):
         if result:
@@ -1020,7 +1120,7 @@ class M3uPlay(Screen):
                 self.download.start().addCallback(self.check).addErrback(self.showError)
             else:
                 self.downloading = False
-                self.session.open(openMessageBox, _('Download Failed!!!'), openMessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _('Download Failed!!!'), MessageBox.TYPE_INFO, timeout=5)
                 pass
 
     def downloadProgress(self, recvbytes, totalbytes):
@@ -1041,7 +1141,7 @@ class M3uPlay(Screen):
     def showError(self, error):
         OnclearMem()
         self.downloading = False
-        self.session.open(openMessageBox, _('Download Failed!!!'), openMessageBox.TYPE_INFO, timeout=5)
+        self.session.open(MessageBox, _('Download Failed!!!'), MessageBox.TYPE_INFO, timeout=5)
 
     def playList(self):
         global search_ok
@@ -1050,13 +1150,11 @@ class M3uPlay(Screen):
         self.urls = []
         self.pics = []
         pic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
-        
+
         try:
             if fileExists(self.name):
                 f1 = open(self.name, 'r+')
                 fpage = f1.read()
-                # fpage.seek(0)
-
                 if "#EXTM3U" and 'tvg-logo' in fpage:
                     print('tvg-logo in fpage: True')
                     regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
@@ -1064,13 +1162,10 @@ class M3uPlay(Screen):
                     for pic, name, url in match:
                             url = url.replace(' ', '')
                             url = url.replace('\\n', '')
-                            # # url = url.replace('https', 'http')
-                            # if pic:
                             pic = pic
                             self.names.append(name)
                             self.urls.append(url)
                             self.pics.append(pic)
-
                 # elif "#EXTM3U" in fpage:
                 else:
                         regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
@@ -1084,24 +1179,20 @@ class M3uPlay(Screen):
                                 self.names.append(name)
                                 self.urls.append(url)
                                 self.pics.append(pic)
-    #####################################################################################
-    #self.onShown.append(self.openTest)
+
                 if config.plugins.TivuStream.thumb.value == True:
                     self.gridmaint = eTimer()
-                    self.gridmaint.start(3000, True)
                     try:
                         self.gridmaint_conn = self.gridmaint.timeout.connect(self.gridpic)
                     except:
                         self.gridmaint.callback.append(self.gridpic)
-                    # self.session.open(GridMain, self.names, self.urls, self.pics)
-    #####################################################################################
+                    self.gridmaint.start(3000, True)
                 else:
                     m3ulist(self.names, self['list'])
 
                 self["live"].setText('N.' + str(len(self.names)) + " Stream")
-
             else:
-                self.session.open(openMessageBox, _('File Unknow!!!'), openMessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _('File Unknow!!!'), MessageBox.TYPE_INFO, timeout=5)
 
         except Exception as ex:
             print('error exception: ', ex)
@@ -1135,7 +1226,7 @@ class M3uPlay(Screen):
     def pinEntered2(self, result):
         if not result:
             self.pin = False
-            self.session.open(openMessageBox, _("The pin code you entered is wrong."), type=openMessageBox.TYPE_ERROR, timeout=5)
+            self.session.open(MessageBox, _("The pin code you entered is wrong."), type=MessageBox.TYPE_ERROR, timeout=5)
         self.runChannel2()
 
     def runChannel2(self):
@@ -1198,11 +1289,12 @@ class TvInfoBarShowHide():
         self.__state = self.STATE_SHOWN
         self.__locked = 0
         self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
+        
         try:
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
         except:
             self.hideTimer.callback.append(self.doTimerHide)
+        self.hideTimer.start(5000, True)
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
 
@@ -1224,10 +1316,6 @@ class TvInfoBarShowHide():
     def __onHide(self):
         self.__state = self.STATE_HIDDEN
 
-    def doShow(self):
-        self.show()
-        self.startHideTimer()
-
     def doTimerHide(self):
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
@@ -1239,22 +1327,36 @@ class TvInfoBarShowHide():
             self.hideTimer.stop()
         elif self.__state == self.STATE_HIDDEN:
             self.show()
+       
+    def doShow(self):
+        self.hideTimer.stop()
+        self.show()
+        self.startHideTimer()
+
 
     def lockShow(self):
-        self.__locked = self.__locked + 1
+        try:
+            self.__locked += 1
+        except:
+            self.__locked = 0
         if self.execing:
             self.show()
             self.hideTimer.stop()
+            self.skipToggleShow = False
 
     def unlockShow(self):
-        self.__locked = self.__locked - 1
+        try:
+            self.__locked -= 1
+        except:
+            self.__locked = 0
+        if self.__locked < 0:
+            self.__locked = 0
         if self.execing:
             self.startHideTimer()
-
+            
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
 
-# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
 class M3uPlay2(
     InfoBarBase,
     InfoBarMenu,
@@ -1327,6 +1429,7 @@ class M3uPlay2(
         else:
             self.onFirstExecBegin.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
+
     def getAspect(self):
         return AVSwitch().getAspectRatioSetting()
 
@@ -1819,7 +1922,7 @@ class OpenConfig(Screen, ConfigListScreen):
 
         def save(self):
             if not os.path.exists(config.plugins.TivuStream.pthm3uf.value):
-                self.mbox = self.session.open(openMessageBox, _('M3u list folder not detected!'), openMessageBox.TYPE_INFO, timeout=4)
+                self.mbox = self.session.open(MessageBox, _('M3u list folder not detected!'), MessageBox.TYPE_INFO, timeout=4)
                 return
             if self['config'].isChanged():
                 for x in self['config'].list:
@@ -1829,7 +1932,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 configfile.save()
                 plugins.clearPluginList()
                 plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-                self.mbox = self.session.open(openMessageBox, _('Settings saved correctly!'), openMessageBox.TYPE_INFO, timeout=5)
+                self.mbox = self.session.open(MessageBox, _('Settings saved correctly!'), MessageBox.TYPE_INFO, timeout=5)
                 self.close()
             else:
              self.close()
@@ -1853,7 +1956,7 @@ class OpenConfig(Screen, ConfigListScreen):
 
         def extnok(self):
             if self['config'].isChanged():
-                self.session.openWithCallback(self.cancelConfirm, openMessageBox, _('Really close without saving the settings?'))
+                self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
             else:
                 self.close()
 
@@ -1862,12 +1965,12 @@ class OpenConfig(Screen, ConfigListScreen):
                 return
             if config.plugins.TivuStream.autoupd.value == False:
                 return
-            self.session.openWithCallback(self.runupdate, openMessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?\nPlease Restart GUI Required!' % self.version), openMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, MessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?\nPlease Restart GUI Required!' % self.version), MessageBox.TYPE_YESNO)
 
         def msgupdt1(self):
             if self.cbUpdate == False:
                 return
-            self.session.openWithCallback(self.runupdate, openMessageBox, _('Update Plugin ?'), openMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, MessageBox, _('Update Plugin ?'), MessageBox.TYPE_YESNO)
 
         def runupdate(self, result):
             if result:
@@ -1985,7 +2088,7 @@ class openMessageBox(Screen):
     def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, picon = None, simple = False, list = [], timeout_default = None):
         self.type = type
         self.session = session
-        skin = skin_path + '/OpenMessageBox.xml'
+        skin = skin_path + '/openMessageBox.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2210,9 +2313,7 @@ class plgnstrt(Screen):
     def loadDefaultImage(self, failure=None):
         import random
         print("*** failure *** %s" % failure)
-        # if self["poster"].instance:
         global pngori
-        # self.png = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa3.jpg'
         fldpng = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/'
         npj = random.choice(imgjpg)
         pngori = fldpng + npj
@@ -2273,7 +2374,13 @@ def checks():
 
 def main(session, **kwargs):
     if checks:
-        # add_skin_font()
+
+        try:
+            from Plugins.Extensions.TivuStream.Update import upd_done
+            upd_done()
+        except:
+            pass
+
         if PY3:
             session.open(OpenScript)
         else:
