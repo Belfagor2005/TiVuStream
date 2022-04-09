@@ -847,7 +847,7 @@ class OpenM3u(Screen):
         urlm3u = self.Movies[idx]
         path = urlparse(urlm3u).path
         ext = splitext(path)[1]
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             name = path
@@ -859,7 +859,7 @@ class OpenM3u(Screen):
 
     def message1(self):
         idx = self['list'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
@@ -878,7 +878,7 @@ class OpenM3u(Screen):
 
     def crea_bouquet(self):
         idx = self['list'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             name = self.names[idx]
@@ -887,7 +887,7 @@ class OpenM3u(Screen):
 
     def crea_bouquet5002(self):
         idx = self['list'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             name = self.names[idx]
@@ -1084,40 +1084,60 @@ class M3uPlay(Screen):
     def runRec(self):
         global urlm3u, namem3u
         idx = self["list"].getSelectionIndex()
-        namem3u = self.names[idx]
-        urlm3u = self.urls[idx]
-        if idx == -1 or None:
-            return
-        if self.downloading == True:
-            self.session.open(MessageBox, _('You are already downloading!!!'), MessageBox.TYPE_INFO, timeout=5)
-        else:
-            if '.mp4' in urlm3u or '.mkv' in urlm3u or '.flv' in urlm3u or '.avi' in urlm3u :
-                self.downloading = True
-                self.session.openWithCallback(self.download_m3u, MessageBox, _("DOWNLOAD VIDEO?" ) , type=MessageBox.TYPE_YESNO, timeout = 10, default = False)
+        try:
+            namem3u = self.names[idx]
+            urlm3u = self.urls[idx]
+            print('namem3u: ',namem3u)
+            print('urlm3u: ',urlm3u)
+            
+            if idx < 0 :
+                return
+            if self.downloading == True:
+                self.session.open(MessageBox, _('You are already downloading!!!'), MessageBox.TYPE_INFO, timeout=5)
             else:
-                self.downloading = False
-                self.session.open(MessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), MessageBox.TYPE_INFO, timeout=5)
+                if '.mp4' in urlm3u or '.mkv' in urlm3u or '.flv' in urlm3u or '.avi' in urlm3u :
+                    self.downloading = True
+                    self.session.openWithCallback(self.download_m3u, MessageBox, _("DOWNLOAD VIDEO?" ) , type=MessageBox.TYPE_YESNO, timeout = 10, default = False)
+                else:
+                    self.downloading = False
+                    self.session.open(MessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), MessageBox.TYPE_INFO, timeout=5)
+
+        except Exception as e:
+           print("Error list: %s" % e)
+           print("self.names is %s" % len(self.names))
+           print("self.urls is %s" % len(self.urls))
+           print("Index is %s" % idx)                   
+           return      
 
     def download_m3u(self, result):
         if result:
             global in_tmp
             OnclearMem()
             if self.downloading == True:
-                selection = str(self['list'].getCurrent()) ######?????????
+                # selection = str(self['list'].getCurrent()) ######?????????
                 idx = self["list"].getSelectionIndex()
-                namem3u = self.names[idx]
-                urlm3u = self.urls[idx]
-                path = urlparse(urlm3u).path
-                ext = splitext(path)[1]
-                fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', namem3u)
-                fileTitle = re.sub(r' ', '_', fileTitle)
-                fileTitle = re.sub(r'_+', '_', fileTitle)
-                fileTitle = fileTitle.replace("(", "_").replace(")", "_").replace("#", "").replace("+", "_").replace("\'", "_").replace("'", "_").replace("!", "_").replace("&", "_")
-                fileTitle = fileTitle.lower() + ext
-                in_tmp = Path_Movies + fileTitle
-                self.download = downloadWithProgress(urlm3u, in_tmp)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.check).addErrback(self.showError)
+                try:
+                
+                    namem3u = self.names[idx]
+                    urlm3u = self.urls[idx]
+                    path = urlparse(urlm3u).path
+                    ext = splitext(path)[1]
+                    fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', namem3u)
+                    fileTitle = re.sub(r' ', '_', fileTitle)
+                    fileTitle = re.sub(r'_+', '_', fileTitle)
+                    fileTitle = fileTitle.replace("(", "_").replace(")", "_").replace("#", "").replace("+", "_").replace("\'", "_").replace("'", "_").replace("!", "_").replace("&", "_")
+                    fileTitle = fileTitle.lower() + ext
+                    in_tmp = Path_Movies + fileTitle
+                    self.download = downloadWithProgress(urlm3u, in_tmp)
+                    self.download.addProgress(self.downloadProgress)
+                    self.download.start().addCallback(self.check).addErrback(self.showError)
+                    
+                except Exception as e:
+                   print("Error list: %s" % e)
+                   print("self.names is %s" % len(self.names))
+                   print("self.urls is %s" % len(self.urls))
+                   print("Index is %s" % idx)                   
+                   return                    
             else:
                 self.downloading = False
                 self.session.open(MessageBox, _('Download Failed!!!'), MessageBox.TYPE_INFO, timeout=5)
@@ -1204,7 +1224,7 @@ class M3uPlay(Screen):
 
     def runChannel(self):
         idx = self['list'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             self.pin = True
@@ -1257,7 +1277,7 @@ class M3uPlay(Screen):
 
     def AdjUrlFavo(self):
         idx = self['list'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0 :
             return
         else:
             name = self.names[idx]
