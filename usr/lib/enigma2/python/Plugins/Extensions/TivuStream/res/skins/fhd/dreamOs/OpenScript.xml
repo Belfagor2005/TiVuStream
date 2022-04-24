@@ -1,25 +1,24 @@
 <!-- Skin OpenScript 15/08/2020 -->
 <screen name="OpenScript" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="transparent" flags="wfNoBorder">
-	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main1.png" alphatest="blend" zPosition="1" />
-	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" zPosition="5" />
-	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
-	<ePixmap position="220,130" size="830,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
-	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_menu.png" scale="strech" position="975,90" size="80,35" zPosition="3" />
+	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5"/>
+	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
+	<widget name="listUpdate" position="220,800" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" valign="center"/>
+	<widget name="infoc2" position="220,855" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
+	<!-- Graph -->
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main1.png" position="0,0" size="1920,1080" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" position="220,40" size="279,50" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_menu.png" scale="strech" position="975,90" size="80,35" zPosition="3"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,130" size="830,8" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,910" size="830,8" zPosition="5"/>
 	<!-- Menu List -->
-	<widget name="list" position="220,155" size="830,650" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" 
-		foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#000b2049" backgroundColorSelected="#0b2049" 
-		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png" />
-	<widget name="listUpdate"  position="220,800" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" valign="center" />
-	<widget name="infoc2"      position="220,855" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" />
+	<widget name="list" position="220,155" size="830,650" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#000b2049" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
 	<!-- Colors -->
-	<ePixmap position="220,910" size="830,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_green.png" position="220,1005" size="30,30" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_yellow.png" position="1020,945" size="30,30" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_blue.png" position="1020,1005" size="30,30" alphatest="on" zPosition="5" />
-	<widget name="key_red" position="270,940" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="black" transparent="1" zPosition="5" />
-	<widget name="key_green" position="270,1000" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="black" transparent="1" zPosition="5" />
-	<widget name="key_yellow" position="710,940" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="black" zPosition="5" transparent="1" />
-	<widget name="key_blue" position="710,1000" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="black" zPosition="5" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_green.png" position="220,1005" size="30,30" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_yellow.png" position="1020,945" size="30,30" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_blue.png" position="1020,1005" size="30,30" alphatest="on" zPosition="5"/>
+	<widget name="key_red" position="270,940" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="black" transparent="1" zPosition="5"/>
+	<widget name="key_green" position="270,1000" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="black" transparent="1" zPosition="5"/>
+	<widget name="key_yellow" position="710,940" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="black" zPosition="5" transparent="1"/>
+	<widget name="key_blue" position="710,1000" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="black" zPosition="5" transparent="1"/>
 </screen>

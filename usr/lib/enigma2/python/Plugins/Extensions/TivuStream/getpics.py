@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *           thank's Pcd                *
-*             13/01/2022               *
+*             24/04/2022               *
 *       skin by MMark                  *
 ****************************************
 Info http://t.me/tivustream
@@ -26,9 +26,6 @@ from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, Inf
 	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
-	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
-	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Directories import SCOPE_PLUGINS
@@ -39,6 +36,7 @@ from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import eTimer, eActionMap
 from enigma import iServiceInformation
+from os.path import splitext
 from time import time, localtime, strftime, sleep
 import glob
 import os
@@ -46,14 +44,12 @@ import re
 import six
 import socket
 import sys
+
+from . import Utils
+
 global skin_path, tmpfold, picfold
-from os.path import splitext
 global defpic, dblank
-import six
-try:
-    from Plugins.Extensions.TivuStream.Utils import *
-except:
-    from . import Utils
+
 
 try:
     from PIL import Image
@@ -82,23 +78,16 @@ else:
         import six
 
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
-# defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/defaultL.png".format('TivuStream'))
-# dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blankL.png".format('TivuStream'))
-# skin_path = plugin_path
-
 skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
 dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blank.png".format('TivuStream'))
 
-if isFHD():
+if Utils.isFHD():
     skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
     defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/defaultL.png".format('TivuStream'))
     dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blankL.png".format('TivuStream'))    
-# else:
-    # skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
-    # defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/default.png".format('TivuStream'))
-    # dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blank.png".format('TivuStream'))
-if DreamOS():
+
+if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 try:
     from OpenSSL import SSL
@@ -108,10 +97,6 @@ try:
 except:
     sslverify = False
 if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
@@ -125,7 +110,7 @@ if sslverify:
 
 #menulist
 pos = []
-if isFHD():
+if Utils.isFHD():
     pos.append([35,80])
     pos.append([395,80])
     pos.append([755,80])
@@ -153,7 +138,7 @@ def getpics(names, pics, tmpfold, picfold):
     defpic = defpic
     print("In getpics tmpfold =", tmpfold)
     print("In getpics picfold =", picfold)
-    if isFHD():
+    if Utils.isFHD():
         nw = 300
     else:
         nw = 200
@@ -181,7 +166,7 @@ def getpics(names, pics, tmpfold, picfold):
             name = name.replace("&", "").replace(":", "").replace("(", "-")
             name = name.replace(")", "").replace(" ", "").replace("'", "")
             name = name.replace("/", "-")
-            name = decodeHtml(name)
+            name = Utils.decodeHtml(name)
         except:
             pass
         url = pics[j]
@@ -222,13 +207,13 @@ def getpics(names, pics, tmpfold, picfold):
                         n2 = url.find("=", n1)
                         url1 = url[:n3]
                         referer = url[n2:]
-                        p = getUrl2(url1, referer)
+                        p = Utils.getUrl2(url1, referer)
                         f1=open(tpicf,"wb")
                         f1.write(p)
                         f1.close()
                     else:
                         print("Going in urlopen url =", url)
-                        fpage = AdultUrl(url)
+                        fpage = Utils.AdultUrl(url)
                         f1=open(tpicf,"wb")
                         f1.write(fpage)
                         f1.close()
@@ -246,7 +231,7 @@ def getpics(names, pics, tmpfold, picfold):
             try:
                 #start kiddac code
                 size = [200, 200]
-                if isFHD():
+                if Utils.isFHD():
                     size = [300, 300]
                 im = Image.open(tpicf).convert('RGBA')
                 im.thumbnail(size, Image.ANTIALIAS)
@@ -327,9 +312,6 @@ class GridMain(Screen):
         self.names1 = names
         list = names
         self["info"] = Label()
-
-
-
         self["menu"] = List(list)
 
         self["frame"] = MovingPixmap()
@@ -645,7 +627,7 @@ class M3uPlay2(
         self.pcip = 'None'
         self.icount = 0
         self.url = url
-        self.name = decodeHtml(name)
+        self.name = Utils.decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onClose.append(self.cancel)
@@ -716,15 +698,14 @@ class M3uPlay2(
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
 
-            text = charRemove(text_clear)
+            text = Utils.charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
 
-            text = charRemove(text_clear)
-            HHHHH = text
-            self.session.open(IMDB, HHHHH)
+            text = Utils.charRemove(text_clear)
+            self.session.open(IMDB, text)
 
         else:
             text_clear = self.name

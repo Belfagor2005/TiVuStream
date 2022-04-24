@@ -83,10 +83,7 @@ import ssl
 import sys
 import time
 import six
-try:
-    from Plugins.Extensions.TivuStream.Utils import *
-except:
-    from . import Utils
+from . import Utils
 
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
@@ -230,13 +227,13 @@ def server_ref():
     server = ''
     host = ''
     TEST1 = 'aHR0cHM6Ly9wYXRidXdlYi5jb20='
-    ServerS1 = b64decoder(TEST1)
+    ServerS1 = Utils.b64decoder(TEST1)
     data_s1 = 'L2lwdHYv' #
-    FTP_1 = b64decoder(data_s1)
+    FTP_1 = Utils.b64decoder(data_s1)
     TEST2 = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmc='
-    ServerS2 = b64decoder(TEST2)
+    ServerS2 = Utils.b64decoder(TEST2)
     data_s2 = 'L2lwdHYv' #
-    FTP_2 = b64decoder(data_s2)
+    FTP_2 = Utils.b64decoder(data_s2)
     if config.plugins.TivuStream.server.value == 'PATBUWEB' :
         host = ServerS1
         server = ServerS1 + FTP_1
@@ -246,32 +243,32 @@ def server_ref():
     upd_fr_txt = ('%splugin/update.txt' % server)
     # upd_nt_txt = ('%se2liste/list.txt' % server)
     tex = 'aHR0cDovL3RpdnVzdHJlYW0ud2Vic2l0ZS9pb3MvbGlzdC50eHQ='
-    upd_nt_txt = b64decoder(tex)
+    upd_nt_txt = Utils.b64decoder(tex)
     return server, host, upd_fr_txt
 server_ref()
 nnewtv = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocA=='
-servernew = b64decoder(nnewtv)
+servernew = Utils.b64decoder(nnewtv)
 nnewm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbC5waHA/cD01JnVhPVRpVnVTdHJlYW0mZj0x'
-servernewm3u = b64decoder(nnewm3u)
+servernewm3u = Utils.b64decoder(nnewm3u)
 estm3u = 'aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL2ZoLnBocA=='
-m3uest = b64decoder(estm3u)
+m3uest = Utils.b64decoder(estm3u)
 nasara = "aHR0cDovL3BhdGJ1d2ViLmNvbS9iYWNrLXR2c3RyZWFtLw=="
-nasarandom = b64decoder(nasara)
+nasarandom = Utils.b64decoder(nasara)
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
 skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
-if isFHD():
+if Utils.isFHD():
     skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
-if DreamOS():
+if Utils.DreamOS():
     skin_path=skin_path + 'dreamOs/'
 
 
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if isFHD():
+        if Utils.isFHD():
             self.l.setItemHeight(50)
             textfont=int(34)
             self.l.setFont(0, gFont('Regular', textfont))
@@ -282,7 +279,7 @@ class tvList(MenuList):
 
 def tvListEntry(name, png):
     res = [name]
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -300,7 +297,7 @@ def m3ulistEntry(download):
     backcol = 0
     blue = 4282611429
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -412,12 +409,12 @@ class OpenScript(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def checkList(self):
-        OnclearMem()
+        Utils.OnclearMem()
         self.icount = 0
         self['listUpdate'].setText(_('Check List Update wait please...'))
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.read)
         else:
             self.timer.callback.append(self.read)
@@ -427,7 +424,7 @@ class OpenScript(Screen):
             destr = plugin_path + 'list.txt'
             onserver2 = upd_nt_txt
             with open(destr, 'w') as f:
-                content = ReadUrl2(onserver2)
+                content = Utils.ReadUrl2(onserver2)
                 f.write(content)
             self['listUpdate'].setText(content)
         except Exception as ex:
@@ -648,7 +645,7 @@ class OpenScript(Screen):
 
     def instal_listTv(self, namex, lnk):
         name = namex
-        lnk = b64decoder(lnk)
+        lnk = Utils.b64decoder(lnk)
         print('link  : ', lnk)
         pin = 2808
         pin2 = str(config.plugins.TivuStream.code.value)
@@ -687,7 +684,7 @@ class OpenScript(Screen):
             namebqt = ('/etc/enigma2/%s' % bqtname)
             try:
                 with open(namebqt, 'w') as f:
-                    content = ReadUrl2(lnk)
+                    content = Utils.ReadUrl2(lnk)
                     print('Resp 2: ', content)
                     f.write(content)
                     os.system('sleep 5')
@@ -747,7 +744,7 @@ class OpenScript(Screen):
 
     def reloadSettings(self, result):
         if result:
-           ReloadBouquets()
+           Utils.ReloadBouquets()
 
     def messagedellist(self):
         self.session.openWithCallback(self.deletelist, MessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?', MessageBox.TYPE_YESNO)
@@ -765,7 +762,7 @@ class OpenScript(Screen):
                         os.remove(radio)
                         os.system("sed -i '/subbouquet.tivustream/d' /etc/enigma2/bouquets.radio")
             self.mbox = self.session.open(MessageBox, _('TiVuStream Revolution channel lists successfully deleted'), MessageBox.TYPE_INFO, timeout=4)
-            ReloadBouquets()
+            Utils.ReloadBouquets()
 
     def M3uPlay(self):
         tivustream = 'tivustream'
@@ -775,7 +772,7 @@ class OpenScript(Screen):
         self.session.open(OpenConfig)
 
     def cancel(self):
-        deletetmp()
+        Utils.deletetmp()
         self.close()
 
 class OpenM3u(Screen):
@@ -812,7 +809,7 @@ class OpenM3u(Screen):
         try:
             destx = Path_Movies + 'tivustream.m3u'
             with open(destx, 'w') as e:
-                content = ReadUrl2(servernewm3u)
+                content = Utils.ReadUrl2(servernewm3u)
                 content = six.ensure_str(content)
                 print('Resp 1: ', content)
                 e.write(content)
@@ -842,6 +839,10 @@ class OpenM3u(Screen):
         m3ulist(self.names, self['list'])
 
     def runList(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         idx = self["list"].getSelectionIndex()
         namem3u = self.names[idx]
         urlm3u = self.Movies[idx]
@@ -858,9 +859,13 @@ class OpenM3u(Screen):
                 return
 
     def message1(self):
-        idx = self['list'].getSelectionIndex()
-        if idx < 0 :
-            return
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
+        # idx = self['list'].getSelectionIndex()
+        # if idx < 0 :
+            # return
         else:
             self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
 
@@ -877,22 +882,30 @@ class OpenM3u(Screen):
             self.onShown.append(self.openList)
 
     def crea_bouquet(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         idx = self['list'].getSelectionIndex()
-        if idx < 0 :
-            return
-        else:
-            name = self.names[idx]
-            self.create_bouquet()
-            return
+        # if idx < 0 :
+            # return
+        # else:
+        name = self.names[idx]
+        self.create_bouquet()
+        return
 
     def crea_bouquet5002(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         idx = self['list'].getSelectionIndex()
-        if idx < 0 :
-            return
-        else:
-            name = self.names[idx]
-            self.create_bouquet5002()
-            return
+        # if idx < 0 :
+            # return
+        # else:
+        name = self.names[idx]
+        self.create_bouquet5002()
+        return
 
     def create_bouquet5002(self):
         idx = self['list'].getSelectionIndex()
@@ -937,7 +950,7 @@ class OpenM3u(Screen):
                         outfile.close()
                     in_bouquets = 1
         self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
-        ReloadBouquets()
+        Utils.ReloadBouquets()
 
     def create_bouquet(self):
         idx = self['list'].getSelectionIndex()
@@ -984,7 +997,7 @@ class OpenM3u(Screen):
                         outfile.close()
                     in_bouquets = 1
         self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
-        ReloadBouquets()
+        Utils.ReloadBouquets()
 
     def cancel(self):
         if self.convert == False:
@@ -1082,6 +1095,10 @@ class M3uPlay(Screen):
             self.playList()
 
     def runRec(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         global urlm3u, namem3u
         idx = self["list"].getSelectionIndex()
         try:
@@ -1112,7 +1129,7 @@ class M3uPlay(Screen):
     def download_m3u(self, result):
         if result:
             global in_tmp
-            OnclearMem()
+            Utils.OnclearMem()
             if self.downloading == True:
                 # selection = str(self['list'].getCurrent()) ######?????????
                 idx = self["list"].getSelectionIndex()
@@ -1149,7 +1166,7 @@ class M3uPlay(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
     def check(self, fplug):
-        OnclearMem()
+        Utils.OnclearMem()
         checkfile = in_tmp
         if os.path.exists(checkfile):
             self.downloading = False
@@ -1159,7 +1176,7 @@ class M3uPlay(Screen):
             self["progress"].hide()
 
     def showError(self, error):
-        OnclearMem()
+        Utils.OnclearMem()
         self.downloading = False
         self.session.open(MessageBox, _('Download Failed!!!'), MessageBox.TYPE_INFO, timeout=5)
 
@@ -1218,26 +1235,33 @@ class M3uPlay(Screen):
             print('error exception: ', ex)
 
     def gridpic(self):
-
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         self.session.open(GridMain, self.names, self.urls, self.pics)
         self.close()
 
     def runChannel(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         idx = self['list'].getSelectionIndex()
-        if idx < 0 :
-            return
-        else:
-            self.pin = True
-            if config.ParentalControl.configured.value:
-                a = '+18', 'adult', 'hot', 'porn', 'sex', 'xxx'
-                if any(s in str(self.names[idx]).lower() for s in a):
-                    self.allow2()
-                else:
-                    self.pin = True
-                    self.pinEntered2(True)
+        # if idx < 0 :
+            # return
+        # else:
+        self.pin = True
+        if config.ParentalControl.configured.value:
+            a = '+18', 'adult', 'hot', 'porn', 'sex', 'xxx'
+            if any(s in str(self.names[idx]).lower() for s in a):
+                self.allow2()
             else:
                 self.pin = True
                 self.pinEntered2(True)
+        else:
+            self.pin = True
+            self.pinEntered2(True)
 
     def allow2(self):
         from Screens.InputBox import PinInput
@@ -1276,14 +1300,18 @@ class M3uPlay(Screen):
             self.session.open(MessageBox, _('Install Streamlink first'), MessageBox.TYPE_INFO, timeout=5)
 
     def AdjUrlFavo(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return    
         idx = self['list'].getSelectionIndex()
-        if idx < 0 :
-            return
-        else:
-            name = self.names[idx]
-            url = self.urls[idx]
-            self.session.open(AddIpvStream, name, url)
-            return
+        # if idx < 0 :
+            # return
+        # else:
+        name = self.names[idx]
+        url = self.urls[idx]
+        self.session.open(AddIpvStream, name, url)
+        return
 
     def cancel(self):
         if search_ok == True:
@@ -1441,7 +1469,7 @@ class M3uPlay2(
         self.icount = 0
         self.desc = ''
         self.url = url
-        self.name = decodeHtml(name)
+        self.name = Utils.decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
@@ -1515,13 +1543,13 @@ class M3uPlay2(
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
 
-            text = charRemove(text_clear)
+            text = Utils.charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
 
-            text = charRemove(text_clear)
+            text = Utils.charRemove(text_clear)
             HHHHH = text
             self.session.open(IMDB, HHHHH)
 
@@ -1568,7 +1596,7 @@ class M3uPlay2(
         # if "youtube" in str(self.url):
             # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
             # return
-        if isStreamlinkAvailable():
+        if Utils.isStreamlinkAvailable():
             streamtypelist.append("5002") #ref = '5002:0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + url
             streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
@@ -1786,7 +1814,7 @@ class OpenConfig(Screen, ConfigListScreen):
             try:
                 fp = ''
                 destr = plugin_path + 'update.txt'
-                fp = ReadUrl2(upd_fr_txt)
+                fp = Utils.ReadUrl2(upd_fr_txt)
                 fp = six.ensure_str(fp)
                 with open(destr, 'w') as f:
                     f.write(fp)
@@ -1818,7 +1846,7 @@ class OpenConfig(Screen, ConfigListScreen):
                 self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
             self.timerx = eTimer()
             self.timerx.start(100, 1)
-            if DreamOS():
+            if Utils.DreamOS():
                 self.timerx_conn = self.timerx.timeout.connect(self.msgupdt2)
             else:
                 self.timerx.callback.append(self.msgupdt2)
@@ -2175,7 +2203,7 @@ class openMessageBox(Screen):
         self.timeout = timeout
         if timeout > 0:
             self.timer = eTimer()
-            if DreamOS():
+            if Utils.DreamOS():
                 self.timer_conn = self.timer.timeout.connect(self.timerTick)
             else:
                 self.timer.callback.append(self.timerTick)
@@ -2289,7 +2317,7 @@ class plgnstrt(Screen):
 
     def decodeImage(self, pngori):
         pixmaps = pngori
-        if DreamOS():
+        if Utils.DreamOS():
             self['poster'].instance.setPixmap(gPixmapPtr())
         else:
             self['poster'].instance.setPixmap(None)
@@ -2305,7 +2333,7 @@ class plgnstrt(Screen):
          1,
          '#FF000000'))
         ptr = self.picload.getData()
-        if DreamOS():
+        if Utils.DreamOS():
             if self.picload.startDecode(pixmaps, False) == 0:
                 ptr = self.picload.getData()
         else:
@@ -2344,7 +2372,7 @@ class plgnstrt(Screen):
         self['text'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
         self.timer.start(1500, 1)
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
             self.timer.callback.append(self.OpenCheck)
@@ -2419,7 +2447,7 @@ def cfgmain(menuid):
 
 def Plugins(**kwargs):
     icona = 'logo.png'
-    if not DreamOS():
+    if not Utils.DreamOS():
         icona = skin_path + '/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)

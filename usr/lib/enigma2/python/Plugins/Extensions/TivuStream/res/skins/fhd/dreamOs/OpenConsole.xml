@@ -1,4 +1,4 @@
 <!-- Skin OpenConsole 16/08/2020 -->
 <screen name="OpenConsole" position="center,150" size="1600,800" title="..::TiVuStream List Channel::.." backgroundColor="#20000000">
-	<widget name="text" position="10,10" size="1580,880" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1" />
+	<widget name="text" position="10,10" size="1580,880" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1"/>
 </screen>
