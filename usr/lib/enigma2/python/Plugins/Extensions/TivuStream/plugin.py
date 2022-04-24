@@ -887,9 +887,6 @@ class OpenM3u(Screen):
         if i < 1:
             return    
         idx = self['list'].getSelectionIndex()
-        # if idx < 0 :
-            # return
-        # else:
         name = self.names[idx]
         self.create_bouquet()
         return
@@ -900,9 +897,6 @@ class OpenM3u(Screen):
         if i < 1:
             return    
         idx = self['list'].getSelectionIndex()
-        # if idx < 0 :
-            # return
-        # else:
         name = self.names[idx]
         self.create_bouquet5002()
         return
@@ -1305,9 +1299,6 @@ class M3uPlay(Screen):
         if i < 1:
             return    
         idx = self['list'].getSelectionIndex()
-        # if idx < 0 :
-            # return
-        # else:
         name = self.names[idx]
         url = self.urls[idx]
         self.session.open(AddIpvStream, name, url)
@@ -1542,17 +1533,13 @@ class M3uPlay2(
         if os.path.exists(TMDB):
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
-
             text = Utils.charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
-
             text = Utils.charRemove(text_clear)
-            HHHHH = text
-            self.session.open(IMDB, HHHHH)
-
+            self.session.open(IMDB, text)
         else:
             text_clear = self.name
             self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
@@ -2413,19 +2400,17 @@ class plgnstrt(Screen):
         self.session.openWithCallback(self.close, OpenScript)
 
 def checks():
-    from Plugins.Extensions.revolution.Utils import checkInternet
-    checkInternet()
+    from . import Utils
     chekin= False
-    if checkInternet():
+    if Utils.checkInternet():
         chekin = True
         return True
 
 def main(session, **kwargs):
     if checks:
-
         try:
-            from Plugins.Extensions.TivuStream.Update import upd_done
-            upd_done()
+            from . import Update
+            Update.upd_done()
         except:
             pass
 
