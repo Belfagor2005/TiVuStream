@@ -19,6 +19,7 @@ from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixm
 from Components.Pixmap import Pixmap, MovingPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.Sources.List import List
+from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo,ConfigEnableDisable
 from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
@@ -85,7 +86,7 @@ dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blank.png".forma
 if Utils.isFHD():
     skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
     defpic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/defaultL.png".format('TivuStream'))
-    dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blankL.png".format('TivuStream'))    
+    dblank = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/blankL.png".format('TivuStream'))
 
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
@@ -486,7 +487,7 @@ class TvInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.OkPressed,
          "hide": self.hide}, 0)
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
         self.__state = self.STATE_SHOWN
@@ -542,7 +543,7 @@ class TvInfoBarShowHide():
         else:
             self.hide()
             self.startHideTimer()
-            
+
     def lockShow(self):
         try:
             self.__locked += 1
