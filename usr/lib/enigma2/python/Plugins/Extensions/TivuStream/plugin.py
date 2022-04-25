@@ -1760,269 +1760,278 @@ class AddIpvStream(Screen):
 
 
 class OpenConfig(Screen, ConfigListScreen):
-        def __init__(self, session):
-            skin = skin_path + '/OpenConfig.xml'
-            f = open(skin, 'r')
-            self.skin = f.read()
-            f.close()
-            Screen.__init__(self, session)
-            self.setup_title = _("TiVuStream Config")
-            self.onChangedEntry = [ ]
-            self.session = session
-            info = '***'
-            self['title'] = Label(_(title_plug))
-            self['Maintainer2'] = Label('%s' % Maintainer2)
-            self['infoc2'] = Label('%s' % Credits)
-            self['key_red'] = Button(_('Exit'))
-            self['key_green'] = Button(_('Save'))
-            self['key_yellow'] = Button(_('Update'))
-            self["key_blue"] = Button(_(''))
-            self["key_blue"].hide()
-            self['text'] = Label(info)
-            self["description"] = Label(_(''))
+    def __init__(self, session):
+        skin = skin_path + '/OpenConfig.xml'
+        f = open(skin, 'r')
+        self.skin = f.read()
+        f.close()
+        Screen.__init__(self, session)
+        self.setup_title = _("TiVuStream Config")
+        self.onChangedEntry = [ ]
+        self.session = session
+        info = '***'
+        self['title'] = Label(_(title_plug))
+        self['Maintainer2'] = Label('%s' % Maintainer2)
+        self['infoc2'] = Label('%s' % Credits)
+        self["paypal"] = Label()
+        self['key_red'] = Button(_('Exit'))
+        self['key_green'] = Button(_('Save'))
+        self['key_yellow'] = Button(_('Update'))
+        self["key_blue"] = Button(_(''))
+        self["key_blue"].hide()
+        self['text'] = Label(info)
+        self["description"] = Label(_(''))
+        self.cbUpdate = False
+        self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"  ], {
+            'cancel': self.extnok,
+            "red": self.extnok,
+            "green": self.cfgok,
+            'yellow': self.msgupdt1,
+            'showVirtualKeyboard': self.KeyText,
+            'ok': self.Ok_edit,
+        }, -2)
+        self.list = []
+        ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
+        self.createSetup()
+        self.onLayoutFinish.append(self.checkUpdate)
+        self.onLayoutFinish.append(self.layoutFinished)
+        if self.setInfo not in self['config'].onSelectionChanged:
+            self['config'].onSelectionChanged.append(self.setInfo)
+
+    def checkUpdate(self):
+        try:
+            fp = ''
+            destr = plugin_path + 'update.txt'
+            fp = Utils.ReadUrl2(upd_fr_txt)
+            fp = six.ensure_str(fp)
+            with open(destr, 'w') as f:
+                f.write(fp)
+                f.close()
+            with open(destr, 'r') as fp:
+                count = 0
+                fp.seek(0)
+                s1 = fp.readline()
+                s2 = fp.readline()
+                s3 = fp.readline()
+                s1 = s1.strip()
+                s2 = s2.strip()
+                s3 = s3.strip()
+                self.link = s2
+                self.version = s1
+                self.info = s3
+                fp.close()
+                if s1 <= currversion:
+                    self.cbUpdate = False
+                    print("Update False =", s1)
+                    self['text'].setText(_('Version: ') + currversion + '\n'+ _('No updates!') + '\n' + _('if you like it you can make a free donation') + '\n' + _('www.paypal.me/TivuStream'))
+                else:
+                    self.cbUpdate = True
+                    print("Update True =", s1)
+                    updatestr = (_('Version: ') + currversion + '\n' + _('Last update ') + s1 + ' ' + _('available!') + '\n' + _('ChangeLog:') + self.info)
+                    self['text'].setText(updatestr)
+        except:
             self.cbUpdate = False
-            self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"  ], {
-                'cancel': self.extnok,
-                "red": self.extnok,
-                "green": self.cfgok,
-                'yellow': self.msgupdt1,
-                'showVirtualKeyboard': self.KeyText,
-                'ok': self.Ok_edit,
-            }, -2)
-            self.list = []
-            ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
-            self.createSetup()
-            self.onLayoutFinish.append(self.checkUpdate)
-            self.onLayoutFinish.append(self.layoutFinished)
-            if self.setInfo not in self['config'].onSelectionChanged:
-                self['config'].onSelectionChanged.append(self.setInfo)
+            self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
+        self.timerx = eTimer()
+        self.timerx.start(100, 1)
+        if Utils.DreamOS():
+            self.timerx_conn = self.timerx.timeout.connect(self.msgupdt2)
+        else:
+            self.timerx.callback.append(self.msgupdt2)
 
-        def checkUpdate(self):
-            try:
-                fp = ''
-                destr = plugin_path + 'update.txt'
-                fp = Utils.ReadUrl2(upd_fr_txt)
-                fp = six.ensure_str(fp)
-                with open(destr, 'w') as f:
-                    f.write(fp)
-                    f.close()
-                with open(destr, 'r') as fp:
-                    count = 0
-                    fp.seek(0)
-                    s1 = fp.readline()
-                    s2 = fp.readline()
-                    s3 = fp.readline()
-                    s1 = s1.strip()
-                    s2 = s2.strip()
-                    s3 = s3.strip()
-                    self.link = s2
-                    self.version = s1
-                    self.info = s3
-                    fp.close()
-                    if s1 <= currversion:
-                        self.cbUpdate = False
-                        print("Update False =", s1)
-                        self['text'].setText(_('Version: ') + currversion + '\n'+ _('No updates!') + '\n' + _('if you like it you can make a free donation') + '\n' + _('www.paypal.me/TivuStream'))
-                    else:
-                        self.cbUpdate = True
-                        print("Update True =", s1)
-                        updatestr = (_('Version: ') + currversion + '\n' + _('Last update ') + s1 + ' ' + _('available!') + '\n' + _('ChangeLog:') + self.info)
-                        self['text'].setText(updatestr)
-            except:
-                self.cbUpdate = False
-                self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
-            self.timerx = eTimer()
-            self.timerx.start(100, 1)
-            if Utils.DreamOS():
-                self.timerx_conn = self.timerx.timeout.connect(self.msgupdt2)
-            else:
-                self.timerx.callback.append(self.msgupdt2)
+    def paypal2(self):
+        conthelp = "If you like what I do you\n"
+        conthelp += " can contribute with a coffee\n\n"
+        conthelp += "scan the qr code and donate € 1.00"
+        return conthelp
+    
+    def layoutFinished(self):
+        paypal = self.paypal2()
+        self["paypal"].setText(paypal)    
+        self.setTitle(self.setup_title)
 
-        def layoutFinished(self):
-            self.setTitle(self.setup_title)
+    def createSetup(self):
+        self.editListEntry = None
+        self.list = []
+        self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server))
+        self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd))
+        self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code))
+        self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop))
+        self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
+        self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
+        self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
+        if config.plugins.TivuStream.thumb.value == True:
+            self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
+        self.list.append(getConfigListEntry(_('Folder Cache for Thumbpics:'), config.plugins.TivuStream.cachefold))
+        self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext))
+        self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain))
+        self['config'].list = self.list
+        self["config"].setList(self.list)
+        self.setInfo()
 
-        def createSetup(self):
-            self.editListEntry = None
-            self.list = []
-            self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server))
-            self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd))
-            self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code))
-            self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop))
-            self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
-            self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
-            self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
-            if config.plugins.TivuStream.thumb.value == True:
-                self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
-            self.list.append(getConfigListEntry(_('Folder Cache for Thumbpics:'), config.plugins.TivuStream.cachefold))
-            self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext))
-            self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain))
-            self['config'].list = self.list
-            self["config"].setList(self.list)
-            self.setInfo()
-
-        def setInfo(self):
-            entry = str(self.getCurrentEntry())
-            if entry == _('Server:'):
-                self['description'].setText(_("Configure Server for Update Service and List"))
-                return
-            if entry == _('Auto Update Plugin:'):
-                self['description'].setText(_("Set Automatic Update Plugin Version"))
-                return
-            if entry == _('Personal Password:'):
-                self['description'].setText(_("Enter the password to download Lists XXX Adults"))
-                return
-            if entry == _('IPTV bouquets location '):
-                self['description'].setText(_("Configure position of the bouquets of the converted lists"))
-                return
-            if entry == _('Player folder List <.m3u>:'):
-                self['description'].setText(_("Folder path containing the .m3u files"))
-                return
-            if entry == _('Services Player Reference type'):
-                self['description'].setText(_("Configure Service Player Reference"))
-                return
-            if entry == _('Show thumpics?'):
-                self['description'].setText(_("Show Thumbpics ? Enigma restart required"))
-                return
-            if entry == _('Download thumpics?'):
-                self['description'].setText(_("Download thumpics in Player M3U (is very Slow)?"))
-                return
-            if entry == _('Folder Cache for Thumbpics:'):
-                self['description'].setText(_("Configure position folder for temporary Thumbpics"))
-                return
-            if entry == _('Link in Extensions Menu:'):
-                self['description'].setText(_("Show Plugin in Extensions Menu"))
-                return
-            if entry == _('Link in Main Menu:'):
-                self['description'].setText(_("Show Plugin in Main Menu"))
+    def setInfo(self):
+        entry = str(self.getCurrentEntry())
+        if entry == _('Server:'):
+            self['description'].setText(_("Configure Server for Update Service and List"))
             return
-
-        def changedEntry(self):
-            sel = self['config'].getCurrent()
-            for x in self.onChangedEntry:
-                x()
-            try:
-                if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
-                    self.createSetup()
-            except:
-                pass
-
-        def getCurrentEntry(self):
-            return self['config'].getCurrent() and self['config'].getCurrent()[0] or ''
-
-        def getCurrentValue(self):
-            return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
-
-        def createSummary(self):
-            from Screens.Setup import SetupSummary
-            return SetupSummary
-
-        def Ok_edit(self):
-            ConfigListScreen.keyOK(self)
-            sel = self['config'].getCurrent()[1]
-            if sel and sel == config.plugins.TivuStream.pthm3uf:
-                self.setting = 'pthm3uf'
-                self.openDirectoryBrowser(config.plugins.TivuStream.pthm3uf.value)
-            elif sel and sel == config.plugins.TivuStream.cachefold:
-                self.setting = 'cachefold'
-                self.openDirectoryBrowser(config.plugins.TivuStream.cachefold.value)
-            else:
-                pass
-
-        def openDirectoryBrowser(self, path):
-            try:
-                self.session.openWithCallback(
-                 self.openDirectoryBrowserCB,
-                 LocationBox,
-                 windowTitle=_('Choose Directory:'),
-                 text=_('Choose Directory'),
-                 currDir=str(path),
-                 bookmarks=config.movielist.videodirs,
-                 autoAdd=False,
-                 editDir=True,
-                 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-                 minFree=15)
-            except Exception as ex:
-                print(ex)
-
-        def openDirectoryBrowserCB(self, path):
-            if path != None:
-                if self.setting == 'pthm3uf':
-                    config.plugins.TivuStream.pthm3uf.setValue(path)
-                elif self.setting == 'cachefold':
-                    config.plugins.TivuStream.cachefold.setValue(path)
+        if entry == _('Auto Update Plugin:'):
+            self['description'].setText(_("Set Automatic Update Plugin Version"))
             return
+        if entry == _('Personal Password:'):
+            self['description'].setText(_("Enter the password to download Lists XXX Adults"))
+            return
+        if entry == _('IPTV bouquets location '):
+            self['description'].setText(_("Configure position of the bouquets of the converted lists"))
+            return
+        if entry == _('Player folder List <.m3u>:'):
+            self['description'].setText(_("Folder path containing the .m3u files"))
+            return
+        if entry == _('Services Player Reference type'):
+            self['description'].setText(_("Configure Service Player Reference"))
+            return
+        if entry == _('Show thumpics?'):
+            self['description'].setText(_("Show Thumbpics ? Enigma restart required"))
+            return
+        if entry == _('Download thumpics?'):
+            self['description'].setText(_("Download thumpics in Player M3U (is very Slow)?"))
+            return
+        if entry == _('Folder Cache for Thumbpics:'):
+            self['description'].setText(_("Configure position folder for temporary Thumbpics"))
+            return
+        if entry == _('Link in Extensions Menu:'):
+            self['description'].setText(_("Show Plugin in Extensions Menu"))
+            return
+        if entry == _('Link in Main Menu:'):
+            self['description'].setText(_("Show Plugin in Main Menu"))
+        return
 
-        def cfgok(self):
-            self.save()
+    def changedEntry(self):
+        sel = self['config'].getCurrent()
+        for x in self.onChangedEntry:
+            x()
+        try:
+            if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
+                self.createSetup()
+        except:
+            pass
 
-        def save(self):
-            if not os.path.exists(config.plugins.TivuStream.pthm3uf.value):
-                self.mbox = self.session.open(MessageBox, _('M3u list folder not detected!'), MessageBox.TYPE_INFO, timeout=4)
-                return
-            if self['config'].isChanged():
-                for x in self['config'].list:
-                    x[1].save()
-                server_ref()
-                config.plugins.TivuStream.server.save()
-                configfile.save()
-                plugins.clearPluginList()
-                plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-                self.mbox = self.session.open(MessageBox, _('Settings saved correctly!'), MessageBox.TYPE_INFO, timeout=5)
-                self.close()
-            else:
-             self.close()
+    def getCurrentEntry(self):
+        return self['config'].getCurrent() and self['config'].getCurrent()[0] or ''
 
-        def VirtualKeyBoardCallback(self, callback = None):
-            if callback != None and len(callback):
-                self["config"].getCurrent()[1].setValue(callback)
-                self["config"].invalidate(self["config"].getCurrent())
+    def getCurrentValue(self):
+        return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
 
-        def KeyText(self):
-            sel = self['config'].getCurrent()
-            if sel:
-                self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
+    def createSummary(self):
+        from Screens.Setup import SetupSummary
+        return SetupSummary
 
-        def cancelConfirm(self, result):
-            if not result:
-                return
+    def Ok_edit(self):
+        ConfigListScreen.keyOK(self)
+        sel = self['config'].getCurrent()[1]
+        if sel and sel == config.plugins.TivuStream.pthm3uf:
+            self.setting = 'pthm3uf'
+            self.openDirectoryBrowser(config.plugins.TivuStream.pthm3uf.value)
+        elif sel and sel == config.plugins.TivuStream.cachefold:
+            self.setting = 'cachefold'
+            self.openDirectoryBrowser(config.plugins.TivuStream.cachefold.value)
+        else:
+            pass
+
+    def openDirectoryBrowser(self, path):
+        try:
+            self.session.openWithCallback(
+             self.openDirectoryBrowserCB,
+             LocationBox,
+             windowTitle=_('Choose Directory:'),
+             text=_('Choose Directory'),
+             currDir=str(path),
+             bookmarks=config.movielist.videodirs,
+             autoAdd=False,
+             editDir=True,
+             inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
+             minFree=15)
+        except Exception as ex:
+            print(ex)
+
+    def openDirectoryBrowserCB(self, path):
+        if path != None:
+            if self.setting == 'pthm3uf':
+                config.plugins.TivuStream.pthm3uf.setValue(path)
+            elif self.setting == 'cachefold':
+                config.plugins.TivuStream.cachefold.setValue(path)
+        return
+
+    def cfgok(self):
+        self.save()
+
+    def save(self):
+        if not os.path.exists(config.plugins.TivuStream.pthm3uf.value):
+            self.mbox = self.session.open(MessageBox, _('M3u list folder not detected!'), MessageBox.TYPE_INFO, timeout=4)
+            return
+        if self['config'].isChanged():
             for x in self['config'].list:
-                x[1].cancel()
+                x[1].save()
+            server_ref()
+            config.plugins.TivuStream.server.save()
+            configfile.save()
+            plugins.clearPluginList()
+            plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+            self.mbox = self.session.open(MessageBox, _('Settings saved correctly!'), MessageBox.TYPE_INFO, timeout=5)
+            self.close()
+        else:
+         self.close()
+
+    def VirtualKeyBoardCallback(self, callback = None):
+        if callback != None and len(callback):
+            self["config"].getCurrent()[1].setValue(callback)
+            self["config"].invalidate(self["config"].getCurrent())
+
+    def KeyText(self):
+        sel = self['config'].getCurrent()
+        if sel:
+            self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
+
+    def cancelConfirm(self, result):
+        if not result:
+            return
+        for x in self['config'].list:
+            x[1].cancel()
+        self.close()
+
+    def extnok(self):
+        if self['config'].isChanged():
+            self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
+        else:
             self.close()
 
-        def extnok(self):
-            if self['config'].isChanged():
-                self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
-            else:
-                self.close()
+    def msgupdt2(self):
+        if self.cbUpdate == False:
+            return
+        if config.plugins.TivuStream.autoupd.value == False:
+            return
+        self.session.openWithCallback(self.runupdate, MessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?\nPlease Restart GUI Required!' % self.version), MessageBox.TYPE_YESNO)
 
-        def msgupdt2(self):
-            if self.cbUpdate == False:
-                return
-            if config.plugins.TivuStream.autoupd.value == False:
-                return
-            self.session.openWithCallback(self.runupdate, MessageBox, _('New Online Version!') + '\n\n' + _('Update Plugin to Version %s ?\nPlease Restart GUI Required!' % self.version), MessageBox.TYPE_YESNO)
+    def msgupdt1(self):
+        if self.cbUpdate == False:
+            return
+        self.session.openWithCallback(self.runupdate, MessageBox, _('Update Plugin ?'), MessageBox.TYPE_YESNO)
 
-        def msgupdt1(self):
-            if self.cbUpdate == False:
-                return
-            self.session.openWithCallback(self.runupdate, MessageBox, _('Update Plugin ?'), MessageBox.TYPE_YESNO)
+    def runupdate(self, result):
+        if result:
+            com = self.link
+            dom = 'Last version ' + self.version
+            os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % com)
+            os.system('sleep 3')
+            self.session.open(OpenConsole, _('Update Plugin: %s') % dom, ['tar -xvf /tmp/tivustream.tar -C /'], closeOnSuccess=False) #finishedCallback=self.ipkrestrt, closeOnSuccess=False)
 
-        def runupdate(self, result):
-            if result:
-                com = self.link
-                dom = 'Last version ' + self.version
-                os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % com)
-                os.system('sleep 3')
-                self.session.open(OpenConsole, _('Update Plugin: %s') % dom, ['tar -xvf /tmp/tivustream.tar -C /'], closeOnSuccess=False) #finishedCallback=self.ipkrestrt, closeOnSuccess=False)
-
-        def ipkrestrt(self):
-            epgpath = '/media/hdd/epg.dat'
-            epgbakpath = '/media/hdd/epg.dat.bak'
-            if os.path.exists(epgbakpath):
-                os.remove(epgbakpath)
-            if os.path.exists(epgpath):
-                copyfile(epgpath, epgbakpath)
-            self.session.open(TryQuitMainloop, 3)
+    def ipkrestrt(self):
+        epgpath = '/media/hdd/epg.dat'
+        epgbakpath = '/media/hdd/epg.dat.bak'
+        if os.path.exists(epgbakpath):
+            os.remove(epgbakpath)
+        if os.path.exists(epgpath):
+            copyfile(epgpath, epgbakpath)
+        self.session.open(TryQuitMainloop, 3)
 
 class OpenConsole(Screen):
     # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):

@@ -1,12 +1,12 @@
 <!-- Skin OpenScript 15/08/2020 -->
-<screen name="OpenScript" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="transparent" flags="wfNoBorder">
+<screen name="OpenScript" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="#20000000" flags="wfNoBorder">
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5"/>
 	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
 	<widget name="listUpdate" position="220,800" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5" valign="center"/>
 	<widget name="infoc2" position="220,855" size="820,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
 	<!-- Graph -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main1.png" position="0,0" size="1920,1080" zPosition="1"/>
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" position="220,40" size="279,50" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" position="220,40" size="279,50" zPosition="5"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_menu.png" scale="strech" position="975,90" size="80,35" zPosition="3"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,130" size="830,8" zPosition="5"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,910" size="830,8" zPosition="5"/>
