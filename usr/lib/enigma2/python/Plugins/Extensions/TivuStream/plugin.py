@@ -374,10 +374,10 @@ Panel_list = [
  ('LIVE XXX'),
  ('MOVIE XXX')]
 
-class OpenScript(Screen):
+class MainTvStream(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + '/OpenScript.xml'
+        skin = skin_path + '/MainTvStream.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2406,7 +2406,7 @@ class plgnstrt(Screen):
 
 
     def clsgo(self):
-        self.session.openWithCallback(self.close, OpenScript)
+        self.session.openWithCallback(self.close, MainTvStream)
 
 def checks():
     from . import Utils
@@ -2424,7 +2424,7 @@ def main(session, **kwargs):
             pass
 
         if PY3:
-            session.open(OpenScript)
+            session.open(MainTvStream)
         else:
             session.open(plgnstrt)
     else:
