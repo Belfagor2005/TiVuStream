@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             22/03/2022               *
+*             01/06/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -121,7 +121,6 @@ if sys.version_info >= (2, 7, 9):
 		sslContext = None
 
 try:
-    from OpenSSL import SSL
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
@@ -258,7 +257,9 @@ imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+
 skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
+
 if Utils.isFHD():
     skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
 if Utils.DreamOS():
@@ -464,25 +465,28 @@ class MainTvStream(Screen):
 
         elif sel == ("SPORT ITALIA"):
                 namex = "sportitalia"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0y"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEw"
 
         elif sel == ("SPORT LIVE"):
-                namex = "sportlive"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0z"
+                return
+                # namex = "sportlive"
+                # lnk = "http://patbuweb.com/php_filter/tslEn.php?p=1&t=3"
+                
         elif sel == ("SPORT ESTERI"):
                 namex = "sportesteri"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEz"
 
         elif sel == ("PLUTO TV"):
                 namex = "plutotv"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xNg=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTY="
         elif sel == ("SAMSUNG PLUS"):
                 namex = "samsungtv"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD0xOA=="
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTc="
 
         elif sel == ("REGIONALI"):
-                namex = "regionali"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
+                return
+                # namex = "regionali"
+                # lnk = "http://patbuweb.com/php_filter/tslEn.php?p=1&t=8"
         elif sel == ("ABRUZZO"):
                 namex = "abruzzo"
                 lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MA=="
@@ -547,17 +551,19 @@ class MainTvStream(Screen):
 
         elif sel == ("MUSICA"):
                 namex = "musica"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD01"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEx"
         elif sel == ("RELAX"):
-                namex = "relax"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
+                return
+                # namex = "relax"
+                # lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD05"
 
         elif sel == ("NEWS ITALIA"):
                 namex = "newsitalia"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD02"
+                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEy"
         elif sel == ("NEWS INTERNATIONAL"):
-                namex = "newsinternational"
-                lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
+                return
+                # namex = "newsinternational"
+                # lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD03"
 
         elif sel == ("INTERNATIONAL"):
                 namex = "international"
