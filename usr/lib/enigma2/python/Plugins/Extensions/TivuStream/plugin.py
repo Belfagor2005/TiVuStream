@@ -257,7 +257,7 @@ imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
 pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
 png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
-
+makem3u ='aHR0cHM6Ly90aXZ1c3RyZWFtLndlYnNpdGUvaW9zL2NyZWF0ZU0zdS5waHA/Z3JvdXA9JndyaXRlRmlsZT0x'
 skin_path= resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
 
 if Utils.isFHD():
@@ -314,6 +314,24 @@ def m3ulist(data, list):
         mlist.append(m3ulistEntry(name))
         icount = icount + 1
     list.setList(mlist)
+
+def make_m3u():
+    try:
+        link =''
+        import sys 
+        url = Utils.b64decoder(makem3u)
+        if sys.version_info.major == 3:
+             import urllib.request as urllib2
+        elif sys.version_info.major == 2:
+             import urllib2
+        req = urllib2.Request(url)                      
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+        r = urllib2.urlopen(req, None, 15)
+        link = r.read()
+        r.close()
+        print(link) 
+    except Exception as ex:
+        print(ex)
 
 Panel_list = [
  ('LIVE TUTTI'),
@@ -414,12 +432,12 @@ class MainTvStream(Screen):
         self.icount = 0
         self['listUpdate'].setText(_('Check List Update wait please...'))
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.read)
         else:
             self.timer.callback.append(self.read)
-
+        self.timer.start(500, 1)
+        
     def read(self):
         try:
             destr = plugin_path + 'list.txt'
@@ -428,6 +446,7 @@ class MainTvStream(Screen):
                 content = Utils.ReadUrl2(onserver2)
                 f.write(content)
             self['listUpdate'].setText(content)
+            make_m3u()
         except Exception as ex:
             print(ex)
 
