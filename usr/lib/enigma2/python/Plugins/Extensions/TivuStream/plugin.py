@@ -157,7 +157,7 @@ except Exception:
 	is_imdb = False
 
 #changelog 14/03/2022
-currversion = '3.1'
+currversion = '3.2'
 # Version = currversion + ' - 14/01/2022'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
