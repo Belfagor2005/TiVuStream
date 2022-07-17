@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             01/06/2022               *
+*             01/07/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -2440,20 +2440,47 @@ def checks():
         chekin = True
         return True
 
+def intCheck():
+    import socket
+    try:
+        socket.setdefaulttimeout(1)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
+        return False
+
 def main(session, **kwargs):
-    if checks:
-        try:
+    try:
+        if intCheck():
             from . import Update
             Update.upd_done()
-        except:
-            pass
-
-        if PY3:
-            session.open(MainTvStream)
+            if PY3:
+                session.open(MainTvStream)
+            else:
+                session.open(plgnstrt)
         else:
-            session.open(plgnstrt)
-    else:
-        session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
+            from Screens.MessageBox import MessageBox
+            from Tools.Notifications import AddPopup
+            AddPopup(_("Sorry but No Internet :("),MessageBox.TYPE_INFO, 10, 'Sorry')  
+    except:
+        import traceback
+        traceback.print_exc() 
+        pass
+        
+# def main(session, **kwargs):
+    # if checks:
+        # try:
+            # from . import Update
+            # Update.upd_done()
+        # except:
+            # pass
+
+        # if PY3:
+            # session.open(MainTvStream)
+        # else:
+            # session.open(plgnstrt)
+    # else:
+        # session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
 def cfgmain(menuid):
     if menuid == 'mainmenu':
