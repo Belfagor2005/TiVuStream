@@ -4,12 +4,12 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             01/07/2022               *
+*             01/08/2022               *
 ****************************************
 Info http://t.me/tivustream
 '''
 # from __future__ import print_function
-from . import _
+from .__init__ import _
 # from Components.HTMLComponent import *
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
@@ -2004,7 +2004,7 @@ class OpenConfig(Screen, ConfigListScreen):
             self.mbox = self.session.open(MessageBox, _('Settings saved correctly!'), MessageBox.TYPE_INFO, timeout=5)
             self.close()
         else:
-         self.close()
+            self.close()
 
     def VirtualKeyBoardCallback(self, callback = None):
         if callback != None and len(callback):
@@ -2451,7 +2451,7 @@ def intCheck():
 
 def main(session, **kwargs):
     try:
-        if intCheck():
+        if Utils.zCheckInternet(0):
             from . import Update
             Update.upd_done()
             if PY3:
@@ -2467,21 +2467,6 @@ def main(session, **kwargs):
         traceback.print_exc() 
         pass
         
-# def main(session, **kwargs):
-    # if checks:
-        # try:
-            # from . import Update
-            # Update.upd_done()
-        # except:
-            # pass
-
-        # if PY3:
-            # session.open(MainTvStream)
-        # else:
-            # session.open(plgnstrt)
-    # else:
-        # session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
-
 def cfgmain(menuid):
     if menuid == 'mainmenu':
         return [('TiVuStream Revolution',
