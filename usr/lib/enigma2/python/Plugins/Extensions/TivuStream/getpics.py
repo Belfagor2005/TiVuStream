@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 '''
 ****************************************
 *        coded by Lululla              *
@@ -23,8 +24,8 @@ from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo,ConfigEnableDisable
 from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
-	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
-	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
+    InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+    InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
 from Screens.MessageBox import MessageBox
@@ -109,7 +110,6 @@ if sslverify:
             return ctx
 
 
-#menulist
 pos = []
 if Utils.isFHD():
     pos.append([35,80])
@@ -248,8 +248,6 @@ def getpics(names, pics, tmpfold, picfold):
                 bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
                 im = bg
                 im.save(tpicf, 'PNG')
-
-
             #end kiddac code
                 # im = Image.open(tpicf)#.convert('RGBA')
                 # # imode = im.mode

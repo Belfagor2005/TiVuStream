@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 '''
 ****************************************
 *        coded by Lululla              *
@@ -41,8 +42,8 @@ from Screens.Console import Console
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
-	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
-	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
+    InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+    InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from Screens.InputBox import InputBox
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
@@ -114,11 +115,11 @@ except:
 
 
 if sys.version_info >= (2, 7, 9):
-	try:
-		import ssl
-		sslContext = ssl._create_unverified_context()
-	except:
-		sslContext = None
+    try:
+        import ssl
+        sslContext = ssl._create_unverified_context()
+    except:
+        sslContext = None
 
 try:
     from twisted.internet import ssl
@@ -139,24 +140,24 @@ if sslverify:
             return ctx
 
 def ssl_urlopen(url):
-	if sslContext:
-		return urlopen(url, context=sslContext)
-	else:
-		return urlopen(url)
+    if sslContext:
+        return urlopen(url, context=sslContext)
+    else:
+        return urlopen(url)
 
 try:
-	from Plugins.Extensions.tmdb import tmdb
-	is_tmdb = True
+    from Plugins.Extensions.tmdb import tmdb
+    is_tmdb = True
 except Exception:
-	is_tmdb = False
+    is_tmdb = False
 
 try:
-	from Plugins.Extensions.IMDb.plugin import main as imdb
-	is_imdb = True
+    from Plugins.Extensions.IMDb.plugin import main as imdb
+    is_imdb = True
 except Exception:
-	is_imdb = False
+    is_imdb = False
 
-#changelog 14/03/2022
+# changelog 14/03/2022
 currversion = '3.2'
 # Version = currversion + ' - 14/01/2022'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
@@ -1084,9 +1085,9 @@ class M3uPlay(Screen):
                 if fileExists(self.name):
                     f1 = open(self.name, "r+")
                     fpage = f1.read()
-                    ##EXTINF:-1 group-title="SERIE TV: A-E" tvg-logo="https://patbuweb.com/tivustream/logos/logo.png",[COLOR red]-- UNDER MAINTENANCE --[/COLOR]
-                    ##EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
-                    ##EXTINF:-1,Primafila 1
+                    # #EXTINF:-1 group-title="SERIE TV: A-E" tvg-logo="https://patbuweb.com/tivustream/logos/logo.png",[COLOR red]-- UNDER MAINTENANCE --[/COLOR]
+                    # #EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
+                    # #EXTINF:-1,Primafila 1
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
                     # if 'tvg-logo' in fpage:
                         # print('Tvg-logo in fpage is True1 ---')
