@@ -18,26 +18,24 @@ from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText
+from Components.MultiContent import MultiContentEntryPixmapAlphaTest
 from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
 from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.ServiceList import ServiceList
-from Components.Sources.List import List
 from Components.Sources.Progress import Progress
 from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigEnableDisable, ConfigYesNo, ConfigSelection, ConfigText
 from Components.config import getConfigListEntry, ConfigDirectory, ConfigSubsection, configfile
 from Plugins.Extensions.TivuStream.getpics import GridMain
-from Plugins.Extensions.TivuStream.getpics import getpics
 from Plugins.Plugin import PluginDescriptor
-from Screens.ChoiceBox import ChoiceBox
 from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
-from Screens.InputBox import InputBox
+from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -406,17 +404,16 @@ class MainTvStream(Screen):
         self['setupActions'] = ActionMap(['SetupActions',
                                           'ColorActions',
                                           'MenuActions',
-                                          'TimerEditActions'],
-                                                             {'ok': self.messagerun,
-                                                             'file': self.M3uPlay,
-                                                             'menu': self.scsetup,
-                                                             'red': self.cancel,
-                                                             'green': self.messagereload,
-                                                             'info': self.cancel,
-                                                             'yellow': self.messagedellist,
-                                                             'blue': self.M3uPlay,
-                                                             'back': self.cancel,
-                                                             'cancel': self.cancel}, -1)
+                                          'TimerEditActions'], {'ok': self.messagerun,
+                                                                'file': self.M3uPlay,
+                                                                'menu': self.scsetup,
+                                                                'red': self.cancel,
+                                                                'green': self.messagereload,
+                                                                'info': self.cancel,
+                                                                'yellow': self.messagedellist,
+                                                                'blue': self.M3uPlay,
+                                                                'back': self.cancel,
+                                                                'cancel': self.cancel}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -730,7 +727,7 @@ class MainTvStream(Screen):
                     new_bouquet.close()
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
-                os.system('chmod 0644 /etc/enigma2/%s' %groupname)
+                os.system('chmod 0644 /etc/enigma2/%s' % groupname)
                 linetv = 1
             z = open(dirgroupname)
             for line in z:
@@ -781,7 +778,6 @@ class MainTvStream(Screen):
             Utils.ReloadBouquets()
 
     def M3uPlay(self):
-        tivustream = 'tivustream'
         self.session.open(OpenM3u)
 
     def scsetup(self):
@@ -816,14 +812,12 @@ class OpenM3u(Screen):
         self['setupActions'] = ActionMap(['SetupActions',
                                           'ColorActions',
                                           'MenuActions',
-                                          'TimerEditActions'],
-                                                            {
-                                                             'file': self.crea_bouquet5002,
-                                                             'green': self.crea_bouquet5002,
-                                                             'blue': self.message1,
-                                                             'yellow': self.crea_bouquet,
-                                                             'cancel': self.cancel,
-                                                             'ok': self.runList}, -2)
+                                          'TimerEditActions'], {'file': self.crea_bouquet5002,
+                                                                'green': self.crea_bouquet5002,
+                                                                'blue': self.message1,
+                                                                'yellow': self.crea_bouquet,
+                                                                'cancel': self.cancel,
+                                                                'ok': self.runList}, -2)
         self.convert = False
         self.name = Path_Movies
         try:
@@ -1043,6 +1037,7 @@ class M3uPlay(Screen):
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
         self["progress"].hide()
+        self.srefInit = self.session.nav.getCurrentlyPlayingServiceReference()
         self.downloading = False
         self.pin = False
         global search_ok
@@ -1061,12 +1056,11 @@ class M3uPlay(Screen):
         self.onLayoutFinish.append(self.playList)
 
     def search_m3u(self):
-        text = ''
         self.session.openWithCallback(
             self.filterM3u,
             VirtualKeyBoard,
-            title = _("Filter this category..."),
-            text = self.search)
+            title=_("Filter this category..."),
+            text=self.search)
 
     def filterM3u(self, result):
         if result:
@@ -1087,7 +1081,7 @@ class M3uPlay(Screen):
                         # print('Tvg-logo in fpage is True1 ---')
                         # regexcat = 'EXTINF.*?tvg-logo="(.*?)".*?,(.*?)\\n(.*?)\\n'
                     match = re.compile(regexcat, re.DOTALL).findall(fpage)
-                    for  name, url in match:
+                    for name, url in match:
                         if str(search).lower() in name.lower():
                             global search_ok
                             search_ok = True
@@ -1099,8 +1093,8 @@ class M3uPlay(Screen):
                     if search_ok is True:
                         m3ulist(self.names, self["list"])
                         self["live"].setText('N.' + str(len(self.names)) + " Stream")
-                        search_ok = False
-                        self.playList()
+                        # search_ok = False
+                        # self.playList()
             except:
                 pass
         else:
@@ -1321,7 +1315,7 @@ class M3uPlay(Screen):
             self.playList()
         else:
             self.session.nav.stopService()
-            self.session.nav.playService(srefInit)
+            self.session.nav.playService(self.srefInit)
             self.close()
 
 
@@ -1885,7 +1879,6 @@ class OpenConfig(Screen, ConfigListScreen):
         return
 
     def changedEntry(self):
-        sel = self['config'].getCurrent()
         for x in self.onChangedEntry:
             x()
         try:
@@ -2279,15 +2272,17 @@ class plgnstrt(Screen):
         # self['text'] = ScrollLabel()
         self['text'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
-         'DirectionActions', 'ColorActions', 'SetupActions'], {'ok': self.clsgo,
-                                                               'cancel': self.clsgo,
-                                                               'back': self.clsgo,
-                                                               'red': self.clsgo,
-                                                               # 'up': self['text'].pageUp,
-                                                               # 'down': self['text'].pageDown,
-                                                               # 'left': self['text'].pageUp,
-                                                               # 'right': self['text'].pageDown,
-                                                               'green': self.clsgo}, -1)
+                                     'DirectionActions',
+                                     'ColorActions',
+                                     'SetupActions'], {'ok': self.clsgo,
+                                                       'cancel': self.clsgo,
+                                                       'back': self.clsgo,
+                                                       'red': self.clsgo,
+                                                       # 'up': self['text'].pageUp,
+                                                       # 'down': self['text'].pageDown,
+                                                       # 'left': self['text'].pageUp,
+                                                       # 'right': self['text'].pageDown,
+                                                       'green': self.clsgo}, -1)
         # self.onShown.append(self.checkDwnld)
         self.onFirstExecBegin.append(self.loadDefaultImage)
         # self.onLayoutFinish.append(self.image_downloaded)
