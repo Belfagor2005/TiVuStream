@@ -555,7 +555,6 @@ class TvInfoBarShowHide():
         print(text + " %s\n" % obj)
 
 
-# class M3uPlay2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide):#,InfoBarSubtitleSupport
 class M3uPlay2(
     InfoBarBase,
     InfoBarMenu,
