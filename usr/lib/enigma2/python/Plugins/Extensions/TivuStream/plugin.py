@@ -1847,7 +1847,7 @@ class OpenConfig(Screen, ConfigListScreen):
         self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext))
         self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain))
         self['config'].list = self.list
-        self["config"].setList(self.list)
+        self["config"].l.setList(self.list)
         self.setInfo()
 
     def setInfo(self):
