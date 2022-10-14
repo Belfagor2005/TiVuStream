@@ -1,34 +1,34 @@
 <screen name="GridMainHD" position="0,0" size="1280,720" title="GridMain">
-	<eLabel position="0,0" zPosition="1" size="1280,720" backgroundColor="#0b1a49"/>
-	<widget name="title" position="850,20" size="350,50" zPosition="3" halign="center" valign="top" foregroundColor="#389416" backgroundColor="black" font="Regular;40" transparent="1"/>
-	<widget name="info" position="150,665" zPosition="4" size="900,50" font="Regular;22" foregroundColor="#7bd7f7" backgroundColor="#40000000" transparent="1" halign="left" valign="center"/>
-	<widget name="frame" position="30,60" size="245,244" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/pic_frame2.png" zPosition="4" alphatest="on"/>
 	<!-- Time -->
-	<widget source="global.CurrentTime" render="Label" position="80,40" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1">
+	<widget source="global.CurrentTime" render="Label" position="1126,35" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1">
 		<convert type="ClockToText">Default</convert>
 	</widget>
-	<widget source="global.CurrentTime" render="Label" position="80,15" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1" valign="center">
+	<widget source="global.CurrentTime" render="Label" position="1125,11" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1" valign="center">
 		<convert type="ClockToText">Format:%d.%m.%Y</convert>
 	</widget>
-	<!-- Poster -->
-	<widget source="label1" render="Label" position="40,295" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap1" position="40,70" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label2" render="Label" position="280,295" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap2" position="280,70" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label3" render="Label" position="520,295" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap3" position="520,70" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label4" render="Label" position="760,295" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap4" position="760,70" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label5" render="Label" position="1000,295" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap5" position="1000,70" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label6" render="Label" position="40,595" size="220,60" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap6" position="40,370" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label7" render="Label" position="280,595" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap7" position="280,370" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label8" render="Label" position="520,595" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap8" position="520,370" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label9" render="Label" position="760,595" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap9" position="760,370" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
-	<widget source="label10" render="Label" position="1000,595" size="220,75" font="Regular;22" halign="center" zPosition="4" transparent="1" foregroundColor="white"/>
-	<widget name="pixmap10" position="1000,370" size="220,220" zPosition="3" transparent="1" alphatest="on"/>
+
+	<ePixmap position="0,0" zPosition="-2" size="1280,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvspro/res/pics/fanarthd.jpg" />
+	<widget name="title" position="43,725" size="1177,53" zPosition="3" halign="center" valign="top" foregroundColor="#a0a0a0" backgroundColor="black" font="Regular;40" transparent="1" />
+	<widget name="info" position="40,615" zPosition="4" size="1188,103" font="Regular; 18" foregroundColor="#7bd7f7" backgroundColor="#40000000" transparent="1" halign="left" valign="top" />
+	<widget name="frame" position="35,15" size="169,240" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvspro/res/pics/pic_frame2.png" zPosition="2" alphatest="on" />
+	<widget source="label1" render="Label" position="40,255" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" backgroundColor="black" valign="bottom" />
+	<widget name="pixmap1" position="40,25" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label2" render="Label" position="286,255" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap2" position="285,25" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label3" render="Label" position="530,255" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap3" position="530,25" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label4" render="Label" position="772,255" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap4" position="770,25" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label5" render="Label" position="1010,255" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap5" position="1010,25" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label6" render="Label" position="40,555" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap6" position="40,325" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label7" render="Label" position="285,555" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap7" position="285,325" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label8" render="Label" position="530,555" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap8" position="530,325" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label9" render="Label" position="770,555" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap9" position="770,325" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
+	<widget source="label10" render="Label" position="1010,555" size="150,60" font="Regular;20" halign="center" zPosition="4" transparent="1" foregroundColor="#ffffff" valign="bottom" />
+	<widget name="pixmap10" position="1010,325" size="150,220" zPosition="3" transparent="1" alphatest="on" scale="1" />
 </screen>

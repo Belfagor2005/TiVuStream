@@ -185,6 +185,7 @@ config.plugins.TivuStream.strtext = ConfigYesNo(default=True)
 config.plugins.TivuStream.strtmain = ConfigYesNo(default=True)
 config.plugins.TivuStream.thumb = ConfigYesNo(default=False)
 config.plugins.TivuStream.thumbpic = ConfigYesNo(default=False)
+config.plugins.TivuStream.dowm3u = ConfigYesNo(default=False)
 global pngori, skin_path
 global Path_Movies
 Path_Movies = str(config.plugins.TivuStream.pthm3uf.value) + "/"
@@ -267,12 +268,12 @@ class tvList(MenuList):
 def tvListEntry(name, png):
     res = [name]
     if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1900, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(png)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -286,11 +287,11 @@ def m3ulistEntry(download):
     blue = 4282611429
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
     if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1900, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1000, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -407,13 +408,13 @@ class MainTvStream(Screen):
                                           'TimerEditActions'], {'ok': self.messagerun,
                                                                 'file': self.M3uPlay,
                                                                 'menu': self.scsetup,
-                                                                'red': self.cancel,
+                                                                'red': self.closerm,
                                                                 'green': self.messagereload,
-                                                                'info': self.cancel,
+                                                                'info': self.closerm,
                                                                 'yellow': self.messagedellist,
                                                                 'blue': self.M3uPlay,
-                                                                'back': self.cancel,
-                                                                'cancel': self.cancel}, -1)
+                                                                'back': self.closerm,
+                                                                'cancel': self.closerm}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -741,6 +742,7 @@ class MainTvStream(Screen):
                         f.close()
                     in_bouquets = 1
             self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
+            from enigma import eDVBDB
             eDVBDB.getInstance().reloadServicelist()
             eDVBDB.getInstance().reloadBouquets()
             return
@@ -783,8 +785,8 @@ class MainTvStream(Screen):
     def scsetup(self):
         self.session.open(OpenConfig)
 
-    def cancel(self):
-        Utils.deletetmp()
+    def closerm(self):
+        # Utils.deletetmp()
         self.close()
 
 
@@ -820,18 +822,19 @@ class OpenM3u(Screen):
                                                                 'ok': self.runList}, -2)
         self.convert = False
         self.name = Path_Movies
-        try:
-            destx = Path_Movies + 'tivustream.m3u'
-            with open(destx, 'w') as e:
-                content = Utils.ReadUrl2(servernewm3u)
-                content = six.ensure_str(content)
-                print('Resp 1: ', content)
-                e.write(content)
-                os.system('sleep 5')
-                e.close()
-        except Exception as ex:
-            print(ex)
-            print('Exception exit : ', ex)
+        if config.plugins.TivuStream.dowm3u.value == True:
+            try:
+                destx = Path_Movies + 'tivustream.m3u'
+                with open(destx, 'w') as e:
+                    content = Utils.ReadUrl2(servernewm3u)
+                    content = six.ensure_str(content)
+                    print('Resp 1: ', content)
+                    e.write(content)
+                    os.system('sleep 5')
+                    e.close()
+            except Exception as ex:
+                print(ex)
+                print('Exception exit : ', ex)
         self.onLayoutFinish.append(self.openList)
 
     def scsetup(self):
@@ -1043,15 +1046,18 @@ class M3uPlay(Screen):
         global search_ok
         self.search = ''
         search_ok = False
-        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions', 'TimerEditActions', 'InfobarInstantRecord'], {'red': self.cancel,
-                                                                                                                        'green': self.runRec,
-                                                                                                                        'cancel': self.cancel,
-                                                                                                                        'yellow': self.AdjUrlFavo,
-                                                                                                                        'blue': self.search_m3u,
-                                                                                                                        'rec': self.runRec,
-                                                                                                                        'instantRecord': self.runRec,
-                                                                                                                        'ShortRecord': self.runRec,
-                                                                                                                        'ok': self.runChannel}, -2)
+        self['setupActions'] = ActionMap(['SetupActions',
+                                          'ColorActions',
+                                          'TimerEditActions',
+                                          'InfobarInstantRecord'], {'red': self.cancel,
+                                                                    'green': self.runRec,
+                                                                    'cancel': self.cancel,
+                                                                    'yellow': self.AdjUrlFavo,
+                                                                    'blue': self.search_m3u,
+                                                                    'rec': self.runRec,
+                                                                    'instantRecord': self.runRec,
+                                                                    'ShortRecord': self.runRec,
+                                                                    'ok': self.runChannel}, -2)
         self.name = name
         self.onLayoutFinish.append(self.playList)
 
@@ -1832,6 +1838,8 @@ class OpenConfig(Screen, ConfigListScreen):
         self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop))
         self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
         self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
+        self.list.append(getConfigListEntry(_('Download file tivustream.m3u'), config.plugins.TivuStream.dowm3u))
+
         self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
         if config.plugins.TivuStream.thumb.value is True:
             self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
@@ -1846,6 +1854,9 @@ class OpenConfig(Screen, ConfigListScreen):
         entry = str(self.getCurrentEntry())
         if entry == _('Server:'):
             self['description'].setText(_("Configure Server for Update Service and List"))
+            return
+        if entry == _('Download file tivustream.m3u'):
+            self['description'].setText(_("Download file tivustream.m3u complete"))
             return
         if entry == _('Auto Update Plugin:'):
             self['description'].setText(_("Set Automatic Update Plugin Version"))
@@ -2388,8 +2399,11 @@ class plgnstrt(Screen):
 def main(session, **kwargs):
     try:
         if Utils.zCheckInternet(1):
-            from . import Update
-            Update.upd_done()
+            try:
+                from . import Update
+                Update.upd_done()
+            except Exception as e:
+                print(str(e))
             if PY3:
                 session.open(MainTvStream)
             else:
