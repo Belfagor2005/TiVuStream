@@ -6,7 +6,6 @@
 	<widget source="global.CurrentTime" render="Label" position="1125,11" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1" valign="center">
 		<convert type="ClockToText">Format:%d.%m.%Y</convert>
 	</widget>
-
 	<ePixmap position="0,0" zPosition="-2" size="1280,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/fanarthd.jpg" />
 	<widget name="title" position="43,725" size="1177,53" zPosition="3" halign="center" valign="top" foregroundColor="#a0a0a0" backgroundColor="black" font="Regular;40" transparent="1" />
 	<widget name="info" position="40,615" zPosition="4" size="1188,103" font="Regular; 18" foregroundColor="#7bd7f7" backgroundColor="#40000000" transparent="1" halign="left" valign="top" />

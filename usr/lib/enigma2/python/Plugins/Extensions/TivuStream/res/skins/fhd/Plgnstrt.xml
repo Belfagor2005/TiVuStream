@@ -3,7 +3,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustreram_xxx.png" position="1494,151" size="250,117" alphatest="blend" zPosition="7"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" position="1076,159" size="322,113" alphatest="blend" zPosition="5"/>
 	<widget pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" name="poster" position="88,53" size="950,900" alphatest="blend" zPosition="-1"/>
-	<widget source="text" render="tvsRunningText" position="1072,324" size="730,609" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap"/>
+	<widget source="list" render="tvsRunningText" position="1072,324" size="730,609" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap"/>
 	<eLabel position="1833,45" size="8,915" zPosition="1" backgroundColor="#30403f3f"/>
 	<eLabel position="83,45" size="1755,8" zPosition="1" backgroundColor="#30403f3f"/>
 	<eLabel position="75,45" size="8,915" zPosition="1" backgroundColor="#30403f3f"/>

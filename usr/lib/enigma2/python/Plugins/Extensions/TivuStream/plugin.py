@@ -385,7 +385,7 @@ Panel_list = [
 class MainTvStream(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + '/MainTvStream.xml'
+        skin = skin_path + 'MainTvStream.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -793,7 +793,7 @@ class MainTvStream(Screen):
 class OpenM3u(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + '/OpenM3u.xml'
+        skin = skin_path + 'OpenM3u.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -1019,7 +1019,7 @@ class OpenM3u(Screen):
 class M3uPlay(Screen):
     def __init__(self, session, name):
         self.session = session
-        skin = skin_path + '/M3uPlay.xml'
+        skin = skin_path + 'M3uPlay.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         # f.close()
@@ -1626,7 +1626,7 @@ class M3uPlay2(
 class AddIpvStream(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + '/AddIpvStream.xml'
+        skin = skin_path + 'AddIpvStream.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -1740,7 +1740,7 @@ class AddIpvStream(Screen):
 
 class OpenConfig(Screen, ConfigListScreen):
     def __init__(self, session):
-        skin = skin_path + '/OpenConfig.xml'
+        skin = skin_path + 'OpenConfig.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2021,7 +2021,7 @@ class OpenConsole(Screen):
     # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
         self.session = session
-        skin = skin_path + '/OpenConsole.xml'
+        skin = skin_path + 'OpenConsole.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2117,7 +2117,7 @@ class openMessageBox(Screen):
     def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=None, simple=False, list=[], timeout_default=None):
         self.type = type
         self.session = session
-        skin = skin_path + '/openMessageBox.xml'
+        skin = skin_path + 'openMessageBox.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2271,7 +2271,7 @@ class openMessageBox(Screen):
 class plgnstrt(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + '/Plgnstrt.xml'
+        skin = skin_path + 'Plgnstrt.xml'
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2281,7 +2281,7 @@ class plgnstrt(Screen):
         self.picload = ePicLoad()
         self.scale = AVSwitch().getFramebufferScale()
         # self['text'] = ScrollLabel()
-        self['text'] = StaticText()
+        self['list'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'DirectionActions',
                                      'ColorActions',
@@ -2289,10 +2289,6 @@ class plgnstrt(Screen):
                                                        'cancel': self.clsgo,
                                                        'back': self.clsgo,
                                                        'red': self.clsgo,
-                                                       # 'up': self['text'].pageUp,
-                                                       # 'down': self['text'].pageDown,
-                                                       # 'left': self['text'].pageUp,
-                                                       # 'right': self['text'].pageDown,
                                                        'green': self.clsgo}, -1)
         # self.onShown.append(self.checkDwnld)
         self.onFirstExecBegin.append(self.loadDefaultImage)
@@ -2353,7 +2349,7 @@ class plgnstrt(Screen):
 
     def checkDwnld(self):
         self.icount = 0
-        self['text'].setText(_('\n\n\nCheck Connection wait please...'))
+        self['list'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
         self.timer.start(1500, 1)
         if Utils.DreamOS():
@@ -2385,12 +2381,12 @@ class plgnstrt(Screen):
 
     def OpenCheck(self):
         try:
-            self['text'].setText(self.getinfo())
+            self['list'].setText(self.getinfo())
         except:
-            self['text'].setText(_('\n\n' + 'Error downloading News!'))
+            self['list'].setText(_('\n\n' + 'Error downloading News!'))
 
     def error(self):
-        self['text'].setText(_('\n\n' + 'Server Off !') + '\n' + _('check SERVER in config'))
+        self['list'].setText(_('\n\n' + 'Server Off !') + '\n' + _('check SERVER in config'))
 
     def clsgo(self):
         self.session.openWithCallback(self.close, MainTvStream)
@@ -2428,7 +2424,7 @@ def cfgmain(menuid):
 def Plugins(**kwargs):
     icona = 'logo.png'
     if not Utils.DreamOS():
-        icona = skin_path + '/logo.png'
+        icona = skin_path + 'logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)
     result = [PluginDescriptor(name=name_plug, description=_(title_plug), where=[PluginDescriptor.WHERE_PLUGINMENU], icon=icona, fnc=main)]
