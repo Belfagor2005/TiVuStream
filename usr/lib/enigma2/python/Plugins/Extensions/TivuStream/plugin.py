@@ -144,7 +144,7 @@ currversion = '3.2'
 title_plug = '..:: TivuStream Revolution V. %s ::..' % currversion
 name_plug = 'TivuStream Revolution'
 Credits = 'Info http://t.me/tivustream'
-Maintainer2 = 'Maintener @Lululla'
+Maintener = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
@@ -396,8 +396,8 @@ class MainTvStream(Screen):
         server_ref()
         self['listUpdate'] = Label()
         self['title'] = Label(_(title_plug))
-        self['Maintainer2'] = Label('%s' % Maintainer2)
-        self['infoc2'] = Label('%s' % Credits)
+        self['Maintener'] = Label('%s' % Maintener)
+        self['info'] = Label('%s' % Credits)
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Reload Bouquet'))
         self['key_yellow'] = Button(_('Delete Bouquet'))
@@ -804,8 +804,8 @@ class OpenM3u(Screen):
         self.initialservice = self.session.nav.getCurrentlyPlayingServiceReference()
         srefInit = self.initialservice
         self['title'] = Label(_(title_plug))
-        self['Maintainer2'] = Label('%s' % Maintainer2)
-        self['infoc2'] = Label('%s' % Credits)
+        self['Maintener'] = Label('%s' % Maintener)
+        self['info'] = Label('%s' % Credits)
         self['path'] = Label(_('Folder path %s') % Path_Movies)
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Convert ExtePlayer3'))
@@ -1027,8 +1027,8 @@ class M3uPlay(Screen):
         self.list = []
         self['list'] = tvList([])
         self['title'] = Label(_(title_plug))
-        self['Maintainer2'] = Label('%s' % Maintainer2)
-        self['infoc2'] = Label('%s' % Credits)
+        self['Maintener'] = Label('%s' % Maintener)
+        self['info'] = Label('%s' % Credits)
         service = config.plugins.TivuStream.services.value
         self['service'] = Label(_('Service Reference used %s') % service)
         self['live'] = Label('')
@@ -1632,8 +1632,8 @@ class AddIpvStream(Screen):
         f.close()
         Screen.__init__(self, session)
         self['title'] = Label(_(title_plug))
-        self['Maintainer2'] = Label('%s' % Maintainer2)
-        self['infoc2'] = Label('%s' % Credits)
+        self['Maintener'] = Label('%s' % Maintener)
+        self['info'] = Label('%s' % Credits)
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Ok'))
         self['key_yellow'] = Button(_(''))
@@ -1646,7 +1646,7 @@ class AddIpvStream(Screen):
                                                                        'red': self.keyCancel}, -2)
         self['statusbar'] = Label()
         self.list = []
-        self['menu'] = MenuList([])
+        self['config'] = MenuList([])
         self.mutableList = None
         self.servicelist = ServiceList(None)
         self.onLayoutFinish.append(self.createTopMenu)
@@ -1656,14 +1656,14 @@ class AddIpvStream(Screen):
 
     def initSelectionList(self):
         self.list = []
-        self['menu'].setList(self.list)
+        self['config'].setList(self.list)
 
     def createTopMenu(self):
         self.setTitle(_('Add Stream IPTV'))
         self.initSelectionList()
         self.list = []
         self.list = self.getBouquetList()
-        self['menu'].setList(self.list)
+        self['config'].setList(self.list)
         self['statusbar'].setText(_('Select the Bouquet and press OK to add'))
 
     def getBouquetList(self):
@@ -1706,7 +1706,7 @@ class AddIpvStream(Screen):
             self.url = res
             str = '4097:0:0:0:0:0:0:0:0:0:%s:%s' % (quote(self.url), quote(self.name))
             ref = eServiceReference(str)
-            self.addServiceToBouquet(self.list[self['menu'].getSelectedIndex()][1], ref)
+            self.addServiceToBouquet(self.list[self['config'].getSelectedIndex()][1], ref)
             self.close()
 
     def addServiceToBouquet(self, dest, service=None):
@@ -1750,15 +1750,15 @@ class OpenConfig(Screen, ConfigListScreen):
         self.session = session
         info = '***'
         self['title'] = Label(_(title_plug))
-        self['Maintainer2'] = Label('%s' % Maintainer2)
-        self['infoc2'] = Label('%s' % Credits)
+        self['Maintener'] = Label('%s' % Maintener)
+        self['info'] = Label('%s' % Credits)
         self["paypal"] = Label()
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Save'))
         self['key_yellow'] = Button(_('Update'))
         self["key_blue"] = Button(_(''))
         self["key_blue"].hide()
-        self['text'] = Label(info)
+        self['list'] = Label(info)
         self["description"] = Label(_(''))
         self.cbUpdate = False
         self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"], {
@@ -1802,15 +1802,15 @@ class OpenConfig(Screen, ConfigListScreen):
                 if s1 <= currversion:
                     self.cbUpdate = False
                     print("Update False =", s1)
-                    self['text'].setText(_('Version: ') + currversion + '\n' + _('No updates!') + '\n' + _('if you like it you can make a free donation') + '\n' + _('www.paypal.me/TivuStream'))
+                    self['list'].setText(_('Version: ') + currversion + '\n' + _('No updates!') + '\n' + _('if you like it you can make a free donation') + '\n' + _('www.paypal.me/TivuStream'))
                 else:
                     self.cbUpdate = True
                     print("Update True =", s1)
                     updatestr = (_('Version: ') + currversion + '\n' + _('Last update ') + s1 + ' ' + _('available!') + '\n' + _('ChangeLog:') + self.info)
-                    self['text'].setText(updatestr)
+                    self['list'].setText(updatestr)
         except:
             self.cbUpdate = False
-            self['text'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
+            self['list'].setText(_('No updates available') + '\n' + _('No internet connection or server OFF') + '\n' + _('Please try again later or change SERVER to config menu.'))
         self.timerx = eTimer()
         self.timerx.start(100, 1)
         if Utils.DreamOS():
@@ -2029,12 +2029,12 @@ class OpenConsole(Screen):
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
         self.endstr = endstr
-        self['text'] = ScrollLabel('')
+        self['list'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions'], {'ok': self.cancel,
                                                                             'back': self.cancel,
                                                                             'blue': self.restartenigma,
-                                                                            'up': self['text'].pageUp,
-                                                                            'down': self['text'].pageDown}, -1)
+                                                                            'up': self['list'].pageUp,
+                                                                            'down': self['list'].pageDown}, -1)
         self.cmdlist = cmdlist
         self.container = eConsoleAppContainer()
         self.run = 0
@@ -2050,7 +2050,7 @@ class OpenConsole(Screen):
         self.setTitle(self.newtitle)
 
     def startRun(self):
-        self['text'].setText(_('Executing in run:') + '\n\n')
+        self['list'].setText(_('Executing in run:') + '\n\n')
         if self.container.execute(self.cmdlist[self.run]):
             self.runFinished(-1)
 

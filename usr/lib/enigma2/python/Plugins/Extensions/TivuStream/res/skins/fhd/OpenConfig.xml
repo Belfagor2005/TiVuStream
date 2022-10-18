@@ -8,10 +8,10 @@
 	<!-- Menu List -->
 	<widget name="config" position="220,155" size="1030,456" itemHeight="50" font="Regular;30" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png" />
 	<!-- Widget -->
-	<widget name="Maintainer2" position="510,68" size="412,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="Maintainer" position="510,68" size="412,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<widget name="description" position="221,662" size="1018,94" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="infoc2" position="220,700" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="text" position="220,709" size="1030,191" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="info" position="220,700" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="list" position="220,709" size="1030,191" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/PayPal.png" position="1447,157" size="156,75" zPosition="2" alphatest="on" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/qr-codetvs.png" position="1379,240" size="320,320" zPosition="2" alphatest="on" />

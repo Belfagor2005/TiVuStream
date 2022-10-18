@@ -1,8 +1,8 @@
 <!-- Skin M3uPlayer 16/08/2020 -->
 <screen name="M3uPlay" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="#20000000" flags="wfNoBorder">
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5"/>
-	<widget name="Maintainer2" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
-	<widget name="infoc2" position="215,860" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
+	<widget name="Maintener" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
+	<widget name="info" position="215,860" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
 	<widget name="service" position="219,808" size="1030,46" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
 	<widget name="live" position="220,865" size="995,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
 	<widget name="progress" position="585,965" size="300,50" foregroundColor="#2a70a4" backgroundColor="#10000000" transparent="1" zPosition="5"/>
