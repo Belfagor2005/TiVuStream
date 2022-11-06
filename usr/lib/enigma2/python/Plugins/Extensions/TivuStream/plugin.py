@@ -27,15 +27,18 @@ from Components.ScrollLabel import ScrollLabel
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.ServiceList import ServiceList
 from Components.Sources.Progress import Progress
-from Components.Sources.Source import Source
+# from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
-from Components.config import config, ConfigEnableDisable, ConfigYesNo, ConfigSelection, ConfigText
-from Components.config import getConfigListEntry, ConfigDirectory, ConfigSubsection, configfile
+from Components.config import config, ConfigSelection, ConfigText
+from Components.config import ConfigEnableDisable, ConfigYesNo
+from Components.config import getConfigListEntry, ConfigDirectory
+from Components.config import ConfigSubsection, configfile
 from Plugins.Extensions.TivuStream.getpics import GridMain
 from Plugins.Plugin import PluginDescriptor
 from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarSeek
+from Screens.InfoBarGenerics import InfoBarAudioSelection, InfoBarNotifications
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -44,11 +47,12 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import resolveFilename, fileExists, copyfile
 from Tools.Downloader import downloadWithProgress
-from Tools.LoadPixmap import LoadPixmap
+# from Tools.LoadPixmap import LoadPixmap
 from enigma import eConsoleAppContainer
 from enigma import RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT
-from enigma import eListbox, eListboxPythonMultiContent
+# from enigma import eListbox
+from enigma import eListboxPythonMultiContent
 from enigma import eTimer
 from enigma import gPixmapPtr
 from enigma import gFont
@@ -56,7 +60,6 @@ from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import ePicLoad
 from enigma import loadPNG
-from enigma import quitMainloop
 from enigma import iPlayableService
 from os.path import splitext
 import base64
@@ -196,6 +199,7 @@ print('patch movies: ', Path_Movies)
 tvstrvl = config.plugins.TivuStream.cachefold.value + "tivustream"
 tmpfold = config.plugins.TivuStream.cachefold.value + "tivustream/tmp"
 picfold = config.plugins.TivuStream.cachefold.value + "tivustream/pic"
+_firstStarttvstream = True
 
 if not os.path.exists(tvstrvl):
     os.system("mkdir " + tvstrvl)
@@ -245,7 +249,6 @@ png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format
 pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
 makem3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLndlYnNpdGUvaW9zL2NyZWF0ZU0zdS5waHA/Z3JvdXA9JndyaXRlRmlsZT0x'
 skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
-
 if Utils.isFHD():
     skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
 if Utils.DreamOS():
@@ -267,11 +270,22 @@ class tvList(MenuList):
 
 def tvListEntry(name, png):
     res = [name]
+    if 'radio' in name.lower():
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/radio.png".format('TivuStream'))
+    elif 'webcam' in name.lower():
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/webcam.png".format('TivuStream'))
+    elif 'music' in name.lower():
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/music.png".format('TivuStream'))
+    elif 'sport' in name.lower():
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/sport.png".format('TivuStream'))
+    else:
+        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
+    # pngs = piconlocal(name)
     if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(80, 0), size=(1900, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
+        # png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(80, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
@@ -285,7 +299,7 @@ def m3ulistEntry(download):
     col = 16777215
     backcol = 0
     blue = 4282611429
-    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
     if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(80, 0), size=(1900, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -323,13 +337,14 @@ def make_m3u():
     except Exception as ex:
         print(ex)
 
+
 def returnIMDB(text_clear):
     TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
     IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
     if TMDB:
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
-            text = decodeHtml(text_clear)
+            text = Utils.decodeHtml(text_clear)
             _session.open(TMBD.tmdbScreen, text, 0)
         except Exception as ex:
             print("[XCF] Tmdb: ", str(ex))
@@ -337,13 +352,13 @@ def returnIMDB(text_clear):
     elif IMDb:
         try:
             from Plugins.Extensions.IMDb.plugin import main as imdb
-            text = decodeHtml(text_clear)
+            text = Utils.decodeHtml(text_clear)
             imdb(_session, text)
         except Exception as ex:
             print("[XCF] imdb: ", str(ex))
         return True
     else:
-        text_clear = decodeHtml(text_clear)
+        text_clear = Utils.decodeHtml(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
     return
@@ -473,6 +488,7 @@ class MainTvStream(Screen):
         list = []
         idx = 0
         png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
+        # pngs = piconlocal(x)
         for x in Panel_list:
             list.append(tvListEntry(x, png))
             self.menu_list.append(x)
@@ -847,7 +863,7 @@ class OpenM3u(Screen):
                                                                 'ok': self.runList}, -2)
         self.convert = False
         self.name = Path_Movies
-        if config.plugins.TivuStream.dowm3u.value == True:
+        if config.plugins.TivuStream.dowm3u.value is True:
             try:
                 destx = Path_Movies + 'tivustream.m3u'
                 with open(destx, 'w') as e:
@@ -886,7 +902,7 @@ class OpenM3u(Screen):
         if i < 1:
             return
         idx = self["list"].getSelectionIndex()
-        namem3u = self.names[idx]
+        # namem3u = self.names[idx]
         urlm3u = self.Movies[idx]
         path = urlparse(urlm3u).path
         ext = splitext(path)[1]
@@ -929,7 +945,7 @@ class OpenM3u(Screen):
         if i < 1:
             return
         idx = self['list'].getSelectionIndex()
-        name = self.names[idx]
+        # name = self.names[idx]
         self.create_bouquet()
         return
 
@@ -939,7 +955,7 @@ class OpenM3u(Screen):
         if i < 1:
             return
         idx = self['list'].getSelectionIndex()
-        name = self.names[idx]
+        # name = self.names[idx]
         self.create_bouquet5002()
         return
 
@@ -1849,7 +1865,6 @@ class OpenConfig(Screen, ConfigListScreen):
         self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
         self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
         self.list.append(getConfigListEntry(_('Download file tivustream.m3u'), config.plugins.TivuStream.dowm3u))
-
         self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
         if config.plugins.TivuStream.thumb.value is True:
             self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
@@ -2402,6 +2417,36 @@ class plgnstrt(Screen):
         self.session.openWithCallback(self.close, MainTvStream)
 
 
+class AutoStartTimertvstream:
+
+    def __init__(self, session):
+        self.session = session
+        global _firstStarttvstream
+        print("*** running AutoStartTimertvstream ***")
+        if _firstStarttvstream:
+            self.runUpdate()
+
+    def runUpdate(self):
+        print("*** running update ***")
+        try:
+            from . import Update
+            Update.upd_done()
+            _firstStarttvstream = False
+        except Exception as e:
+            print('error Fxy', str(e))
+
+
+def autostart(reason, session=None, **kwargs):
+    print("*** running autostart ***")
+    global autoStartTimertvstream
+    global _firstStarttvstream
+    if reason == 0:
+        if session is not None:
+            _firstStarttvstream = True
+            autoStartTimertvstream = AutoStartTimertvstream(session)
+    return
+
+
 def main(session, **kwargs):
     try:
         if Utils.zCheckInternet(1):
@@ -2437,7 +2482,9 @@ def Plugins(**kwargs):
         icona = skin_path + 'logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)
-    result = [PluginDescriptor(name=name_plug, description=_(title_plug), where=[PluginDescriptor.WHERE_PLUGINMENU], icon=icona, fnc=main)]
+    # result = [PluginDescriptor(name=name_plug, description=_(title_plug), where=[PluginDescriptor.WHERE_PLUGINMENU], icon=icona, fnc=main)]
+    result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
+              PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icona, fnc=main)]
     if config.plugins.TivuStream.strtext.value:
         result.append(extDescriptor)
     if config.plugins.TivuStream.strtmain.value:
