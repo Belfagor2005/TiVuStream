@@ -2433,7 +2433,7 @@ class AutoStartTimertvstream:
             Update.upd_done()
             _firstStarttvstream = False
         except Exception as e:
-            print('error Fxy', str(e))
+            print('error TiVuStream', str(e))
 
 
 def autostart(reason, session=None, **kwargs):
