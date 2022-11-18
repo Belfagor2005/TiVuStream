@@ -944,7 +944,7 @@ class OpenM3u(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        idx = self['list'].getSelectionIndex()
+        # idx = self['list'].getSelectionIndex()
         # name = self.names[idx]
         self.create_bouquet()
         return
@@ -954,7 +954,7 @@ class OpenM3u(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        idx = self['list'].getSelectionIndex()
+        # idx = self['list'].getSelectionIndex()
         # name = self.names[idx]
         self.create_bouquet5002()
         return
