@@ -442,19 +442,20 @@ class MainTvStream(Screen):
         self['key_green'] = Button(_('Reload Bouquet'))
         self['key_yellow'] = Button(_('Delete Bouquet'))
         self["key_blue"] = Button(_("Player"))
-        self['setupActions'] = ActionMap(['SetupActions',
-                                          'ColorActions',
-                                          'MenuActions',
-                                          'TimerEditActions'], {'ok': self.messagerun,
-                                                                'file': self.M3uPlay,
-                                                                'menu': self.scsetup,
-                                                                'red': self.closerm,
-                                                                'green': self.messagereload,
-                                                                'info': self.closerm,
-                                                                'yellow': self.messagedellist,
-                                                                'blue': self.M3uPlay,
-                                                                'back': self.closerm,
-                                                                'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'MenuActions',
+                                     'EPGSelectActions',
+                                     'SetupActions'], {'ok': self.messagerun,
+                                                       'file': self.M3uPlay,
+                                                       'menu': self.scsetup,
+                                                       'red': self.closerm,
+                                                       'green': self.messagereload,
+                                                       'info': self.closerm,
+                                                       'yellow': self.messagedellist,
+                                                       'blue': self.M3uPlay,
+                                                       'back': self.closerm,
+                                                       'cancel': self.closerm}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -852,15 +853,14 @@ class OpenM3u(Screen):
         self['key_green'] = Button(_('Convert ExtePlayer3'))
         self['key_yellow'] = Button(_('Convert Gstreamer'))
         self["key_blue"] = Button(_("Remove"))
-        self['setupActions'] = ActionMap(['SetupActions',
-                                          'ColorActions',
-                                          'MenuActions',
-                                          'TimerEditActions'], {'file': self.crea_bouquet5002,
-                                                                'green': self.crea_bouquet5002,
-                                                                'blue': self.message1,
-                                                                'yellow': self.crea_bouquet,
-                                                                'cancel': self.cancel,
-                                                                'ok': self.runList}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'SetupActions'], {'file': self.crea_bouquet5002,
+                                                       'green': self.crea_bouquet5002,
+                                                       'blue': self.message1,
+                                                       'yellow': self.crea_bouquet,
+                                                       'cancel': self.cancel,
+                                                       'ok': self.runList}, -2)
         self.convert = False
         self.name = Path_Movies
         if config.plugins.TivuStream.dowm3u.value is True:
@@ -1087,18 +1087,18 @@ class M3uPlay(Screen):
         global search_ok
         self.search = ''
         search_ok = False
-        self['setupActions'] = ActionMap(['SetupActions',
-                                          'ColorActions',
-                                          'TimerEditActions',
-                                          'InfobarInstantRecord'], {'red': self.cancel,
-                                                                    'green': self.runRec,
-                                                                    'cancel': self.cancel,
-                                                                    'yellow': self.AdjUrlFavo,
-                                                                    'blue': self.search_m3u,
-                                                                    'rec': self.runRec,
-                                                                    'instantRecord': self.runRec,
-                                                                    'ShortRecord': self.runRec,
-                                                                    'ok': self.runChannel}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'TimerEditActions',
+                                     'InfobarInstantRecord'], {'red': self.cancel,
+                                                               'green': self.runRec,
+                                                               'cancel': self.cancel,
+                                                               'yellow': self.AdjUrlFavo,
+                                                               'blue': self.search_m3u,
+                                                               'rec': self.runRec,
+                                                               'instantRecord': self.runRec,
+                                                               'ShortRecord': self.runRec,
+                                                               'ok': self.runChannel}, -2)
         self.name = name
         self.onLayoutFinish.append(self.playList)
 
@@ -1490,7 +1490,6 @@ class M3uPlay2(
                                      'MediaPlayerActions',
                                      'EPGSelectActions',
                                      'MediaPlayerSeekActions',
-                                     'SetupActions',
                                      'ColorActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
@@ -1666,10 +1665,11 @@ class AddIpvStream(Screen):
         self["key_yellow"].hide()
         self["key_blue"] = Button(_(''))
         self["key_blue"].hide()
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.keyOk,
-                                                                       'cancel': self.keyCancel,
-                                                                       'green': self.keyOk,
-                                                                       'red': self.keyCancel}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.keyOk,
+                                                       'cancel': self.keyCancel,
+                                                       'green': self.keyOk,
+                                                       'red': self.keyCancel}, -2)
         self['statusbar'] = Label()
         self.list = []
         self['config'] = MenuList([])
@@ -1787,14 +1787,15 @@ class OpenConfig(Screen, ConfigListScreen):
         self['list'] = Label(info)
         self["description"] = Label(_(''))
         self.cbUpdate = False
-        self['actions'] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"], {
-                                                                                                 'cancel': self.extnok,
-                                                                                                 "red": self.extnok,
-                                                                                                 'green': self.cfgok,
-                                                                                                 'yellow': self.msgupdt1,
-                                                                                                 'showVirtualKeyboard': self.KeyText,
-                                                                                                 'ok': self.Ok_edit,
-                                                                                                  }, -2)
+        self['actions'] = ActionMap(["SetupActions",
+                                     "ColorActions",
+                                     "VirtualKeyboardActions"], {'cancel': self.extnok,
+                                                                 'red': self.extnok,
+                                                                 'green': self.cfgok,
+                                                                 'yellow': self.msgupdt1,
+                                                                 'showVirtualKeyboard': self.KeyText,
+                                                                 'ok': self.Ok_edit,
+                                                                  }, -2)
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
         self.createSetup()
@@ -2309,8 +2310,7 @@ class plgnstrt(Screen):
         self['list'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'DirectionActions',
-                                     'ColorActions',
-                                     'SetupActions'], {'ok': self.clsgo,
+                                     'ColorActions'], {'ok': self.clsgo,
                                                        'cancel': self.clsgo,
                                                        'back': self.clsgo,
                                                        'red': self.clsgo,
