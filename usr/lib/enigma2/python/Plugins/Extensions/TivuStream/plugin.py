@@ -70,7 +70,7 @@ import ssl
 import sys
 import six
 from . import Utils
-
+from . import html_conv
 PY3 = sys.version_info.major >= 3
 print('Py3: ', PY3)
 if PY3:
@@ -181,7 +181,7 @@ except:
 # config.plugins.TivuStream.code = ConfigNumber(default = 1234)
 config.plugins.TivuStream.code = ConfigText(default="1234")
 config.plugins.TivuStream.bouquettop = ConfigSelection(default='Bottom', choices=['Bottom', 'Top'])
-config.plugins.TivuStream.server = ConfigSelection(default='CORVOBOYS', choices=['PATBUWEB', 'CORVOBOYS'])
+config.plugins.TivuStream.server = ConfigSelection(default='CORVOBOYS', choices=['DEFAULT', 'CORVOBOYS'])
 config.plugins.TivuStream.services = ConfigSelection(default='4097', choices=modechoices)
 config.plugins.TivuStream.cachefold = ConfigDirectory(default='/media/hdd/')
 config.plugins.TivuStream.strtext = ConfigYesNo(default=True)
@@ -221,7 +221,7 @@ def server_ref():
     ServerS2 = Utils.b64decoder(TEST2)
     data_s2 = 'L2lwdHYv'
     FTP_2 = Utils.b64decoder(data_s2)
-    if config.plugins.TivuStream.server.value == 'PATBUWEB':
+    if config.plugins.TivuStream.server.value == 'DEFAULT':
         host = ServerS1
         server = ServerS1 + FTP_1
     else:
@@ -344,7 +344,7 @@ def returnIMDB(text_clear):
     if TMDB:
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
-            text = Utils.decodeHtml(text_clear)
+            text = html_conv.html_unescape(text_clear)
             _session.open(TMBD.tmdbScreen, text, 0)
         except Exception as ex:
             print("[XCF] Tmdb: ", str(ex))
@@ -352,13 +352,13 @@ def returnIMDB(text_clear):
     elif IMDb:
         try:
             from Plugins.Extensions.IMDb.plugin import main as imdb
-            text = Utils.decodeHtml(text_clear)
+            text = html_conv.html_unescape(text_clear)
             imdb(_session, text)
         except Exception as ex:
             print("[XCF] imdb: ", str(ex))
         return True
     else:
-        text_clear = Utils.decodeHtml(text_clear)
+        text_clear = html_conv.html_unescape(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
     return
@@ -446,16 +446,16 @@ class MainTvStream(Screen):
                                      'ColorActions',
                                      'MenuActions',
                                      'EPGSelectActions',
-                                     'SetupActions'], {'ok': self.messagerun,
-                                                       'file': self.M3uPlay,
-                                                       'menu': self.scsetup,
-                                                       'red': self.closerm,
-                                                       'green': self.messagereload,
-                                                       'info': self.closerm,
-                                                       'yellow': self.messagedellist,
-                                                       'blue': self.M3uPlay,
-                                                       'back': self.closerm,
-                                                       'cancel': self.closerm}, -1)
+                                     'ButtonSetupActions'], {'ok': self.messagerun,
+                                                             'file': self.M3uPlay,
+                                                             'menu': self.scsetup,
+                                                             'red': self.closerm,
+                                                             'green': self.messagereload,
+                                                             'info': self.closerm,
+                                                             'yellow': self.messagedellist,
+                                                             'blue': self.M3uPlay,
+                                                             'back': self.closerm,
+                                                             'cancel': self.closerm}, -1)
         self.onFirstExecBegin.append(self.checkList)
         self.onLayoutFinish.append(self.updateMenuList)
 
@@ -855,6 +855,7 @@ class OpenM3u(Screen):
         self["key_blue"] = Button(_("Remove"))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
+                                     'ButtonSetupActions',
                                      'SetupActions'], {'file': self.crea_bouquet5002,
                                                        'green': self.crea_bouquet5002,
                                                        'blue': self.message1,
@@ -1090,6 +1091,7 @@ class M3uPlay(Screen):
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
                                      'TimerEditActions',
+                                     'ButtonSetupActions',
                                      'InfobarInstantRecord'], {'red': self.cancel,
                                                                'green': self.runRec,
                                                                'cancel': self.cancel,
@@ -1491,6 +1493,7 @@ class M3uPlay2(
                                      'EPGSelectActions',
                                      'MediaPlayerSeekActions',
                                      'ColorActions',
+                                     'ButtonSetupActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
                                      'InfobarSeekActions'], {'leavePlayer': self.cancel,
@@ -1507,7 +1510,7 @@ class M3uPlay2(
         self.icount = 0
         self.desc = ''
         self.url = url
-        self.name = Utils.decodeHtml(name)
+        self.name = html_conv.html_unescape(name)
         self.state = self.STATE_PLAYING
         self.srefInit = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
@@ -2449,20 +2452,10 @@ def autostart(reason, session=None, **kwargs):
 
 def main(session, **kwargs):
     try:
-        if Utils.zCheckInternet(1):
-            try:
-                from . import Update
-                Update.upd_done()
-            except Exception as e:
-                print(str(e))
-            if PY3:
-                session.open(MainTvStream)
-            else:
-                session.open(plgnstrt)
+        if PY3:
+            session.open(MainTvStream)
         else:
-            from Screens.MessageBox import MessageBox
-            from Tools.Notifications import AddPopup
-            AddPopup(_("Sorry but No Internet :("), MessageBox.TYPE_INFO, 10, 'Sorry')
+            session.open(plgnstrt)
     except:
         import traceback
         traceback.print_exc()
@@ -2482,7 +2475,6 @@ def Plugins(**kwargs):
         icona = skin_path + 'logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=icona, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=_(title_plug), where=PluginDescriptor.WHERE_MENU, icon=icona, fnc=cfgmain)
-    # result = [PluginDescriptor(name=name_plug, description=_(title_plug), where=[PluginDescriptor.WHERE_PLUGINMENU], icon=icona, fnc=main)]
     result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
               PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icona, fnc=main)]
     if config.plugins.TivuStream.strtext.value:
