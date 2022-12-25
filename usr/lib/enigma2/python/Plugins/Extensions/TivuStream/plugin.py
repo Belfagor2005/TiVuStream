@@ -77,9 +77,9 @@ if PY3:
     from urllib.parse import urlparse
     from urllib.parse import quote
     from urllib.request import urlopen
-    unicode = str
-    unichr = chr
-    long = int
+    # unicode = str
+    # unichr = chr
+    # long = int
     PY3 = True
 else:
     from urllib2 import urlopen
@@ -1596,10 +1596,10 @@ class M3uPlay2(
         if Utils.isStreamlinkAvailable():
             streamtypelist.append("5002")  # ref = '5002:0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + url
             streaml = True
-        if os.path.exists("/usr/bin/gstplayer"):
-            streamtypelist.append("5001")
-        if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypelist.append("5002")
+        # if os.path.exists("/usr/bin/gstplayer"):
+            # streamtypelist.append("5001")
+        # if os.path.exists("/usr/bin/exteplayer3"):
+            # streamtypelist.append("5002")
         if os.path.exists("/usr/bin/apt-get"):
             streamtypelist.append("8193")
         for index, item in enumerate(streamtypelist, start=0):
@@ -2379,11 +2379,11 @@ class plgnstrt(Screen):
         self.icount = 0
         self['list'].setText(_('\n\n\nCheck Connection wait please...'))
         self.timer = eTimer()
-        self.timer.start(1500, 1)
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.OpenCheck)
         else:
             self.timer.callback.append(self.OpenCheck)
+        self.timer.start(1500, 1)
 
     def getinfo(self):
         continfo = _("==========       WELCOME     ============\n")

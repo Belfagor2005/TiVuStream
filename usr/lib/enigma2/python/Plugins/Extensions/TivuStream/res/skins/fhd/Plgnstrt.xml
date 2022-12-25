@@ -1,5 +1,5 @@
 <screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1920,1080" title="..::TiVuStream Project::.." backgroundColor="#30000000">
-	<ePixmap position="787,55" size="250,117" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_xxx.png" alphatest="blend" zPosition="5" />
+	<!-- <ePixmap position="787,55" size="250,117" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_xxx.png" alphatest="blend" zPosition="5" /> -->
 	<ePixmap position="96,61" size="322,113" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="5" />
 	<widget source="list" render="rvRunningText" position="1072,90" size="730,843" font="Regular;28" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
 	<widget name="poster" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" position="88,53" size="950,900" alphatest="blend" scale="stretch" zPosition="4"/>	
