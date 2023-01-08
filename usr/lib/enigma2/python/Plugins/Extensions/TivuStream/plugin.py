@@ -475,7 +475,7 @@ class MainTvStream(Screen):
             destr = plugin_path + 'list.txt'
             onserver2 = upd_nt_txt
             with open(destr, 'w') as f:
-                content = Utils.ReadUrl2(onserver2)
+                content = Utils.ReadUrl(onserver2)
                 f.write(content)
             self['listUpdate'].setText(content)
             make_m3u()
@@ -740,7 +740,7 @@ class MainTvStream(Screen):
             namebqt = ('/etc/enigma2/%s' % bqtname)
             try:
                 with open(namebqt, 'w') as f:
-                    content = Utils.ReadUrl2(lnk)
+                    content = Utils.ReadUrl(lnk)
                     print('Resp 2: ', content)
                     f.write(content)
                     os.system('sleep 5')
@@ -868,7 +868,7 @@ class OpenM3u(Screen):
             try:
                 destx = Path_Movies + 'tivustream.m3u'
                 with open(destx, 'w') as e:
-                    content = Utils.ReadUrl2(servernewm3u)
+                    content = Utils.ReadUrl(servernewm3u)
                     content = six.ensure_str(content)
                     print('Resp 1: ', content)
                     e.write(content)
@@ -1811,7 +1811,7 @@ class OpenConfig(Screen, ConfigListScreen):
         try:
             fp = ''
             destr = plugin_path + 'update.txt'
-            fp = Utils.ReadUrl2(upd_fr_txt)
+            fp = Utils.ReadUrl(upd_fr_txt)
             fp = six.ensure_str(fp)
             with open(destr, 'w') as f:
                 f.write(fp)
