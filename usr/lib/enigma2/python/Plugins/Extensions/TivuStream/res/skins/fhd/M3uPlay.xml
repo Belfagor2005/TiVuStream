@@ -6,7 +6,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,130" size="1030,8" zPosition="5"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,910" size="1030,8" zPosition="5"/>
 	<!-- Menu List -->
-	<widget name="list" position="220,155" size="1030,650" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
+	<widget name="list" position="220,155" size="1030,600" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
 	<!-- Widget -->
 	<widget name="Maintainer" position="510,68" size="400,30" font="Regular;24" halign="left" foregroundColor="yellow" backgroundColor="#000000" transparent="1" zPosition="5"/>
 	<widget name="info" position="215,860" size="0,0" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>

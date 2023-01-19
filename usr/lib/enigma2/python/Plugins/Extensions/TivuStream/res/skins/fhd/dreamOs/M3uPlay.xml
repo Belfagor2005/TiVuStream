@@ -13,7 +13,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,130" size="1030,8" zPosition="5"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="220,910" size="1030,8" zPosition="5"/>
 	<!-- Menu List -->
-	<widget name="list" position="220,155" size="1030,650" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
+	<widget name="list" position="220,155" size="1030,600" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
 	<!-- Colors 1220 -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_green.png" position="220,1005" size="30,30" alphatest="on" zPosition="5"/>

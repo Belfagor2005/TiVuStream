@@ -5,7 +5,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             01/08/2022               *
+*             11/01/2023               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -77,9 +77,6 @@ if PY3:
     from urllib.parse import urlparse
     from urllib.parse import quote
     from urllib.request import urlopen
-    # unicode = str
-    # unichr = chr
-    # long = int
     PY3 = True
 else:
     from urllib2 import urlopen
@@ -291,21 +288,31 @@ def tvListEntry(name, png):
     return res
 
 
-def m3ulistEntry(download):
-    res = [download]
+def m3ulistEntry(name):
+    res = [name]
     white = 16777215
     yellow = 16776960
     green = 3828297
     col = 16777215
     backcol = 0
     blue = 4282611429
+    if 'radio' in name.lower():
+        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/radio.png".format('TivuStream'))
+    elif 'webcam' in name.lower():
+        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/webcam.png".format('TivuStream'))
+    elif 'music' in name.lower():
+        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/music.png".format('TivuStream'))
+    elif 'sport' in name.lower():
+        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/sport.png".format('TivuStream'))
+    else:
+        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
     if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(1900, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(1000, 50), font=0, text=download, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -538,7 +545,7 @@ class MainTvStream(Screen):
         elif sel == ("REGIONALI"):
             return
             # namex = "regionali"
-            # lnk = "http://patbuweb.com/php_filter/tslEn.php?p=1&t=8"
+            # lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD04"
         elif sel == ("ABRUZZO"):
             namex = "abruzzo"
             lnk = "aHR0cDovL3BhdGJ1d2ViLmNvbS9waHBfZmlsdGVyL3RzbEVuLnBocD9wPTEmdD00MA=="
@@ -922,9 +929,6 @@ class OpenM3u(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        # idx = self['list'].getSelectionIndex()
-        # if idx < 0 :
-            # return
         else:
             self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
 
@@ -945,8 +949,6 @@ class OpenM3u(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        # idx = self['list'].getSelectionIndex()
-        # name = self.names[idx]
         self.create_bouquet()
         return
 
@@ -955,8 +957,6 @@ class OpenM3u(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        # idx = self['list'].getSelectionIndex()
-        # name = self.names[idx]
         self.create_bouquet5002()
         return
 
@@ -1142,8 +1142,6 @@ class M3uPlay(Screen):
                     if search_ok is True:
                         m3ulist(self.names, self["list"])
                         self["live"].setText('N.' + str(len(self.names)) + " Stream")
-                        # search_ok = False
-                        # self.playList()
             except:
                 pass
         else:
@@ -1186,7 +1184,6 @@ class M3uPlay(Screen):
             global in_tmp
             Utils.OnclearMem()
             if self.downloading is True:
-                # selection = str(self['list'].getCurrent()) ######?????????
                 idx = self["list"].getSelectionIndex()
                 try:
                     namem3u = self.names[idx]
@@ -1204,9 +1201,6 @@ class M3uPlay(Screen):
                     self.download.start().addCallback(self.check).addErrback(self.showError)
                 except Exception as e:
                     print("Error list: %s" % e)
-                    print("self.names is %s" % len(self.names))
-                    print("self.urls is %s" % len(self.urls))
-                    print("Index is %s" % idx)
                     return
             else:
                 self.downloading = False
@@ -1262,8 +1256,6 @@ class M3uPlay(Screen):
                     for name, url in match:
                         url = url.replace(' ', '')
                         url = url.replace('\\n', '')
-                        # # url = url.replace('https', 'http')
-                        # if pic:
                         pic = pic
                         self.names.append(name)
                         self.urls.append(url)
@@ -1493,6 +1485,7 @@ class M3uPlay2(
                                      'EPGSelectActions',
                                      'MediaPlayerSeekActions',
                                      'ColorActions',
+                                     'OkCancelActions',
                                      'ButtonSetupActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
@@ -2047,7 +2040,6 @@ class OpenConfig(Screen, ConfigListScreen):
 
 
 class OpenConsole(Screen):
-    # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
         self.session = session
         skin = skin_path + 'OpenConsole.xml'
