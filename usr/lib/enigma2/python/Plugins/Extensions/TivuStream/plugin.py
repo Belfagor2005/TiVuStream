@@ -10,7 +10,9 @@
 Info http://t.me/tivustream
 '''
 # from __future__ import print_function
-from .__init__ import _
+from . import _
+from . import Utils
+from . import html_conv
 # from Components.HTMLComponent import *
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
@@ -69,8 +71,7 @@ import re
 import ssl
 import sys
 import six
-from . import Utils
-from . import html_conv
+
 PY3 = sys.version_info.major >= 3
 print('Py3: ', PY3)
 if PY3:
@@ -147,8 +148,8 @@ Credits = 'Info http://t.me/tivustream'
 Maintener = 'Maintener @Lululla'
 dir_enigma2 = '/etc/enigma2/'
 service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
-plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/".format('TivuStream'))
-res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('TivuStream'))
+plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/TivuStream'
+res_plugin_path = os.path.join(plugin_path, 'res/')
 # ================
 modechoices = [
                 ("4097", _("ServiceMp3(4097)")),
@@ -241,13 +242,13 @@ m3uest = Utils.b64decoder(estm3u)
 nasara = "aHR0cDovL3BhdGJ1d2ViLmNvbS9iYWNrLXR2c3RyZWFtLw=="
 nasarandom = Utils.b64decoder(nasara)
 imgjpg = ("nasa1.jpg", "nasa2.jpg", "nasa3.jpg")
-pngori = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/nasa3.jpg".format('TivuStream'))
-png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
-pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting2.png".format('TivuStream'))
+pngori = os.path.join(plugin_path, 'res/pics/nasa3.jpg')
+png = os.path.join(plugin_path, 'res/pics/setting.png')
+pngx = os.path.join(plugin_path, 'res/pics/setting2.png')
 makem3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLndlYnNpdGUvaW9zL2NyZWF0ZU0zdS5waHA/Z3JvdXA9JndyaXRlRmlsZT0x'
-skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('TivuStream'))
+skin_path = os.path.join(plugin_path, 'res/skins/hd/')
 if Utils.isFHD():
-    skin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('TivuStream'))
+    skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 
@@ -268,15 +269,15 @@ class tvList(MenuList):
 def tvListEntry(name, png):
     res = [name]
     if 'radio' in name.lower():
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/radio.png".format('TivuStream'))
+        png = os.path.join(plugin_path, 'res/pics/radio.png')
     elif 'webcam' in name.lower():
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/webcam.png".format('TivuStream'))
+        png = os.path.join(plugin_path, 'res/pics/webcam.png')
     elif 'music' in name.lower():
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/music.png".format('TivuStream'))
+        png = os.path.join(plugin_path, 'res/pics/music.png')
     elif 'sport' in name.lower():
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/sport.png".format('TivuStream'))
+        png = os.path.join(plugin_path, 'res/pics/sport.png')
     else:
-        png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
+        png = os.path.join(plugin_path, 'res/pics/tv.png')
     # pngs = piconlocal(name)
     if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(png)))
@@ -297,16 +298,16 @@ def m3ulistEntry(name):
     backcol = 0
     blue = 4282611429
     if 'radio' in name.lower():
-        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/radio.png".format('TivuStream'))
+        pngx = os.path.join(plugin_path, 'res/pics/radio.png')
     elif 'webcam' in name.lower():
-        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/webcam.png".format('TivuStream'))
+        pngx = os.path.join(plugin_path, 'res/pics/webcam.png')
     elif 'music' in name.lower():
-        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/music.png".format('TivuStream'))
+        pngx = os.path.join(plugin_path, 'res/pics/music.png')
     elif 'sport' in name.lower():
-        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/sport.png".format('TivuStream'))
+        pngx = os.path.join(plugin_path, 'res/pics/sport.png')
     else:
-        pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
-    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/tv.png".format('TivuStream'))
+        pngx = os.path.join(plugin_path, 'res/pics/tv.png')
+    pngx = os.path.join(plugin_path, 'res/pics/tv.png')
     if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -432,10 +433,9 @@ Panel_list = [
 class MainTvStream(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'MainTvStream.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'MainTvStream.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.setup_title = _('Channel List')
         self['list'] = tvList([])
@@ -842,10 +842,9 @@ class MainTvStream(Screen):
 class OpenM3u(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'OpenM3u.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'OpenM3u.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
@@ -1061,10 +1060,9 @@ class OpenM3u(Screen):
 class M3uPlay(Screen):
     def __init__(self, session, name):
         self.session = session
-        skin = skin_path + 'M3uPlay.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        # f.close()
+        skin = os.path.join(skin_path, 'M3uPlay.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
@@ -1516,22 +1514,26 @@ class M3uPlay2(
         return AVSwitch().getAspectRatioSetting()
 
     def getAspectString(self, aspectnum):
-        return {0: _('4:3 Letterbox'),
-                1: _('4:3 PanScan'),
-                2: _('16:9'),
-                3: _('16:9 always'),
-                4: _('16:10 Letterbox'),
-                5: _('16:10 PanScan'),
-                6: _('16:9 Letterbox')}[aspectnum]
+        return {
+            0: '4:3 Letterbox',
+            1: '4:3 PanScan',
+            2: '16:9',
+            3: '16:9 always',
+            4: '16:10 Letterbox',
+            5: '16:10 PanScan',
+            6: '16:9 Letterbox'
+        }[aspectnum]
 
     def setAspect(self, aspect):
-        map = {0: '4_3_letterbox',
-               1: '4_3_panscan',
-               2: '16_9',
-               3: '16_9_always',
-               4: '16_10_letterbox',
-               5: '16_10_panscan',
-               6: '16_9_letterbox'}
+        map = {
+            0: '4_3_letterbox',
+            1: '4_3_panscan',
+            2: '16_9',
+            3: '16_9_always',
+            4: '16_10_letterbox',
+            5: '16_10_panscan',
+            6: '16_9_letterbox'
+        }
         config.av.aspectratio.setValue(map[aspect])
         try:
             AVSwitch().setAspectRatio(aspect)
@@ -1647,10 +1649,9 @@ class M3uPlay2(
 class AddIpvStream(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'AddIpvStream.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'AddIpvStream.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self['title'] = Label(_(title_plug))
         self['Maintener'] = Label('%s' % Maintener)
@@ -1762,10 +1763,9 @@ class AddIpvStream(Screen):
 
 class OpenConfig(Screen, ConfigListScreen):
     def __init__(self, session):
-        skin = skin_path + 'OpenConfig.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'OpenConfig.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.setup_title = _("TiVuStream Config")
         self.onChangedEntry = []
@@ -2042,10 +2042,9 @@ class OpenConfig(Screen, ConfigListScreen):
 class OpenConsole(Screen):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
         self.session = session
-        skin = skin_path + 'OpenConsole.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'OpenConsole.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
@@ -2138,10 +2137,9 @@ class openMessageBox(Screen):
     def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=None, simple=False, list=[], timeout_default=None):
         self.type = type
         self.session = session
-        skin = skin_path + 'openMessageBox.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'openMessageBox.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self.msgBoxID = msgBoxID
         self['text'] = Label(text)
@@ -2292,10 +2290,9 @@ class openMessageBox(Screen):
 class plgnstrt(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'Plgnstrt.xml'
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
+        skin = os.path.join(skin_path, 'Plgnstrt.xml')
+        with open(skin, 'r') as f:
+            self.skin = f.read()
         Screen.__init__(self, session)
         self["poster"] = Pixmap()
         self["poster"].hide()
