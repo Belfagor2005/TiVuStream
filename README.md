@@ -1,5 +1,7 @@
 Tivustream Revolution FINAL VERSION 3.0
 
+![](https://komarev.com/ghpvc/?username=Belfagor2005)
+
 <img src="https://github.com/Belfagor2005/TiVuStream/blob/main/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/logo.png">
 
 Enigma2 project
