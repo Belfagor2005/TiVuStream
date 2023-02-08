@@ -5,7 +5,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             11/01/2023               *
+*             08/02/2023               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -289,32 +289,32 @@ def tvListEntry(name, png):
     return res
 
 
-def m3ulistEntry(name):
-    res = [name]
-    white = 16777215
-    yellow = 16776960
-    green = 3828297
-    col = 16777215
-    backcol = 0
-    blue = 4282611429
-    if 'radio' in name.lower():
-        pngx = os.path.join(plugin_path, 'res/pics/radio.png')
-    elif 'webcam' in name.lower():
-        pngx = os.path.join(plugin_path, 'res/pics/webcam.png')
-    elif 'music' in name.lower():
-        pngx = os.path.join(plugin_path, 'res/pics/music.png')
-    elif 'sport' in name.lower():
-        pngx = os.path.join(plugin_path, 'res/pics/sport.png')
-    else:
-        pngx = os.path.join(plugin_path, 'res/pics/tv.png')
-    pngx = os.path.join(plugin_path, 'res/pics/tv.png')
-    if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    return res
+# def m3ulistEntry(name):
+    # res = [name]
+    # white = 16777215
+    # yellow = 16776960
+    # green = 3828297
+    # col = 16777215
+    # backcol = 0
+    # blue = 4282611429
+    # if 'radio' in name.lower():
+        # pngx = os.path.join(plugin_path, 'res/pics/radio.png')
+    # elif 'webcam' in name.lower():
+        # pngx = os.path.join(plugin_path, 'res/pics/webcam.png')
+    # elif 'music' in name.lower():
+        # pngx = os.path.join(plugin_path, 'res/pics/music.png')
+    # elif 'sport' in name.lower():
+        # pngx = os.path.join(plugin_path, 'res/pics/sport.png')
+    # else:
+        # pngx = os.path.join(plugin_path, 'res/pics/tv.png')
+    # pngx = os.path.join(plugin_path, 'res/pics/tv.png')
+    # if Utils.isFHD():
+        # res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
+        # res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    # else:
+        # res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 0), size=(50, 50), png=loadPNG(pngx)))
+        # res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    # return res
 
 
 def m3ulist(data, list):
@@ -322,8 +322,8 @@ def m3ulist(data, list):
     mlist = []
     for line in data:
         name = data[icount]
-        mlist.append(m3ulistEntry(name))
-        icount = icount + 1
+        mlist.append(tvListEntry(name, icount))
+        icount += 1
     list.setList(mlist)
 
 
@@ -496,7 +496,6 @@ class MainTvStream(Screen):
         list = []
         idx = 0
         png = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('TivuStream'))
-        # pngs = piconlocal(x)
         for x in Panel_list:
             list.append(tvListEntry(x, png))
             self.menu_list.append(x)
@@ -906,10 +905,9 @@ class OpenM3u(Screen):
     def runList(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self["list"].getSelectionIndex()
-        # namem3u = self.names[idx]
         urlm3u = self.Movies[idx]
         path = urlparse(urlm3u).path
         ext = splitext(path)[1]
@@ -926,7 +924,7 @@ class OpenM3u(Screen):
     def message1(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         else:
             self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
@@ -946,7 +944,7 @@ class OpenM3u(Screen):
     def crea_bouquet(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.create_bouquet()
         return
@@ -954,7 +952,7 @@ class OpenM3u(Screen):
     def crea_bouquet5002(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.create_bouquet5002()
         return
@@ -1122,7 +1120,6 @@ class M3uPlay(Screen):
                     fpage = f1.read()
                     # #EXTINF:-1 group-title="SERIE TV: A-E" tvg-logo="https://patbuweb.com/tivustream/logos/logo.png",[COLOR red]-- UNDER MAINTENANCE --[/COLOR]
                     # #EXTINF:-1 tvg-ID="Rai 1 HD" tvg-name="Rai 1 HD" tvg-logo="" group-title="Top Italia",Rai 1 HD
-                    # #EXTINF:-1,Primafila 1
                     regexcat = "EXTINF.*?,(.*?)\\n(.*?)\\n"
                     # if 'tvg-logo' in fpage:
                         # print('Tvg-logo in fpage is True1 ---')
@@ -1148,7 +1145,7 @@ class M3uPlay(Screen):
     def runRec(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         global urlm3u, namem3u
         idx = self["list"].getSelectionIndex()
@@ -1279,7 +1276,7 @@ class M3uPlay(Screen):
     def gridpic(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.open(GridMain, self.names, self.urls, self.pics)
         self.close()
@@ -1287,12 +1284,12 @@ class M3uPlay(Screen):
     def runChannel(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self['list'].getSelectionIndex()
         self.pin = True
         if config.ParentalControl.configured.value:
-            a = '+18', 'adult', 'hot', 'porn', 'sex', 'xxx'
+            a = '+18', 'adult', 'hot', 'porn', 'sex', 'xxx', 'anal'
             if any(s in str(self.names[idx]).lower() for s in a):
                 self.allow2()
             else:
@@ -1341,7 +1338,7 @@ class M3uPlay(Screen):
     def AdjUrlFavo(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self['list'].getSelectionIndex()
         name = self.names[idx]
@@ -1542,7 +1539,7 @@ class M3uPlay2(
 
     def av(self):
         temp = int(self.getAspect())
-        temp = temp + 1
+        temp += 1
         if temp > 6:
             temp = 0
         self.new_aspect = temp
@@ -1752,7 +1749,6 @@ class AddIpvStream(Screen):
             if list is not None:
                 return list.startEdit()
             return
-            return
 
     def getRoot(self):
         return self.servicelist.getRoot()
@@ -1843,7 +1839,7 @@ class OpenConfig(Screen, ConfigListScreen):
 
     def paypal2(self):
         conthelp = "If you like what I do you\n"
-        conthelp += " can contribute with a coffee\n\n"
+        conthelp += "can contribute with a coffee\n\n"
         conthelp += "scan the qr code and donate € 1.00"
         return conthelp
 
@@ -2050,6 +2046,7 @@ class OpenConsole(Screen):
         self.closeOnSuccess = closeOnSuccess
         self.endstr = endstr
         self['list'] = ScrollLabel('')
+        # self["text"] = Label('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions'], {'ok': self.cancel,
                                                                             'back': self.cancel,
                                                                             'blue': self.restartenigma,
@@ -2296,9 +2293,6 @@ class plgnstrt(Screen):
         Screen.__init__(self, session)
         self["poster"] = Pixmap()
         self["poster"].hide()
-        self.picload = ePicLoad()
-        self.scale = AVSwitch().getFramebufferScale()
-        # self['text'] = ScrollLabel()
         self['list'] = StaticText()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'DirectionActions',
