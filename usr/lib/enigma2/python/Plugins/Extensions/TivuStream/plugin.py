@@ -794,25 +794,22 @@ class MainTvStream(Screen):
             eDVBDB.getInstance().reloadBouquets()
             return
 
-    def messagerun(self):
-        self.session.openWithCallback(self.messagerun2, MessageBox, _('Install the selected list?'), MessageBox.TYPE_YESNO)
-
-    def messagerun2(self, result):
-        if result:
+    def messagerun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.messagerun, MessageBox, _('Install the selected list?'))
+        elif answer:
             self.session.openWithCallback(self.okRun, MessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=3)
 
-    def messagereload(self):
-        self.session.openWithCallback(self.reloadSettings, MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
+    # def messagereload(self, answer=None):
+        # if answer is None:
+            # self.session.openWithCallback(self.messagereload, MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
+        # elif answer:
+            # Utils.ReloadBouquets()
 
-    def reloadSettings(self, result):
-        if result:
-            Utils.ReloadBouquets()
-
-    def messagedellist(self):
-        self.session.openWithCallback(self.deletelist, MessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?', MessageBox.TYPE_YESNO)
-
-    def deletelist(self, result):
-        if result:
+    def messagedellist(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.messagedellist, MessageBox, _('ATTENTION') + ':\n' + _('Delete TiVuStream Revolution channel lists') + ' ?')
+        elif answer:
             for file in os.listdir('/etc/enigma2/'):
                 if file.startswith('userbouquet.tivustream') or file.startswith('subbouquet.tivustream'):
                     file = '/etc/enigma2/' + file
@@ -824,6 +821,14 @@ class MainTvStream(Screen):
                         os.remove(radio)
                         os.system("sed -i '/subbouquet.tivustream/d' /etc/enigma2/bouquets.radio")
             self.mbox = self.session.open(MessageBox, _('TiVuStream Revolution channel lists successfully deleted'), MessageBox.TYPE_INFO, timeout=4)
+            # Utils.ReloadBouquets()
+            self.messagereload()
+
+    def messagereload(self):
+        self.session.openWithCallback(self.reloadSettings, MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
+
+    def reloadSettings(self, result):
+        if result:
             Utils.ReloadBouquets()
 
     def M3uPlay(self):
@@ -846,27 +851,23 @@ class OpenM3u(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
-        global srefInit
-        self.initialservice = self.session.nav.getCurrentlyPlayingServiceReference()
-        srefInit = self.initialservice
         self['title'] = Label(_(title_plug))
         self['Maintener'] = Label('%s' % Maintener)
         self['info'] = Label('%s' % Credits)
         self['path'] = Label(_('Folder path %s') % Path_Movies)
         self['key_red'] = Button(_('Exit'))
-        self['key_green'] = Button(_('Convert ExtePlayer3'))
+        self['key_green'] = Button(_('Convert Bouquet'))
         self['key_yellow'] = Button(_('Convert Gstreamer'))
         self["key_blue"] = Button(_("Remove"))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
                                      'ButtonSetupActions',
-                                     'SetupActions'], {'file': self.crea_bouquet5002,
-                                                       'green': self.crea_bouquet5002,
+                                     'SetupActions'], {'file': self.crea_bouquet,
+                                                       'green': self.crea_bouquet,
                                                        'blue': self.message1,
                                                        'yellow': self.crea_bouquet,
                                                        'cancel': self.cancel,
                                                        'ok': self.runList}, -2)
-        self.convert = False
         self.name = Path_Movies
         if config.plugins.TivuStream.dowm3u.value is True:
             try:
@@ -889,9 +890,8 @@ class OpenM3u(Screen):
     def openList(self):
         self.names = []
         self.Movies = []
-        path = self.name
         AA = ['.m3u']
-        for root, dirs, files in os.walk(path):
+        for root, dirs, files in os.walk(Path_Movies):
             for name in files:
                 for x in AA:
                     if x not in name:
@@ -909,7 +909,6 @@ class OpenM3u(Screen):
         idx = self["list"].getSelectionIndex()
         urlm3u = self.Movies[idx]
         path = urlparse(urlm3u).path
-        ext = splitext(path)[1]
         if idx < 0:
             return
         else:
@@ -920,16 +919,13 @@ class OpenM3u(Screen):
             else:
                 return
 
-    def message1(self):
+    def message1(self, answer=None):
         i = len(self.names)
-        print('iiiiii= ', i)
         if i < 0:
             return
-        else:
-            self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
-
-    def callMyMsg1(self, result):
-        if result:
+        if answer is None:
+            self.session.openWithCallback(self.message1, MessageBox, _('Do you want to remove?'))
+        elif answer:
             idx = self['list'].getSelectionIndex()
             path = self.Movies[idx]
             dom = path
@@ -948,110 +944,98 @@ class OpenM3u(Screen):
         self.create_bouquet()
         return
 
-    def crea_bouquet5002(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.create_bouquet5002()
-        return
-
-    def create_bouquet5002(self):
-        idx = self['list'].getSelectionIndex()
-        self.convert = True
-        name = self.names[idx]
-        pth = Path_Movies  # self.name
-        if not os.path.exists(pth):
-            self.mbox = self.session.open(MessageBox, _('Check in your Config Plugin - Path Movie'), MessageBox.TYPE_INFO, timeout=5)
-            return
-        bqtname = 'userbouquet.%s.tv' % name
-        desk_tmp = ''
-        in_bouquets = 0
-        if os.path.isfile('/etc/enigma2/%s' % bqtname):
-            os.remove('/etc/enigma2/%s' % bqtname)
-        with open('/etc/enigma2/%s' % bqtname, 'w') as outfile:
-            outfile.write('#NAME %s\r\n' % name.capitalize())
-            for line in open(pth + '%s' % name):
-                if line.startswith('http://') or line.startswith('https'):
-                    outfile.write('#SERVICE 5002:0:1:1:0:0:0:0:0:0:%s' % line.replace(':', '%3a'))
-                    outfile.write('#DESCRIPTION %s' % desk_tmp)
-                elif line.startswith('#EXTINF'):
-                    desk_tmp = '%s' % line.split(',')[-1]
-                elif '<stream_url><![CDATA' in line:
-                    outfile.write('#SERVICE 5002:0:1:1:0:0:0:0:0:0:%s\r\n' % line.split('[')[-1].split(']')[0].replace(':', '%3a'))
-                    outfile.write('#DESCRIPTION %s\r\n' % desk_tmp)
-                elif '<title>' in line:
-                    if '<![CDATA[' in line:
-                        desk_tmp = '%s\r\n' % line.split('[')[-1].split(']')[0]
-                    else:
-                        desk_tmp = '%s\r\n' % line.split('<')[1].split('>')[1]
-            outfile.close()
-        self.mbox = self.session.open(MessageBox, _('Check out the favorites list ...'), MessageBox.TYPE_INFO, timeout=5)
-        if os.path.isfile('/etc/enigma2/bouquets.tv'):
-            for line in open('/etc/enigma2/bouquets.tv'):
-                if bqtname in line:
-                    in_bouquets = 1
-            if in_bouquets == 0:
-                if os.path.isfile('/etc/enigma2/%s' % bqtname) and os.path.isfile('/etc/enigma2/bouquets.tv'):
-                    Utils.remove_line('/etc/enigma2/bouquets.tv', bqtname)
-                    with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
-                        outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
-                        outfile.close()
-                    in_bouquets = 1
-        self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
-        Utils.ReloadBouquets()
-
     def create_bouquet(self):
         idx = self['list'].getSelectionIndex()
-        self.convert = True
         name = self.names[idx]
-        pth = Path_Movies  # self.name
+        pth = self.Movies[idx]
         if not os.path.exists(pth):
             self.mbox = self.session.open(MessageBox, _('Check in your Config Plugin - Path Movie'), MessageBox.TYPE_INFO, timeout=5)
             return
-        bqtname = 'userbouquet.%s.tv' % name
-        desk_tmp = ''
-        in_bouquets = 0
-        if os.path.isfile('/etc/enigma2/%s' % bqtname):
-            os.remove('/etc/enigma2/%s' % bqtname)
-        with open('/etc/enigma2/%s' % bqtname, 'w') as outfile:
-            outfile.write('#NAME %s\r\n' % name.capitalize())
-            for line in open(pth + '%s' % name):
-                if line.startswith('http://') or line.startswith('https'):
-                    outfile.write('#SERVICE 4097:0:1:1:0:0:0:0:0:0:%s' % line.replace(':', '%3a'))
-                    outfile.write('#DESCRIPTION %s' % desk_tmp)
-                elif line.startswith('#EXTINF'):
-                    desk_tmp = '%s' % line.split(',')[-1]
-                elif '<stream_url><![CDATA' in line:
-                    outfile.write('#SERVICE 4097:0:1:1:0:0:0:0:0:0:%s\r\n' % line.split('[')[-1].split(']')[0].replace(':', '%3a'))
-                    outfile.write('#DESCRIPTION %s\r\n' % desk_tmp)
-                elif '<title>' in line:
-                    if '<![CDATA[' in line:
-                        desk_tmp = '%s\r\n' % line.split('[')[-1].split(']')[0]
-                    else:
-                        desk_tmp = '%s\r\n' % line.split('<')[1].split('>')[1]
-            outfile.close()
-        self.mbox = self.session.open(MessageBox, _('Check out the favorites list ...'), MessageBox.TYPE_INFO, timeout=5)
-        if os.path.isfile('/etc/enigma2/bouquets.tv'):
-            for line in open('/etc/enigma2/bouquets.tv'):
-                if bqtname in line:
-                    in_bouquets = 1
+        type = 'tv'
+        if "radio" in name.lower():
+            type = "radio"
+        name_file = name.replace('/', '_').replace(',', '').replace(' ', '-')
+        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(name_file))
+        cleanName = re.sub(r' ', '_', cleanName)
+        cleanName = re.sub(r'\d+:\d+:[\d.]+', '_', cleanName)
+        name_file = re.sub(r'_+', '_', cleanName)
+        name_file = name_file.lower()
 
-            if in_bouquets == 0:
-                if os.path.isfile('/etc/enigma2/%s' % bqtname) and os.path.isfile('/etc/enigma2/bouquets.tv'):
-                    Utils.remove_line('/etc/enigma2/bouquets.tv', bqtname)
-                    with open('/etc/enigma2/bouquets.tv', 'a') as outfile:
-                        outfile.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet\r\n' % bqtname)
-                        outfile.close()
+        bouquetname = 'userbouquet.%s.%s' % (name_file.lower(), type.lower())
+        tmpx = ''
+        namel = ''
+        tmplist = []
+        tmplist.append('#NAME %s (%s)' % (name_file, type))
+        tmplist.append('#SERVICE 1:64:0:0:0:0:0:0:0:0::%s CHANNELS' % name_file)
+        tmplist.append('#DESCRIPTION --- %s ---' % name_file)
+        print("Converting Bouquet %s" % name_file)
+        if os.path.exists(pth) and os.stat(pth).st_size > 0:
+            for line in open(pth):
+                if line.startswith('#EXTM3U'):
+                    continue
+                if '#EXTM3U $BorpasFileFormat="1"' in line:  # force export bouquet ???
+                    line = line.replace('$BorpasFileFormat="1"', '')
+                    continue
+                if line == ' ':
+                    continue
+                if line.startswith("#EXTINF"):
+                    line = '%s' % line.split(',')[-1]
+                    line = Utils.checkStr(line).rstrip('\r').rstrip('\n')
+                    namel = '%s' % line.split(',')[-1]
+                    tmpx = '#DESCRIPTION %s' % namel
+                else:
+                    if type.upper() == 'TV':
+                        line = line.replace(':', '%3a')
+                        line = line.rstrip()
+                        if line.startswith('rtmp') or line.startswith('rtsp') or line.startswith('mms'):
+                            line = '#SERVICE 4097:0:1:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                        if not line.startswith("#SERVICE 4097:0:1:0:0:0:0:0:0:0:rt"):
+                            if line.startswith('http%3a'):
+                                line = '#SERVICE 4097:0:1:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                            if line.startswith('https%3a'):
+                                line = '#SERVICE 4097:0:1:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                    elif type.upper() == 'RADIO':
+                        line = line.replace(':', '%3a')
+                        line = line.rstrip()
+                        if line.startswith('rtmp') or line.startswith('rtsp') or line.startswith('mms'):
+                            line = '#SERVICE 4097:0:2:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                        if not line.startswith("#SERVICE 4097:0:2:0:0:0:0:0:0:0:rt"):
+                            if line.startswith('http%3a'):
+                                line = '#SERVICE 4097:0:2:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                            if line.startswith('https%3a'):
+                                line = '#SERVICE 4097:0:2:0:0:0:0:0:0:0:%s:%s' % (line, namel)
+                    else:
+                        print("UNKNOWN TYPE: %s" % type)
+                tmplist.append(line)
+                tmplist.append(tmpx)
+                print('lineee222: ', line)
+                print('tmpx222: ', tmpx)
+
+            path1 = '/etc/enigma2/' + str(bouquetname)
+            path2 = '/etc/enigma2/bouquets.' + str(type.lower())
+            # create userbouquet
+            with open(path1, 'w+') as f:
+                for item in tmplist:
+                    f.write("%s\n" % item)
+            # write bouquet.tv file
+            in_bouquets = 0
+            for line in open('/etc/enigma2/bouquets.%s' % type.lower()):
+                if bouquetname in line:
                     in_bouquets = 1
-        self.mbox = self.session.open(MessageBox, _('Shuffle Favorite List in Progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=5)
-        Utils.ReloadBouquets()
+                    break
+            if in_bouquets == 0:
+                '''
+                Rename unlinked bouquet file /etc/enigma2/userbouquet.webcam.tv to /etc/enigma2/userbouquet.webcam.tv.del
+                '''
+                with open(path2, 'a+') as f:
+                    bouquetTvString = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "' + str(bouquetname) + '" ORDER BY bouquet\n'
+                    f.write(str(bouquetTvString))
+            message = (_("Bouquet exported"))
+            Utils.web_info(message)
+            Utils.ReloadBouquets()
 
     def cancel(self):
-        if self.convert is False:
-            self.close()
-        else:
-            self.close()
+        self.close()
 
 
 class M3uPlay(Screen):
@@ -1453,7 +1437,7 @@ class M3uPlay2(
     screen_timeout = 5000
 
     def __init__(self, session, name, url):
-        global SREF, streaml
+        global streaml
         Screen.__init__(self, session)
         self.session = session
         global _session
@@ -1786,7 +1770,7 @@ class OpenConfig(Screen, ConfigListScreen):
                                                                  'yellow': self.msgupdt1,
                                                                  'showVirtualKeyboard': self.KeyText,
                                                                  'ok': self.Ok_edit,
-                                                                  }, -2)
+                                                                 }, -2)
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
         self.createSetup()
@@ -1991,18 +1975,17 @@ class OpenConfig(Screen, ConfigListScreen):
         if sel:
             self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
 
-    def cancelConfirm(self, result):
-        if not result:
-            return
-        for x in self['config'].list:
-            x[1].cancel()
-        self.close()
-
-    def extnok(self):
-        if self['config'].isChanged():
-            self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
-        else:
-            self.close()
+    def extnok(self, answer=None):
+        if answer is None:
+            if self["config"].isChanged():
+                self.session.openWithCallback(self.zExit, MessageBox, _("Really close without saving settings?"))
+            else:
+                self.close(False)
+        elif answer:
+            for x in self["config"].list:
+                x[1].cancel()
+            self.close(True)
+        return
 
     def msgupdt2(self):
         if self.cbUpdate is False:
