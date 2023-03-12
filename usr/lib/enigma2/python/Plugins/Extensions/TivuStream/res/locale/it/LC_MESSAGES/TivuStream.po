@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TivuStream\n"
 "Report-Msgid-Bugs-To: Lululla <ekekaz@gmail.com>\n"
-"POT-Creation-Date: 2020-09-19 15:58+0200\n"
-"PO-Revision-Date: 2020-09-19 15:58+0200\n"
+"POT-Creation-Date: 2023-03-12 13:56+0100\n"
+"PO-Revision-Date: 2023-03-12 13:56+0100\n"
 "Last-Translator: Lululla <ekekaz@gmail.com>\n"
 "Language-Team: lululla\n"
 "Language: it_IT\n"
@@ -16,393 +16,482 @@ msgstr ""
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: plugin-py2.py:132 plugin.py:190
-msgid "IPTV(4097)"
+#: getpics.py:254
+msgid "..:: TiVuStream Revolution ::.."
 msgstr ""
 
-#: plugin-py2.py:133 plugin.py:191
-msgid "Dvb(1)"
+#: getpics.py:632
+msgid "4:3 Letterbox"
 msgstr ""
 
-#: plugin-py2.py:134 plugin.py:192
-msgid "eServiceUri(8193)"
+#: getpics.py:633
+msgid "4:3 PanScan"
 msgstr ""
 
-#: plugin-py2.py:138 plugin.py:196
+#: getpics.py:634
+msgid "16:9"
+msgstr ""
+
+#: getpics.py:635
+msgid "16:9 always"
+msgstr ""
+
+#: getpics.py:636
+msgid "16:10 Letterbox"
+msgstr ""
+
+#: getpics.py:637
+msgid "16:10 PanScan"
+msgstr ""
+
+#: getpics.py:638
+msgid "16:9 Letterbox"
+msgstr ""
+
+#: plugin.py:142
+msgid "ServiceMp3(4097)"
+msgstr ""
+
+#: plugin.py:143
+msgid "Hardware(1)"
+msgstr ""
+
+#: plugin.py:147
 msgid "Gstreamer(5001)"
 msgstr ""
 
-#: plugin-py2.py:140 plugin.py:198
+#: plugin.py:149
 msgid "Exteplayer3(5002)"
 msgstr ""
 
-#: plugin-py2.py:379 plugin.py:445
+#: plugin.py:151
+msgid "Streamlink(5002)"
+msgstr ""
+
+#: plugin.py:153
+msgid "eServiceUri(8193)"
+msgstr ""
+
+#: plugin.py:398
 msgid "Channel List"
 msgstr "Lista Canali"
 
-#: plugin-py2.py:384 plugin-py2.py:607 plugin-py2.py:807 plugin-py2.py:1266
-#: plugin.py:450 plugin.py:754 plugin.py:956 plugin.py:1415
-#, python-format
-msgid "..:: TiVuStream List V. %s ::.."
-msgstr ""
-
-#: plugin-py2.py:387 plugin-py2.py:611 plugin-py2.py:814 plugin-py2.py:1147
-#: plugin-py2.py:1269 plugin.py:453 plugin.py:758 plugin.py:963 plugin.py:1296
-#: plugin.py:1418
+#: plugin.py:406 plugin.py:818 plugin.py:1008 plugin.py:1590 plugin.py:1708
 msgid "Exit"
 msgstr "Uscire"
 
-#: plugin-py2.py:388 plugin.py:454
+#: plugin.py:407
 msgid "Reload Bouquet"
 msgstr "Ricarica Bouquet"
 
-#: plugin-py2.py:389 plugin.py:455
+#: plugin.py:408
 msgid "Delete Bouquet"
 msgstr "Eliminare Bouquet"
 
-#: plugin-py2.py:390 plugin.py:456
+#: plugin.py:409
 msgid "Player"
 msgstr "Player"
 
-#: plugin-py2.py:408 plugin.py:474
+#: plugin.py:430
 msgid "Check List Update wait please..."
 msgstr "Controlla aggiornamento elenco attendere per favore ..."
 
-#: plugin-py2.py:422
-msgid "List Update: None"
-msgstr "Aggiornamento Liste: Nessuno"
-
-#: plugin-py2.py:475 plugin.py:615
+#: plugin.py:662
 msgid "Bouquet not installed"
 msgstr "Bouquet non installato"
 
-#: plugin-py2.py:484 plugin.py:627
-msgid "CONNECTION ERROR OR UNKNOWN"
-msgstr ""
-
-#: plugin-py2.py:489 plugin.py:632
+#: plugin.py:682
 msgid "You are not allowed!"
 msgstr "Non hai il permesso!"
 
-#: plugin-py2.py:517 plugin-py2.py:733 plugin-py2.py:775 plugin.py:664
-#: plugin.py:882 plugin.py:924
+#: plugin.py:714
 msgid "Check out the favorites list ..."
 msgstr "Dai un'occhiata all'elenco dei preferiti ..."
 
-#: plugin-py2.py:549 plugin-py2.py:563 plugin-py2.py:744 plugin-py2.py:787
-#: plugin.py:697 plugin.py:710 plugin.py:893 plugin.py:936
+#: plugin.py:750 plugin.py:780
 msgid "Shuffle Favorite List in Progress"
 msgstr "Riordino Liste favorite in corso"
 
-#: plugin-py2.py:549 plugin-py2.py:560 plugin-py2.py:563 plugin-py2.py:744
-#: plugin-py2.py:787 plugin.py:697 plugin.py:707 plugin.py:710 plugin.py:893
-#: plugin.py:936
+#: plugin.py:750 plugin.py:760 plugin.py:780
 msgid "Wait please ..."
 msgstr "Attendere prego ..."
 
-#: plugin-py2.py:556 plugin.py:703
+#: plugin.py:758
 msgid "Install the selected list?"
 msgstr "Installare Lista selezionata?"
 
-#: plugin-py2.py:560 plugin.py:707
+#: plugin.py:760
 msgid "Installation in progress"
-msgstr ""
+msgstr "Installazione in corso..."
 
-#: plugin-py2.py:570 plugin.py:717
+#: plugin.py:764
 msgid "ATTENTION"
 msgstr "ATTENZIONE"
 
-#: plugin-py2.py:570 plugin.py:717
-msgid "Delete TiVuStream channel lists"
-msgstr "Cancellare le liste canali TiVuStream?"
+#: plugin.py:764
+msgid "Delete TiVuStream Revolution channel lists"
+msgstr "Cancellando elenchi dei canali TiVuStream Revolution"
 
-#: plugin-py2.py:585 plugin.py:732
-msgid "TiVuStream channel lists successfully deleted"
-msgstr "Elenchi di canali TiVuStream eliminati correttamente"
+#: plugin.py:776
+msgid "TiVuStream Revolution channel lists successfully deleted"
+msgstr ""
+"Gli elenchi dei canali di TiVuStream Revolution sono stati eliminati con "
+"successo"
 
-#: plugin-py2.py:610 plugin.py:757
+#: plugin.py:817
 #, python-format
 msgid "Folder path %s"
 msgstr "Percorso cartella %s"
 
-#: plugin-py2.py:612 plugin.py:759
-msgid "Convert ExtePlayer3"
-msgstr "Converti ExtePlayer3"
+#: plugin.py:819
+msgid "Convert Bouquet"
+msgstr "Converti Bouquet"
 
-#: plugin-py2.py:613 plugin.py:760
+#: plugin.py:820
 msgid "Convert Gstreamer"
 msgstr "Converti Gstreamer"
 
-#: plugin-py2.py:614 plugin.py:761
+#: plugin.py:821
 msgid "Remove"
-msgstr ""
+msgstr "Rimuovere"
 
-#: plugin-py2.py:673 plugin.py:822
+#: plugin.py:887
 msgid "Do you want to remove?"
 msgstr "Vuoi rimuovere?"
 
-#: plugin-py2.py:811 plugin.py:960
+#: plugin.py:907
+msgid "Check in your Config Plugin - Path Movie"
+msgstr "Controlla nel plugin di configurazione - Path Movie"
+
+#: plugin.py:912
+#, python-format
+msgid ""
+"Do you want to Convert %s\n"
+"to Favorite Bouquet ?\n"
+"\n"
+"Attention!! Wait while converting !!!"
+msgstr ""
+"Vuoi convertire %s\n"
+"al bouquet preferito?\n"
+"\n"
+"Attenzione!! Aspetta durante la conversione !!!"
+
+#: plugin.py:984
+msgid "bouquets reloaded.."
+msgstr "bouquet ricaricati.."
+
+#: plugin.py:986
+msgid "Download Error"
+msgstr ""
+
+#: plugin.py:1005
 #, python-format
 msgid "Service Reference used %s"
 msgstr "Service Reference utilizzato %s"
 
-#: plugin-py2.py:815 plugin.py:964
+#: plugin.py:1009
 msgid "Download"
 msgstr ""
 
-#: plugin-py2.py:816 plugin.py:965
+#: plugin.py:1010
 msgid "Add Stream to Bouquet"
 msgstr "Aggiungi a Bouquet"
 
-#: plugin-py2.py:817 plugin.py:966
+#: plugin.py:1011
 msgid "Search"
 msgstr "Cerca"
 
-#: plugin-py2.py:844 plugin.py:993
+#: plugin.py:1041
 msgid "Filter this category..."
 msgstr "Filtra questa categoria..."
 
-#: plugin-py2.py:885 plugin.py:1034
+#: plugin.py:1095
 msgid "You are already downloading!!!"
 msgstr "Stai già scaricando !!!"
 
-#: plugin-py2.py:889 plugin.py:1038
+#: plugin.py:1099
 msgid "DOWNLOAD VIDEO?"
 msgstr ""
 
-#: plugin-py2.py:892 plugin-py2.py:1079 plugin.py:1041 plugin.py:1228
+#: plugin.py:1102
 msgid "Only VOD Movie allowed or not .ext Filtered!!!"
 msgstr "Solo film VOD consentito o nessun Filtro!!!"
 
-#: plugin-py2.py:917 plugin-py2.py:936 plugin.py:1066 plugin.py:1085
+#: plugin.py:1136 plugin.py:1157
 msgid "Download Failed!!!"
 msgstr ""
 
-#: plugin-py2.py:978 plugin.py:1127
+#: plugin.py:1205
+msgid "File Unknow!!!"
+msgstr ""
+
+#: plugin.py:1238
 msgid "Please enter the parental control pin code"
 msgstr "Inserisci il codice PIN del controllo genitori"
 
-#: plugin-py2.py:978 plugin.py:1127
+#: plugin.py:1238
 msgid "Enter pin code"
 msgstr "Inserisci il codice PIN"
 
-#: plugin-py2.py:983 plugin.py:1132
+#: plugin.py:1243
 msgid "The pin code you entered is wrong."
 msgstr "Il codice PIN che hai inserito è sbagliato."
 
-#: plugin-py2.py:1144 plugin.py:1293
-#, python-format
-msgid "..:: TiVuStream List V. %s by Lululla ::.."
-msgstr ""
+#: plugin.py:1270
+msgid "Install Streamlink first"
+msgstr "Installare Stremlnk prima"
 
-#: plugin-py2.py:1148 plugin.py:1297
+#: plugin.py:1591
 msgid "Ok"
 msgstr ""
 
-#: plugin-py2.py:1172 plugin.py:1321
+#: plugin.py:1616
 msgid "Add Stream IPTV"
 msgstr "Aggiungi Stream IPTV"
 
-#: plugin-py2.py:1178 plugin.py:1327
+#: plugin.py:1621
 msgid "Select the Bouquet and press OK to add"
 msgstr "Selezionare il bouquet e premere OK per aggiungere"
 
-#: plugin-py2.py:1213 plugin.py:1362
+#: plugin.py:1656
 msgid "Enter Name"
 msgstr "Inserire Nome"
 
-#: plugin-py2.py:1262 plugin.py:1411
+#: plugin.py:1700
 msgid "TiVuStream Config"
 msgstr "TiVuStream Config"
 
-#: plugin-py2.py:1270 plugin.py:1419
+#: plugin.py:1709
 msgid "Save"
 msgstr "Salva"
 
-#: plugin-py2.py:1271 plugin.py:1420
+#: plugin.py:1710
 msgid "Update"
 msgstr "Aggiorna"
 
-#: plugin-py2.py:1311 plugin-py2.py:1314 plugin-py2.py:1317 plugin.py:1460
-#: plugin.py:1463 plugin.py:1466
+#: plugin.py:1758 plugin.py:1762
 msgid "Version: "
 msgstr ""
 
-#: plugin-py2.py:1311 plugin-py2.py:1314 plugin.py:1460 plugin.py:1463
+#: plugin.py:1758
 msgid "No updates!"
 msgstr ""
 
-#: plugin-py2.py:1311 plugin-py2.py:1314 plugin.py:1460 plugin.py:1463
+#: plugin.py:1758
 msgid "if you like it you can make a free donation"
 msgstr "se ti piace puoi fare una donazione gratuita"
 
-#: plugin-py2.py:1311 plugin-py2.py:1314 plugin.py:1460 plugin.py:1463
+#: plugin.py:1758
 msgid "www.paypal.me/TivuStream"
 msgstr "www.paypal.me/TivuStream"
 
-#: plugin-py2.py:1317 plugin.py:1466
+#: plugin.py:1762
 msgid "Last update "
-msgstr ""
+msgstr "Ultimo aggiornamento"
 
-#: plugin-py2.py:1317 plugin.py:1466
+#: plugin.py:1762
 msgid "available!"
 msgstr "disponibile !"
 
-#: plugin-py2.py:1317 plugin.py:1466
+#: plugin.py:1762
 msgid "ChangeLog:"
 msgstr "ChangeLog:"
 
-#: plugin-py2.py:1322 plugin.py:1471
+#: plugin.py:1766
 msgid "No updates available"
 msgstr "Nessun aggiornamento disponibile !"
 
-#: plugin-py2.py:1322 plugin.py:1471
+#: plugin.py:1766
 msgid "No internet connection or server OFF"
 msgstr ""
 
-#: plugin-py2.py:1322 plugin.py:1471
+#: plugin.py:1766
 msgid "Please try again later or change SERVER to config menu."
 msgstr "Riprovare più tardi o cambiare SERVER nel menu di configurazione."
 
-#: plugin-py2.py:1336 plugin.py:1485
-msgid "          Server:"
+#: plugin.py:1788 plugin.py:1807
+msgid "Server:"
 msgstr ""
 
-#: plugin-py2.py:1336 plugin.py:1485
-msgid "Server selection"
-msgstr "Selezionare il Server Liste"
-
-#: plugin-py2.py:1337 plugin.py:1486
-msgid "          Auto Update Plugin:"
+#: plugin.py:1789 plugin.py:1813
+msgid "Auto Update Plugin:"
 msgstr ""
 
-#: plugin-py2.py:1337 plugin.py:1486
-msgid "Automatic plugin update"
-msgstr "Aggiornamento automatico plugin"
-
-#: plugin-py2.py:1338 plugin.py:1487
-msgid "          Personal Password:"
+#: plugin.py:1790 plugin.py:1816
+msgid "Personal Password:"
 msgstr ""
 
-#: plugin-py2.py:1338 plugin.py:1487
+#: plugin.py:1791 plugin.py:1819
+msgid "IPTV bouquets location "
+msgstr ""
+
+#: plugin.py:1792 plugin.py:1822
+msgid "Player folder List <.m3u>:"
+msgstr ""
+
+#: plugin.py:1793 plugin.py:1825
+msgid "Services Player Reference type"
+msgstr ""
+
+#: plugin.py:1794 plugin.py:1810
+msgid "Download file tivustream.m3u"
+msgstr "Download file tivustream.m3u"
+
+#: plugin.py:1795 plugin.py:1828
+msgid "Show thumpics?"
+msgstr "Mostra PIC"
+
+#: plugin.py:1797 plugin.py:1831
+msgid "Download thumpics?"
+msgstr "Sownload PIC"
+
+#: plugin.py:1798 plugin.py:1834
+msgid "Folder Cache for Thumbpics:"
+msgstr "Percorso Cache per PIC:"
+
+#: plugin.py:1799 plugin.py:1837
+msgid "Link in Extensions Menu:"
+msgstr ""
+
+#: plugin.py:1800 plugin.py:1840
+msgid "Link in Main Menu:"
+msgstr ""
+
+#: plugin.py:1808
+msgid "Configure Server for Update Service and List"
+msgstr ""
+
+#: plugin.py:1811
+msgid "Download file tivustream.m3u complete"
+msgstr ""
+
+#: plugin.py:1814
+msgid "Set Automatic Update Plugin Version"
+msgstr ""
+
+#: plugin.py:1817
 msgid "Enter the password to download Lists XXX Adults"
 msgstr "Inserisci la password per il download di Liste XXX Adulti"
 
-#: plugin-py2.py:1339 plugin.py:1488
-msgid "          IPTV bouquets location "
-msgstr ""
-
-#: plugin-py2.py:1339 plugin.py:1488
+#: plugin.py:1820
 msgid "Configure position of the bouquets of the converted lists"
 msgstr "Configura la posizione dei Bouquet delle liste convertite"
 
-#: plugin-py2.py:1340 plugin.py:1489
-msgid "          Player folder List <.m3u>:"
-msgstr ""
-
-#: plugin-py2.py:1340 plugin.py:1489
+#: plugin.py:1823
 msgid "Folder path containing the .m3u files"
 msgstr "Percorso della cartella contenente i file .m3u"
 
-#: plugin-py2.py:1341 plugin.py:1490
-msgid "          Services Player Reference type"
-msgstr ""
-
-#: plugin-py2.py:1341 plugin.py:1490
+#: plugin.py:1826
 msgid "Configure Service Player Reference"
 msgstr "Configura i Service  Reference per il Player"
 
-#: plugin-py2.py:1342 plugin.py:1491
-msgid "          Link in Extensions Menu:"
+#: plugin.py:1829
+msgid "Show Thumbpics ? Enigma restart required"
 msgstr ""
 
-#: plugin-py2.py:1342 plugin.py:1491
+#: plugin.py:1832
+msgid "Download thumpics in Player M3U (is very Slow)?"
+msgstr ""
+
+#: plugin.py:1835
+msgid "Configure position folder for temporary Thumbpics"
+msgstr ""
+
+#: plugin.py:1838
 msgid "Show Plugin in Extensions Menu"
 msgstr "Mostra Plugin in Menu Estensioni"
 
-#: plugin-py2.py:1343 plugin.py:1492
-msgid "          Link in Main Menu:"
-msgstr ""
-
-#: plugin-py2.py:1343 plugin.py:1492
+#: plugin.py:1841
 msgid "Show Plugin in Main Menu"
 msgstr "Mostra Plugin in Menu Estensioni"
 
-#: plugin-py2.py:1390 plugin.py:1539
+#: plugin.py:1880
 msgid "Choose Directory:"
 msgstr "Scegli Cartella"
 
-#: plugin-py2.py:1391 plugin.py:1540
+#: plugin.py:1881
 msgid "Choose Directory"
 msgstr "Scegli Cartella"
 
-#: plugin-py2.py:1412 plugin.py:1561
+#: plugin.py:1904
 msgid "M3u list folder not detected!"
 msgstr "Cartella dell'elenco M3u non rilevata!"
 
-#: plugin-py2.py:1422 plugin.py:1571
+#: plugin.py:1914
 msgid "Settings saved correctly!"
 msgstr "Impostazioni salvate correttamente!"
 
-#: plugin-py2.py:1447 plugin.py:1596
-msgid "Really close without saving the settings?"
-msgstr "Uscire senza salvare le impostazioni?"
+#: plugin.py:1932
+msgid "Really close without saving settings?"
+msgstr ""
 
-#: plugin-py2.py:1456 plugin.py:1605
+#: plugin.py:1946
 msgid "New Online Version!"
 msgstr "Nuova versione online!"
 
-#: plugin-py2.py:1456 plugin.py:1605
+#: plugin.py:1946
 #, python-format
-msgid "Update Plugin to Version %s ?"
-msgstr "Update Plugin to Version %s ?"
+msgid ""
+"Update Plugin to Version %s ?\n"
+"Please Restart GUI Required!"
+msgstr ""
 
-#: plugin-py2.py:1461 plugin.py:1610
+#: plugin.py:1951
 msgid "Update Plugin ?"
 msgstr "Aggiornare il plugin?"
 
-#: plugin-py2.py:1469 plugin.py:1618
+#: plugin.py:1959
 #, python-format
 msgid "Update Plugin: %s"
 msgstr "Update Plugin: %s"
 
-#: plugin-py2.py:1513 plugin.py:1662
+#: plugin.py:2003
 msgid "Executing in run:"
 msgstr ""
 
-#: plugin-py2.py:1524 plugin.py:1673
-msgid "Execution finished !!"
+#: plugin.py:2015
+msgid ""
+"\n"
+"\n"
 msgstr ""
 
-#: plugin-py2.py:1589 plugin.py:1738
+#: plugin.py:2017
+msgid "Execution finished!!\n"
+msgstr ""
+
+#: plugin.py:2034
+msgid "Additional packages must be installed. Do you want to continue?"
+msgstr ""
+
+#: plugin.py:2096
 msgid "Question"
 msgstr "Question"
 
-#: plugin-py2.py:1590 plugin.py:1739
+#: plugin.py:2097
 msgid "Information"
 msgstr "Information"
 
-#: plugin-py2.py:1591 plugin.py:1740
+#: plugin.py:2098
 msgid "Warning"
 msgstr "Warning"
 
-#: plugin-py2.py:1592 plugin.py:1741
+#: plugin.py:2099
 msgid "Error"
 msgstr "Error"
 
-#: plugin-py2.py:1592 plugin.py:1741
+#: plugin.py:2099
 msgid "Message"
 msgstr "Message"
 
-#: plugin-py2.py:1597 plugin-py2.py:1599 plugin.py:1746 plugin.py:1748
+#: plugin.py:2104 plugin.py:2106
 msgid "Yes"
 msgstr "Yes"
 
-#: plugin-py2.py:1597 plugin-py2.py:1599 plugin.py:1746 plugin.py:1748
+#: plugin.py:2104 plugin.py:2106
 msgid "No"
 msgstr "No"
 
-#: plugin-py2.py:1738 plugin.py:1887
+#: plugin.py:2296
 msgid ""
 "\n"
 "\n"
@@ -414,17 +503,89 @@ msgstr ""
 "\n"
 "Check Connection wait please..."
 
-#: plugin-py2.py:1756 plugin.py:1905
+#: plugin.py:2305
+msgid "==========       WELCOME     ============\n"
+msgstr ""
+
+#: plugin.py:2306
+msgid "=========     SUPPORT ON:   ============\n"
+msgstr ""
+
+#: plugin.py:2307
+msgid "+WWW.TIVUSTREAM.COM - WWW.CORVOBOYS.COM+\n"
+msgstr ""
+
+#: plugin.py:2308
+msgid ""
+"http://t.me/tivustream\n"
+"\n"
+msgstr ""
+
+#: plugin.py:2309 plugin.py:2316 plugin.py:2323
+msgid "========================================\n"
+msgstr ""
+
+#: plugin.py:2310
+msgid "NOTA BENE:\n"
+msgstr ""
+
+#: plugin.py:2311
+msgid ""
+"Le liste create ad HOC contengono indirizzi liberamente e gratuitamente\n"
+msgstr ""
+
+#: plugin.py:2312
+msgid "trovati in rete e non protetti da sottoscrizione o abbonamento.\n"
+msgstr ""
+
+#: plugin.py:2313
+msgid "Il server di riferimento strutturale ai progetti rilasciati\n"
+msgstr ""
+
+#: plugin.py:2314
+msgid "non e' fonte di alcun stream/flusso.\n"
+msgstr ""
+
+#: plugin.py:2315
+msgid ""
+"Assolutamente VIETATO utilizzare queste liste senza autorizzazione.\n"
+msgstr ""
+
+#: plugin.py:2317
+msgid "DISCLAIMER: \n"
+msgstr "NOTA BENE:\n"
+
+#: plugin.py:2318
+msgid ""
+"The lists created at HOC contain addresses freely and freely found on\n"
+msgstr ""
+"Le liste create ad HOC contengono indirizzi liberamente e gratuitamente\n"
+
+#: plugin.py:2319
+msgid "the net and not protected by subscription or subscription.\n"
+msgstr "trovati in rete e non protetti da sottoscrizione o abbonamento.\n"
+
+#: plugin.py:2320
+msgid "The structural reference server for projects released\n"
+msgstr "Il server di riferimento strutturale ai progetti rilasciati\n"
+
+#: plugin.py:2321
+msgid "is not a source of any stream/flow.\n"
+msgstr "non e' fonte di alcun stream/flusso.\n"
+
+#: plugin.py:2322
+msgid "Absolutely PROHIBITED to use this lists without authorization\n"
+msgstr ""
+"Assolutamente VIETATO utilizzare queste liste senza autorizzazione.\n"
+
+#: plugin.py:2330
 msgid ""
 "\n"
 "\n"
-"Error downloading updates!"
+"Error downloading News!"
 msgstr ""
-"\n"
-"\n"
-"Error downloading updates!"
 
-#: plugin-py2.py:1759 plugin.py:1908
+#: plugin.py:2333
 msgid ""
 "\n"
 "\n"
@@ -434,17 +595,42 @@ msgstr ""
 "\n"
 "Server Off !"
 
-#: plugin-py2.py:1759 plugin.py:1908
+#: plugin.py:2333
 msgid "check SERVER in config"
 msgstr "Controllare il Server in configurazione"
 
-#: plugin-py2.py:1783 plugin-py2.py:1800 plugin.py:1938 plugin.py:1955
-msgid "TiVuStream List"
-msgstr ""
+#~ msgid "List Update: None"
+#~ msgstr "Aggiornamento Liste: Nessuno"
 
-#: plugin-py2.py:1801 plugin-py2.py:1802 plugin.py:1956 plugin.py:1957
-msgid "TiVuStream List v."
-msgstr ""
+#~ msgid "Delete TiVuStream channel lists"
+#~ msgstr "Cancellare le liste canali TiVuStream?"
+
+#~ msgid "TiVuStream channel lists successfully deleted"
+#~ msgstr "Elenchi di canali TiVuStream eliminati correttamente"
+
+#~ msgid "Convert ExtePlayer3"
+#~ msgstr "Converti ExtePlayer3"
+
+#~ msgid "Server selection"
+#~ msgstr "Selezionare il Server Liste"
+
+#~ msgid "Automatic plugin update"
+#~ msgstr "Aggiornamento automatico plugin"
+
+#~ msgid "Really close without saving the settings?"
+#~ msgstr "Uscire senza salvare le impostazioni?"
+
+#~ msgid "Update Plugin to Version %s ?"
+#~ msgstr "Update Plugin to Version %s ?"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Error downloading updates!"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Error downloading updates!"
 
 #~ msgid "Convert StreamLink"
 #~ msgstr "Converti StreamLink"
