@@ -909,7 +909,7 @@ class OpenM3u(Screen):
         idx = self['list'].getSelectionIndex()
         self.name = self.names[idx]
         if answer is None:
-            self.session.openWithCallback(self.messagerun, MessageBox, _("Do you want to Convert %s\nto Favorite Bouquet ?\n\nAttention!! Wait while converting !!!") % self.name)
+            self.session.openWithCallback(self.crea_bouquet, MessageBox, _("Do you want to Convert %s\nto Favorite Bouquet ?\n\nAttention!! Wait while converting !!!") % self.name)
         elif answer:
             type = 'tv'
             if "radio" in namex.lower():
