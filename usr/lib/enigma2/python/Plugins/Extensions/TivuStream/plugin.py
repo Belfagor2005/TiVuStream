@@ -5,7 +5,7 @@
 ****************************************
 *        coded by Lululla              *
 *                                      *
-*             12/03/2023               *
+*             16/03/2023               *
 ****************************************
 Info http://t.me/tivustream
 '''
@@ -391,6 +391,8 @@ Panel_list = [
 class MainTvStream(Screen):
     def __init__(self, session):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'MainTvStream.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -758,6 +760,8 @@ class MainTvStream(Screen):
             self.session.openWithCallback(self.messagerun, MessageBox, _('Install the selected list?'))
         elif answer:
             self.session.openWithCallback(self.okRun, MessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=3)
+            self.keyNumberGlobalCB(self['list'].getSelectedIndex())
+
 
     def messagedellist(self, answer=None):
         if answer is None:
@@ -805,6 +809,8 @@ class MainTvStream(Screen):
 class OpenM3u(Screen):
     def __init__(self, session):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'OpenM3u.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -912,25 +918,28 @@ class OpenM3u(Screen):
             self.session.openWithCallback(self.crea_bouquet, MessageBox, _("Do you want to Convert %s\nto Favorite Bouquet ?\n\nAttention!! Wait while converting !!!") % self.name)
         elif answer:
             type = 'tv'
-            if "radio" in namex.lower():
+            if "radio" in self.name.lower():
                 type = "radio"
-            name_file = namex.replace('/', '_').replace(',', '').replace(' ', '-')
+            name_file = self.name.replace('/', '_').replace(',', '').replace(' ', '-')
             cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(name_file))
             cleanName = re.sub(r' ', '_', cleanName)
             cleanName = re.sub(r'\d+:\d+:[\d.]+', '_', cleanName)
             name_file = re.sub(r'_+', '_', cleanName)
+            name_file = name_file.replace('.m3u', '')
             bouquetname = 'userbouquet.%s.%s' % (name_file.lower(), type.lower())
             print("Converting Bouquet %s" % name_file)
             self.file = pth
 
             path1 = '/etc/enigma2/' + str(bouquetname)
-            path2 = '/etc/enigma2/bouquets.' + str(self.type.lower())
+            path2 = '/etc/enigma2/bouquets.' + str(type.lower())
 
             if os.path.isfile(self.file) and os.stat(self.file).st_size > 0:
                 self.tmpx = ''
-                self.namel = ''
+                namel = ''
+                servicez = ''
+                descriptionz = ''
                 tmplist = []
-                tmplist.append('#NAME HasBahCa IPTV %s (%s)' % (name_file, self.type))
+                tmplist.append('#NAME %s (%s)' % (name_file, type))
                 tmplist.append('#SERVICE 1:64:0:0:0:0:0:0:0:0::%s CHANNELS' % name_file)
                 tmplist.append('#DESCRIPTION --- %s ---' % name_file)
                 for line in open(self.file):
@@ -992,6 +1001,8 @@ class OpenM3u(Screen):
 class M3uPlay(Screen):
     def __init__(self, session, name):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'M3uPlay.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -1088,9 +1099,6 @@ class M3uPlay(Screen):
             urlm3u = self.urls[idx]
             print('namem3u: ', namem3u)
             print('urlm3u: ', urlm3u)
-
-            if idx < 0:
-                return
             if self.downloading is True:
                 self.session.open(MessageBox, _('You are already downloading!!!'), MessageBox.TYPE_INFO, timeout=5)
             else:
@@ -1100,7 +1108,6 @@ class M3uPlay(Screen):
                 else:
                     self.downloading = False
                     self.session.open(MessageBox, _('Only VOD Movie allowed or not .ext Filtered!!!'), MessageBox.TYPE_INFO, timeout=5)
-
         except Exception as e:
             print("Error list: %s" % e)
             print("self.names is %s" % len(self.names))
@@ -1580,6 +1587,8 @@ class M3uPlay2(
 class AddIpvStream(Screen):
     def __init__(self, session, name, url):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'AddIpvStream.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -1693,13 +1702,16 @@ class AddIpvStream(Screen):
 
 class OpenConfig(Screen, ConfigListScreen):
     def __init__(self, session):
+        self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'OpenConfig.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self.setup_title = _("TiVuStream Config")
         self.onChangedEntry = []
-        self.session = session
+        
         info = '***'
         self['title'] = Label(_(title_plug))
         self['Maintener'] = Label('%s' % Maintener)
@@ -1785,61 +1797,34 @@ class OpenConfig(Screen, ConfigListScreen):
     def createSetup(self):
         self.editListEntry = None
         self.list = []
-        self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server))
-        self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd))
-        self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code))
-        self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop))
-        self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf))
-        self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services))
-        self.list.append(getConfigListEntry(_('Download file tivustream.m3u'), config.plugins.TivuStream.dowm3u))
-        self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb))
+        self.list.append(getConfigListEntry(_('Server:'), config.plugins.TivuStream.server, _("Configure Server for Update Service and List")))
+        self.list.append(getConfigListEntry(_('Auto Update Plugin:'), config.plugins.TivuStream.autoupd, _("Set Automatic Update Plugin Version")))
+        self.list.append(getConfigListEntry(_('Personal Password:'), config.plugins.TivuStream.code, _("Enter the password to download Lists XXX Adults")))
+        self.list.append(getConfigListEntry(_('IPTV bouquets location '), config.plugins.TivuStream.bouquettop, _("Configure position of the bouquets of the converted lists")))
+        self.list.append(getConfigListEntry(_('Player folder List <.m3u>:'), config.plugins.TivuStream.pthm3uf, _("Folder path containing the .m3u files")))
+        self.list.append(getConfigListEntry(_('Services Player Reference type'), config.plugins.TivuStream.services, _("Configure Service Player Reference")))
+        self.list.append(getConfigListEntry(_('Download file tivustream.m3u'), config.plugins.TivuStream.dowm3u, _("Download file tivustream.m3u complete")))
+        self.list.append(getConfigListEntry(_('Show thumpics?'), config.plugins.TivuStream.thumb, _("Show Thumbpics ? Enigma restart required")))
         if config.plugins.TivuStream.thumb.value is True:
-            self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic))
-        self.list.append(getConfigListEntry(_('Folder Cache for Thumbpics:'), config.plugins.TivuStream.cachefold))
-        self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext))
-        self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain))
+            self.list.append(getConfigListEntry(_('Download thumpics?'), config.plugins.TivuStream.thumbpic, _("Download thumpics in Player M3U (is very Slow)?")))
+        self.list.append(getConfigListEntry(_('Folder Cache for Thumbpics:'), config.plugins.TivuStream.cachefold, _("Configure position folder for temporary Thumbpics")))
+        self.list.append(getConfigListEntry(_('Link in Extensions Menu:'), config.plugins.TivuStream.strtext, _("Show Plugin in Extensions Menu")))
+        self.list.append(getConfigListEntry(_('Link in Main Menu:'), config.plugins.TivuStream.strtmain, _("Show Plugin in Main Menu")))
         self['config'].list = self.list
         self["config"].l.setList(self.list)
-        self.setInfo()
+        # self.setInfo()
 
     def setInfo(self):
-        entry = str(self.getCurrentEntry())
-        if entry == _('Server:'):
-            self['description'].setText(_("Configure Server for Update Service and List"))
+        try:
+            sel = self['config'].getCurrent()[2]
+            if sel:
+                # print('sel =: ', sel)
+                self['description'].setText(str(sel))
+            else:
+                self['description'].setText(_('SELECT YOUR CHOICE'))
             return
-        if entry == _('Download file tivustream.m3u'):
-            self['description'].setText(_("Download file tivustream.m3u complete"))
-            return
-        if entry == _('Auto Update Plugin:'):
-            self['description'].setText(_("Set Automatic Update Plugin Version"))
-            return
-        if entry == _('Personal Password:'):
-            self['description'].setText(_("Enter the password to download Lists XXX Adults"))
-            return
-        if entry == _('IPTV bouquets location '):
-            self['description'].setText(_("Configure position of the bouquets of the converted lists"))
-            return
-        if entry == _('Player folder List <.m3u>:'):
-            self['description'].setText(_("Folder path containing the .m3u files"))
-            return
-        if entry == _('Services Player Reference type'):
-            self['description'].setText(_("Configure Service Player Reference"))
-            return
-        if entry == _('Show thumpics?'):
-            self['description'].setText(_("Show Thumbpics ? Enigma restart required"))
-            return
-        if entry == _('Download thumpics?'):
-            self['description'].setText(_("Download thumpics in Player M3U (is very Slow)?"))
-            return
-        if entry == _('Folder Cache for Thumbpics:'):
-            self['description'].setText(_("Configure position folder for temporary Thumbpics"))
-            return
-        if entry == _('Link in Extensions Menu:'):
-            self['description'].setText(_("Show Plugin in Extensions Menu"))
-            return
-        if entry == _('Link in Main Menu:'):
-            self['description'].setText(_("Show Plugin in Main Menu"))
-        return
+        except Exception as e:
+            print("Error ", e)
 
     def changedEntry(self):
         for x in self.onChangedEntry:
@@ -1971,6 +1956,8 @@ class OpenConfig(Screen, ConfigListScreen):
 class OpenConsole(Screen):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'OpenConsole.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -2067,6 +2054,8 @@ class openMessageBox(Screen):
     def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=None, simple=False, list=[], timeout_default=None):
         self.type = type
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'openMessageBox.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -2220,6 +2209,8 @@ class openMessageBox(Screen):
 class plgnstrt(Screen):
     def __init__(self, session):
         self.session = session
+        global _session
+        _session = session
         skin = os.path.join(skin_path, 'Plgnstrt.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
