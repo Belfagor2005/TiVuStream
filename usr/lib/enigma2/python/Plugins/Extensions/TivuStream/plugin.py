@@ -1502,7 +1502,7 @@ class M3uPlay2(
 
     def openPlay(self, servicetype, url):
         name = self.name
-        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
+        ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
         print('reference:   ', ref)
         if streaml is True:
             url = 'http://127.0.0.1:8088/' + str(url)
@@ -1667,7 +1667,7 @@ class AddIpvStream(Screen):
     def addservice(self, res):
         if res:
             self.url = res
-            str = '4097:0:0:0:0:0:0:0:0:0:%s:%s' % (quote(self.url), quote(self.name))
+            str = '4097:0:1:0:0:0:0:0:0:0:%s:%s' % (quote(self.url), quote(self.name))
             ref = eServiceReference(str)
             self.addServiceToBouquet(self.list[self['config'].getSelectedIndex()][1], ref)
             self.close()
@@ -1937,9 +1937,14 @@ class OpenConfig(Screen, ConfigListScreen):
 
     def runupdate(self, result):
         if result:
-            com = self.link
             dom = 'Last version ' + self.version
-            os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % com)
+            cmd = "wget -U '%s' -c '%s' -O '/tmp/tivustream.tar'" % ('Enigma2 - TVstream Plugin', self.link)
+            if "https" in str(self.link):
+                cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '/tmp/tivustream.tar'" % ('Enigma2 - TVstream Plugin', self.link)
+            print('cmd comand wget: ', cmd)
+            
+            # os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % self.link)
+            os.system(cmd)
             os.system('sleep 3')
             self.session.open(OpenConsole, _('Update Plugin: %s') % dom, ['tar -xvf /tmp/tivustream.tar -C /'], closeOnSuccess=False)  # finishedCallback=self.ipkrestrt, closeOnSuccess=False)
 
