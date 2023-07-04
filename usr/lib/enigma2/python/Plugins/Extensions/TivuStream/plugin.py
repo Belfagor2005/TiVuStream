@@ -37,7 +37,7 @@ from Components.config import getConfigListEntry, ConfigDirectory
 from Components.config import ConfigSubsection, configfile
 from Plugins.Extensions.TivuStream.getpics import GridMain
 from Plugins.Plugin import PluginDescriptor
-from Screens.InfoBar import MoviePlayer
+# from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
 from Screens.InfoBarGenerics import InfoBarSeek
 from Screens.InfoBarGenerics import InfoBarAudioSelection, InfoBarNotifications
@@ -63,10 +63,11 @@ from enigma import eServiceReference
 from enigma import ePicLoad
 from enigma import loadPNG
 from enigma import iPlayableService
+from enigma import getDesktop
 from os.path import splitext
-import base64
+# import base64
 import os
-import random
+# import random
 import re
 import ssl
 import sys
@@ -233,9 +234,15 @@ pngori = os.path.join(plugin_path, 'res/pics/nasa3.jpg')
 png = os.path.join(plugin_path, 'res/pics/setting.png')
 pngx = os.path.join(plugin_path, 'res/pics/setting2.png')
 makem3u = 'aHR0cHM6Ly90aXZ1c3RyZWFtLndlYnNpdGUvaW9zL2NyZWF0ZU0zdS5waHA/Z3JvdXA9JndyaXRlRmlsZT0x'
-skin_path = os.path.join(plugin_path, 'res/skins/hd/')
-if Utils.isFHD():
-    skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
+
+
+screenwidth = getDesktop(0).size()
+if screenwidth.width() == 2560:
+    skin_path = plugin_path + '/res/skins/uhd/'
+elif screenwidth.width() == 1920:
+    skin_path = plugin_path + '/res/skins/fhd/'
+else:
+    skin_path = plugin_path + '/res/skins/hd/'
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 
@@ -243,7 +250,11 @@ if Utils.DreamOS():
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if Utils.isFHD():
+        if screenwidth.width() == 2560:
+            self.l.setItemHeight(60)
+            textfont = int(42)
+            self.l.setFont(0, gFont('Regular', textfont))
+        elif screenwidth.width() == 1920:
             self.l.setItemHeight(50)
             textfont = int(30)
             self.l.setFont(0, gFont('Regular', textfont))
@@ -266,7 +277,10 @@ def tvListEntry(name, png):
     else:
         png = os.path.join(plugin_path, 'res/pics/tv.png')
     # pngs = piconlocal(name)
-    if Utils.isFHD():
+    if screenwidth.width() == 2560:
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(50, 50), png=loadPNG(png)))
+        res.append(MultiContentEntryText(pos=(110, 0), size=(1200, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(png)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -761,7 +775,6 @@ class MainTvStream(Screen):
         elif answer:
             self.session.openWithCallback(self.okRun, MessageBox, _('Installation in progress') + '\n' + _('Wait please ...'), MessageBox.TYPE_INFO, timeout=3)
             self.keyNumberGlobalCB(self['list'].getSelectedIndex())
-
 
     def messagedellist(self, answer=None):
         if answer is None:
@@ -1711,7 +1724,6 @@ class OpenConfig(Screen, ConfigListScreen):
         Screen.__init__(self, session)
         self.setup_title = _("TiVuStream Config")
         self.onChangedEntry = []
-        
         info = '***'
         self['title'] = Label(_(title_plug))
         self['Maintener'] = Label('%s' % Maintener)
@@ -1942,7 +1954,6 @@ class OpenConfig(Screen, ConfigListScreen):
             if "https" in str(self.link):
                 cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '/tmp/tivustream.tar'" % ('Enigma2 - TVstream Plugin', self.link)
             print('cmd comand wget: ', cmd)
-            
             # os.system('wget %s -O /tmp/tivustream.tar > /dev/null' % self.link)
             os.system(cmd)
             os.system('sleep 3')
