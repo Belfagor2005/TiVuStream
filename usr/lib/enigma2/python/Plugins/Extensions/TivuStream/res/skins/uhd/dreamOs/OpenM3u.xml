@@ -1,0 +1,23 @@
+<!-- Skin OpwnM3u 15/08/2020 -->
+<screen name="OpenM3u" position="0,0" size="2560,1440" title="..::TiVuStream List Channel::.." backgroundColor="#20000000" flags="wfNoBorder">
+	<widget name="title" position="294,120" size="1200,54" font="Regular;40" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5"/>
+	<widget name="Maintener" position="680,91" size="550,40" font="Regular;32" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
+	<widget name="path" position="294,1080" size="1374,71" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
+	<widget name="info" position="294,1140" size="939,72" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5"/>
+	<!-- Widget -->
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main2.png" position="0,0" size="2560,1440" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" position="294,54" size="372,67" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="294,174" size="1374,11" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sep.png" position="294,1214" size="1374,11" zPosition="5"/>
+	<!-- Menu List -->
+	<widget name="list" position="294,207" size="1374,800" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
+	<!-- Colors 1220 -->
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_red.png" position="294,1260" size="40,40" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_green.png" position="294,1340" size="40,40" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_yellow.png" position="1627,1260" size="40,40" alphatest="on" zPosition="5"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/key_blue.png" position="1627,1340" size="40,40" alphatest="on" zPosition="5"/>
+	<widget name="key_red" position="360,1254" size="400,54" font="Regular;40" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1"/>
+	<widget name="key_green" position="360,1334" size="400,54" font="Regular;40" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1"/>
+	<widget name="key_yellow" position="940,1254" size="667,54" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1"/>
+	<widget name="key_blue" position="940,1334" size="667,54" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1"/>
+</screen>

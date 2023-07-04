@@ -1,0 +1,39 @@
+<!-- Skin MessageBox 16/08/2020 -->
+<screen name="OpenMessageBox" title="..::TiVuStream List Channel::.." position="center,340" size="1600, 160" backgroundColor="#10101010">
+	<widget name="selectedChoice" position="1231,1170" size="1067,67" font="Regular;46" foregroundColor="#ffffff" backgroundColor="#2518252e" transparent="1" zPosition="3"/>
+	<widget name="Text" position="187,7" size="1067,54" font="Regular;43" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1"/>
+	<widget name="text" position="187,7" size="1067,54" font="Regular;43" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1"/>
+	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="27,34" size="107,107"/>
+	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="27,34" size="107,107"/>
+	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="27,34" size="107,107"/>
+	<widget name="WarningPixmap" pixmap="skin_default/icons/input_error.png" position="27,34" size="107,107"/>
+	<widget name="list" position="27,80" size="1254,467" itemHeight="67" transparent="1" foregroundColor="#a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#0b2049" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/sliderb.png"/>
+	<applet type="onLayoutFinish">
+# this should be factored out into some helper code, but currently demonstrates applets.
+from enigma import eSize, ePoint
+orgwidth = self.instance.size().width() + 40
+orgpos = self.instance.position()
+textsize = self["text"].getSize()
+# y size still must be fixed in font stuff... h/w text
+textsize = (textsize[0] + 280, textsize[1] + 80)
+offset = 90
+if self.type == self.TYPE_YESNO:
+	offset = 110
+wsizex = textsize[0] + 120
+wsizey = textsize[1] + offset
+if (800 &gt; wsizex):
+	wsizex = 800
+wsize = (wsizex, wsizey)
+# resize
+self.instance.resize(eSize(*wsize))
+# resize label
+self["text"].instance.resize(eSize(*textsize))
+# move list height item
+listsize = (wsizex - 20, 100)
+self["list"].instance.move(ePoint(10, textsize[1]))
+self["list"].instance.resize(eSize(*listsize))
+# center window
+newwidth = wsize[0]
+self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, orgpos.y()))
+		</applet>
+</screen>

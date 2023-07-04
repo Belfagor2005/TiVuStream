@@ -1,0 +1,10 @@
+<screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="2560,1440" title="..::TiVuStream Project::.." backgroundColor="#30000000">
+	<!-- <ePixmap position="1050,74" size="334,156" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_xxx.png" alphatest="blend" zPosition="5" /> -->
+	<ePixmap position="128,82" size="430,151" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="5" />
+	<widget name="poster" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" position="118,71" size="1267,1200" alphatest="blend" scale="stretch" zPosition="4"/>	
+	<eLabel position="2444,60" size="11,1220" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="111,60" size="2340,11" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="100,60" size="11,1220" zPosition="1" backgroundColor="#30403f3f" />
+	<eLabel position="100,1271" size="2351,11" zPosition="1" backgroundColor="#30403f3f" />
+	<widget source="list" render="rvRunningText" position="1430,120" size="974,1124" font="Regular;38" foregroundColor="#ffb75b" backgroundColor="#101010" halign="center" transparent="1" zPosition="2" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" />
+</screen>
