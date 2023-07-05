@@ -1,4 +1,4 @@
-<screen name="GridMainHD" position="0,0" size="1280,720" title="GridMain">
+<screen name="GridMainHD" position="0,0" size="1280,720" title="GridMain" backgroundColor="#ff000000" flags="wfNoBorder">>
 	<!-- Time -->
 	<widget source="global.CurrentTime" render="Label" position="1126,35" size="140,25" zPosition="2" font="Regular;18" halign="right" backgroundColor="black" foregroundColor="#ffffff" transparent="1">
 		<convert type="ClockToText">Default</convert>

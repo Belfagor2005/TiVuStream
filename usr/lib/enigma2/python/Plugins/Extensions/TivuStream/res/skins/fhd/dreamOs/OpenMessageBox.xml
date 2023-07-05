@@ -1,5 +1,5 @@
 <!-- Skin MessageBox 16/08/2020 -->
-<screen name="OpenMessageBox" title="..::TiVuStream List Channel::.." position="center,255" size="1200, 120" backgroundColor="#10101010">
+<screen name="OpenMessageBox" title="..::TiVuStream List Channel::.." position="center,255" size="1200, 120" backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="selectedChoice" position="923,877" size="800,50" font="Regular;34" foregroundColor="#ffffff" backgroundColor="#2518252e" transparent="1" zPosition="3"/>
 	<widget name="Text" position="140,5" size="800,40" font="Regular;32" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1"/>
 	<widget name="text" position="140,5" size="800,40" font="Regular;32" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1"/>

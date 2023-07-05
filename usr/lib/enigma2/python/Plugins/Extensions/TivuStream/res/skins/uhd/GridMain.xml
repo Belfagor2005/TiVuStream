@@ -1,4 +1,4 @@
-<screen name="GridMain" position="0,0" size="2560,1440" title="GridMain">
+<screen name="GridMain" position="0,0" size="2560,1440" title="GridMain" backgroundColor="#ff000000" flags="wfNoBorder">
     <!-- <ePixmap position="0,0" zPosition="-2" size="2560,1440" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/fanartfhd.jpg" /> -->
     <widget name="title" position="115,1447" size="2355,107" font="Regular;80" zPosition="3" halign="center" valign="top" foregroundColor="#7bd7f7" backgroundColor="black" transparent="1" />
     <widget name="info" position="72,1211" zPosition="4" size="2415,226" font="Regular; 35" foregroundColor="#7bd7f7" backgroundColor="#40000000" transparent="1" halign="left" valign="top" />

@@ -1,5 +1,5 @@
 <!-- Skin Config 15/08/2020 -->
-<screen name="Config" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="#20000000" flags="wfNoBorder">
+<screen name="Config" position="0,0" size="1920,1080" title="..::TiVuStream List Channel::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/main2.png" position="0,0" size="1920,1080" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tvs.png" alphatest="blend" position="220,40" size="279,50" zPosition="5" />

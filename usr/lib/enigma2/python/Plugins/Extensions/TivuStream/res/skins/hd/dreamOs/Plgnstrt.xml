@@ -1,5 +1,5 @@
 <!-- Skin plgstr 16/08/2020 -->
-<screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1280,720" title="..::TiVuStream List Channel::.." backgroundColor="#30000000">
+<screen name="plgnstrt" flags="wfNoBorder" position="center,center" size="1280,720" title="..::TiVuStream List Channel::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<ePixmap position="385,43" size="250,117" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_xxx.png" alphatest="blend" zPosition="5" />
 	<ePixmap position="67,45" size="320,110" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/tivustream_or.png" alphatest="blend" zPosition="5" />
 	<widget name="poster" position="61,48" size="576,585" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TivuStream/res/pics/nasa.jpg" alphatest="blend" scale="stretch" zPosition="4" />
