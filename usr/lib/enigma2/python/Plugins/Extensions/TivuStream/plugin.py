@@ -29,7 +29,6 @@ from Components.ScrollLabel import ScrollLabel
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.ServiceList import ServiceList
 from Components.Sources.Progress import Progress
-# from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigSelection, ConfigText
 from Components.config import ConfigEnableDisable, ConfigYesNo
@@ -37,7 +36,6 @@ from Components.config import getConfigListEntry, ConfigDirectory
 from Components.config import ConfigSubsection, configfile
 from Plugins.Extensions.TivuStream.getpics import GridMain
 from Plugins.Plugin import PluginDescriptor
-# from Screens.InfoBar import MoviePlayer
 from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
 from Screens.InfoBarGenerics import InfoBarSeek
 from Screens.InfoBarGenerics import InfoBarAudioSelection, InfoBarNotifications
@@ -49,11 +47,9 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import resolveFilename, fileExists, copyfile
 from Tools.Downloader import downloadWithProgress
-# from Tools.LoadPixmap import LoadPixmap
 from enigma import eConsoleAppContainer
 from enigma import RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT
-# from enigma import eListbox
 from enigma import eListboxPythonMultiContent
 from enigma import eTimer
 from enigma import gPixmapPtr
@@ -65,9 +61,7 @@ from enigma import loadPNG
 from enigma import iPlayableService
 from enigma import getDesktop
 from os.path import splitext
-# import base64
 import os
-# import random
 import re
 import ssl
 import sys
@@ -342,6 +336,7 @@ def returnIMDB(text_clear):
         text_clear = html_conv.html_unescape(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
+    return False
 
 
 Panel_list = [
@@ -891,9 +886,8 @@ class OpenM3u(Screen):
         if idx < 0:
             return
         else:
-            name = path
-            if '.m3u' in name:
-                self.session.open(M3uPlay, name)
+            if '.m3u' in path:
+                self.session.open(M3uPlay, path)
                 return
             else:
                 return
