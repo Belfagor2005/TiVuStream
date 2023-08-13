@@ -10,7 +10,7 @@
 Info http://t.me/tivustream
 '''
 # from __future__ import print_function
-from . import _
+from . import _, logdata
 from . import Utils
 from . import html_conv
 # from Components.HTMLComponent import *
@@ -114,15 +114,6 @@ def ssl_urlopen(url):
         return urlopen(url, context=sslContext)
     else:
         return urlopen(url)
-
-
-def trace_error():
-    import traceback
-    try:
-        traceback.print_exc(file=sys.stdout)
-        traceback.print_exc(file=open('/tmp/traceback.log', 'a'))
-    except:
-        pass
 
 
 currversion = '3.2'
@@ -1459,7 +1450,7 @@ class M3uPlay2(
         self.onClose.append(self.cancel)
 
     def getAspect(self):
-        return AVSwitch().getAspectRatioSetting()
+        return eAVSwitch().getAspectRatioSetting()
 
     def getAspectString(self, aspectnum):
         return {
@@ -1484,7 +1475,7 @@ class M3uPlay2(
         }
         config.av.aspectratio.setValue(map[aspect])
         try:
-            AVSwitch().setAspectRatio(aspect)
+            eAVSwitch().setAspectRatio(aspect)
         except:
             pass
 
@@ -2250,7 +2241,7 @@ class plgnstrt(Screen):
         else:
             self['poster'].instance.setPixmap(None)
         # self['poster'].hide()
-        sc = AVSwitch().getFramebufferScale()
+        sc = eAVSwitch().getFramebufferScale()
         self.picload = ePicLoad()
         size = self['poster'].instance.size()
         self.picload.setPara((size.width(),
