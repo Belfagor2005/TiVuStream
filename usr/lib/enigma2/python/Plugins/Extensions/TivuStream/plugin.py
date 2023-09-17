@@ -56,7 +56,7 @@ import os
 import ssl
 import sys
 import six
-
+import codecs
 PY3 = sys.version_info.major >= 3
 print('Py3: ', PY3)
 if PY3:
@@ -230,7 +230,7 @@ class MainTvStream(Screen):
         global _session
         _session = session
         skin = os.path.join(skin_path, 'MainTvStream.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self.setup_title = _('Channel List')
@@ -294,7 +294,7 @@ class OpenConfig(Screen, ConfigListScreen):
         global _session
         _session = session
         skin = os.path.join(skin_path, 'OpenConfig.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self.setup_title = _("TiVuStream Config")
@@ -548,7 +548,7 @@ class OpenConsole(Screen):
         global _session
         _session = session
         skin = os.path.join(skin_path, 'OpenConsole.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self.finishedCallback = finishedCallback
@@ -643,7 +643,7 @@ class openMessageBox(Screen):
         global _session
         _session = session
         skin = os.path.join(skin_path, 'openMessageBox.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self.msgBoxID = msgBoxID
@@ -798,7 +798,7 @@ class plgnstrt(Screen):
         global _session
         _session = session
         skin = os.path.join(skin_path, 'Plgnstrt.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         Screen.__init__(self, session)
         self["poster"] = Pixmap()
